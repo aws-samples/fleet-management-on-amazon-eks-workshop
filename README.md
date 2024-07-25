@@ -1,11 +1,6 @@
-## My Project
+## Amazon EKS Fleet Management Workshop
 
-TODO: Fill this README out!
-
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+Comming soon in later in 2024
 
 ## Security
 
