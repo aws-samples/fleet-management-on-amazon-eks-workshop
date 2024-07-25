@@ -1,0 +1,68 @@
+name: frontend
+labels:
+  environment: prod
+namespaces:
+  assets:
+    labels:
+      additionalLabels:
+        app.kubernetes.io/created-by: eks-workshop
+    limitRanges:
+    - name: default
+      labels:
+        app.kubernetes.io/created-by: eks-workshop
+      limits:
+        - default: # this section defines default limits
+            cpu: 500m
+          defaultRequest: # this section defines default requests
+            cpu: 500m
+          max: # max and min define the limit range
+            cpu: "2"
+          min:
+            cpu: 100m
+          type: Container
+    resourceQuotas:
+    - name: default
+      labels:
+        app.kubernetes.io/created-by: eks-workshop
+      spec:
+        hard:
+          cpu: "5000"
+          memory: 200Gi
+          pods: "20"
+        scopeSelector:
+          matchExpressions:
+          - operator : In
+            scopeName: PriorityClass
+            values: ["high"]
+  ui:
+    labels:
+      additionalLabels:
+        app.kubernetes.io/created-by: eks-workshop
+    limitRanges:
+    - name: default
+      labels:
+        app.kubernetes.io/created-by: eks-workshop
+      limits:
+        - default: # this section defines default limits
+            cpu: 500m
+          defaultRequest: # this section defines default requests
+            cpu: 500m
+          max: # max and min define the limit range
+            cpu: "2"
+          min:
+            cpu: 100m
+          type: Container
+    resourceQuotas:
+    - name: default
+      labels:
+        app.kubernetes.io/created-by: eks-workshop
+      spec:
+        hard:
+          cpu: "5000"
+          memory: 200Gi
+          pods: "20"
+        scopeSelector:
+          matchExpressions:
+          - operator : In
+            scopeName: PriorityClass
+            values: ["high"]
