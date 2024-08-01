@@ -200,7 +200,7 @@ resource "kubernetes_secret" "git_secrets" {
 ################################################################################
 module "gitops_bridge_bootstrap" {
   source = "gitops-bridge-dev/gitops-bridge/helm"
-
+  version = "0.1.0"
   cluster = {
     cluster_name = module.eks.cluster_name
     environment  = local.environment
