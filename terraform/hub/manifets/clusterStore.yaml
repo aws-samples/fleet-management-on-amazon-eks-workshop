@@ -1,0 +1,12 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: aws-secrets-manager
+  namespace: external-secrets
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: eu-west-1
+      secretsManager:
+        forceDeleteWithoutRecovery: true
