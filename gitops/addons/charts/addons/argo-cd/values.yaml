@@ -57,8 +57,6 @@ server:
       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 
 configs:
-  params:
-    server.insecure: true
   repositories:
     # Required when using helm repository with oci formal like karpenter and aws-gateway-api-controller
     aws-public-ecr:
@@ -67,9 +65,6 @@ configs:
       url: public.ecr.aws
       enableOCI: 'true'
   cm:
-    # -- Timeout to discover if a new manifests version got published to the repository
-    # Only for workshop or demos set to a low value
-    timeout.reconciliation: 30s
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane
     resource.exclusions: |
       - kinds:
@@ -194,6 +189,7 @@ configs:
 
           return health_status
 
+
 # -- Array of extra K8s manifests to deploy
 ## Note: Supports use of custom Helm templates
 ##       It gets handle in this form inside the argo-cd chart
@@ -213,7 +209,7 @@ extraObjects:
       name: default
       namespace: {{ $.Release.Namespace | quote }}
       annotations:
-        source: gitops-brige
+        source: gitops-bridge
     spec:
       clusterResourceWhitelist:
       - group: '*'
