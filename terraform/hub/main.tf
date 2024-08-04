@@ -133,7 +133,7 @@ locals {
 
   argocd_apps = {
     addons   = file("${path.module}/bootstrap/addons.yaml")
-    fleet    = file("${path.module}/bootstrap/platform.yaml")
+    fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
   tags = {

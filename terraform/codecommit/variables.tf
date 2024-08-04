@@ -21,7 +21,7 @@ variable "gitops_fleet_revision" {
 }
 variable "gitops_fleet_repo_name" {
   description = "Git repository name for addons"
-  default     = "gitops-addons"
+  default     = "gitops-fleet"
 }
 
 variable "gitops_addons_basepath" {
