@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: platform
+  name: fleet
   namespace: argocd
 spec:
   syncPolicy:
@@ -13,13 +13,13 @@ spec:
           environment: control-plane
   template:
     metadata:
-      name: 'platform'
+      name: 'fleet'
     spec:
       project: default
       source:
-        repoURL: '{{metadata.annotations.platform_repo_url}}'
-        path: '{{metadata.annotations.platform_repo_basepath}}{{metadata.annotations.platform_repo_path}}'
-        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+        repoURL: '{{metadata.annotations.fleet_repo_url}}'
+        path: '{{metadata.annotations.fleet_repo_basepath}}{{metadata.annotations.fleet_repo_path}}'
+        targetRevision: '{{metadata.annotations.fleet_repo_revision}}'
         directory:
           recurse: true
       destination:

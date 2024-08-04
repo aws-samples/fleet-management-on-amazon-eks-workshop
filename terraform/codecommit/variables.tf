@@ -6,6 +6,24 @@ variable "ssh_key_basepath" {
   default = "~/.ssh"
 }
 
+
+variable "gitops_fleet_basepath" {
+  description = "Git repository base path for addons"
+  default     = ""
+}
+variable "gitops_fleet_path" {
+  description = "Git repository path for addons"
+  default     = "bootstrap"
+}
+variable "gitops_fleet_revision" {
+  description = "Git repository revision/branch/ref for addons"
+  default     = "HEAD"
+}
+variable "gitops_fleet_repo_name" {
+  description = "Git repository name for addons"
+  default     = "gitops-addons"
+}
+
 variable "gitops_addons_basepath" {
   description = "Git repository base path for addons"
   default     = ""

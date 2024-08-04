@@ -48,15 +48,10 @@ locals {
   gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
   gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
-  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
-  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
-  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
-  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
-
-  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
-  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
-  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
-  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
+  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
+  gitops_fleet_basepath = "fleet/"
+  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
+  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
   argocd_namespace    = "argocd"
@@ -129,22 +124,16 @@ locals {
       addons_repo_revision = local.gitops_addons_revision
     },
     {
-      platform_repo_url      = local.gitops_platform_url
-      platform_repo_basepath = local.gitops_platform_basepath
-      platform_repo_path     = local.gitops_platform_path
-      platform_repo_revision = local.gitops_platform_revision
+      fleet_repo_url      = local.gitops_fleet_url
+      fleet_repo_basepath = local.gitops_fleet_basepath
+      fleet_repo_path     = local.gitops_fleet_path
+      fleet_repo_revision = local.gitops_fleet_revision
     },
-    {
-      workload_repo_url      = local.gitops_workload_url
-      workload_repo_basepath = local.gitops_workload_basepath
-      workload_repo_path     = local.gitops_workload_path
-      workload_repo_revision = local.gitops_workload_revision
-    }
   )
 
   argocd_apps = {
     addons   = file("${path.module}/bootstrap/addons.yaml")
-    platform = file("${path.module}/bootstrap/platform.yaml")
+    fleet    = file("${path.module}/bootstrap/platform.yaml")
   }
 
   tags = {
@@ -172,19 +161,12 @@ resource "kubernetes_secret" "git_secrets" {
       sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
-    git-platform = {
+    git-fleet = {
       type                  = "git"
-      url                   = local.gitops_platform_url
+      url                   = local.gitops_fleet_url
       sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
-    git-workloads = {
-      type                  = "git"
-      url                   = local.gitops_workload_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
-      insecureIgnoreHostKey = "true"
-    }
-
   }
   metadata {
     name      = each.key

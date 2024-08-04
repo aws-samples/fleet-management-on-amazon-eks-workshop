@@ -15,6 +15,30 @@ output "git_private_ssh_key" {
   value = local.git_private_ssh_key
 }
 
+output "gitops_fleet_url" {
+  value = "${local.gitops_fleet_org}/${local.gitops_fleet_repo}"
+}
+output "gitops_fleet_org" {
+  description = "Git repository org/user contains for addons"
+  value       = local.gitops_fleet_org
+}
+output "gitops_fleet_repo" {
+  description = "Git repository contains for addons"
+  value       = local.gitops_fleet_repo
+}
+output "gitops_fleet_basepath" {
+  description = "Git repository base path for addons"
+  value       = var.gitops_fleet_basepath
+}
+output "gitops_fleet_path" {
+  description = "Git repository path for addons"
+  value       = var.gitops_fleet_path
+}
+output "gitops_fleet_revision" {
+  description = "Git repository revision/branch/ref for addons"
+  value       = var.gitops_fleet_revision
+}
+
 output "gitops_addons_url" {
   value = "${local.gitops_addons_org}/${local.gitops_addons_repo}"
 }

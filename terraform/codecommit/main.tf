@@ -4,6 +4,10 @@ locals {
 
   context_prefix = "gitops-bridge"
 
+  gitops_fleet_repo_name = var.gitops_fleet_repo_name
+  gitops_fleet_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
+  gitops_fleet_repo      = "v1/repos/${local.gitops_addons_repo_name}"
+
   gitops_workload_repo_name = var.gitops_workload_repo_name
   gitops_workload_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
   gitops_workload_repo      = "v1/repos/${local.gitops_workload_repo_name}"
@@ -41,6 +45,11 @@ resource "aws_codecommit_repository" "platform" {
 
 resource "aws_codecommit_repository" "addons" {
   repository_name = local.gitops_addons_repo_name
+  description     = "CodeCommit repository for ArgoCD addons"
+}
+
+resource "aws_codecommit_repository" "fleet" {
+  repository_name = local.gitops_fleet_repo_name
   description     = "CodeCommit repository for ArgoCD addons"
 }
 

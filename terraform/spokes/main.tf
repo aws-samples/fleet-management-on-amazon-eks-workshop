@@ -51,12 +51,18 @@ locals {
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
+
+  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
+  gitops_fleet_basepath = "fleet/"
+  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
+  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
   gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
   gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
   gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
   gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
-
+# This will be updated as a seconf project
   gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
   gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
   gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
@@ -118,26 +124,15 @@ locals {
     local.oss_addons,
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
-    { workloads = true }
   )
 
   addons_metadata = merge(
     module.eks_blueprints_addons.gitops_metadata,
-    module.eks_ack_addons.gitops_metadata,
-    {
-      aws_karpenter_role_name = "${module.eks.cluster_name}-karpenter"
-    },
     {
       aws_cluster_name = module.eks.cluster_name
       aws_region       = local.region
       aws_account_id   = data.aws_caller_identity.current.account_id
       aws_vpc_id       = module.vpc.vpc_id
-    },
-    {
-      platform_repo_url      = local.gitops_platform_url
-      platform_repo_basepath = local.gitops_platform_basepath
-      platform_repo_path     = local.gitops_platform_path
-      platform_repo_revision = local.gitops_platform_revision
     },
     {
       addons_repo_url      = local.gitops_addons_url
@@ -146,12 +141,43 @@ locals {
       addons_repo_revision = local.gitops_addons_revision
     },
     {
+      platform_repo_url      = local.gitops_platform_url
+      platform_repo_basepath = local.gitops_platform_basepath
+      platform_repo_path     = local.gitops_platform_path
+      platform_repo_revision = local.gitops_platform_revision
+    },
+    {
       workload_repo_url      = local.gitops_workload_url
       workload_repo_basepath = local.gitops_workload_basepath
       workload_repo_path     = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
     }
   )
+
+  fleet_addons = merge(
+    { kubernetes_version = local.cluster_version },
+    { aws_cluster_name = module.eks.cluster_name },
+    {fleet_member = true}
+  )
+
+  fleet_metadata = merge(
+    {
+      aws_cluster_name = module.eks.cluster_name
+      aws_region       = local.region
+      aws_account_id   = data.aws_caller_identity.current.account_id
+      aws_vpc_id       = module.vpc.vpc_id
+    },
+    {
+      fleet_repo_url      = local.gitops_fleet_url
+      fleet_repo_basepath = local.gitops_fleet_basepath
+      fleet_repo_path     = local.gitops_fleet_path
+      fleet_repo_revision = local.gitops_fleet_revision
+    },
+  )
+  argocd_apps = {
+    addons   = file("${path.module}/bootstrap/addons.yaml")
+    platform = file("${path.module}/bootstrap/platform.yaml")
+  }
 
   tags = {
     Blueprint  = local.name
@@ -169,8 +195,8 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
   secret_string = jsonencode({
     cluster_name = module.eks.cluster_name
     environment  = local.environment
-    metadata     = local.addons_metadata
-    addons       = local.addons
+    metadata     = local.fleet_metadata
+    addons       = local.fleet_addons
     server       = module.eks.cluster_endpoint
     config = {
       tlsClientConfig = {
@@ -183,6 +209,62 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
       }
     }
   })
+}
+
+resource "kubernetes_secret" "git_secrets" {
+  for_each = {
+    git-addons = {
+      type                  = "git"
+      url                   = local.gitops_addons_url
+      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      insecureIgnoreHostKey = "true"
+    }
+    git-platform = {
+      type                  = "git"
+      url                   = local.gitops_platform_url
+      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      insecureIgnoreHostKey = "true"
+    }
+    git-workloads = {
+      type                  = "git"
+      url                   = local.gitops_workload_url
+      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      insecureIgnoreHostKey = "true"
+    }
+
+  }
+
+  metadata {
+    name      = each.key
+    namespace = "argocd"
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+  data = each.value
+}
+################################################################################
+# GitOps Bridge: Bootstrap for Spoke Cluster
+################################################################################
+# Wait ArgoCD CRDs and "argocd" namespace to be created by hub cluster to this spoke cluster
+# resource "time_sleep" "wait_for_argocd_namespace_and_crds" {
+#   create_duration = "7m"
+
+#   depends_on = [aws_secretsmanager_secret_version.argocd_cluster_secret_version]
+# }
+module "gitops_bridge_bootstrap_spoke" {
+  source = "gitops-bridge-dev/gitops-bridge/helm"
+
+  install = false # Not installing argocd via helm on spoke cluster
+  cluster = {
+    cluster_name = module.eks.cluster_name
+    environment  = local.environment
+    metadata     = local.addons_metadata
+    addons       = local.addons
+  }
+  apps = local.argocd_apps
+
+  # depends_on = [time_sleep.wait_for_argocd_namespace_and_crds]
 }
 
 ################################################################################
