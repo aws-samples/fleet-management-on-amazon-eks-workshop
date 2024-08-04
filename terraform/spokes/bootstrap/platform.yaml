@@ -10,7 +10,7 @@ spec:
   - clusters:
       selector:
         matchLabels:
-          fleet_spoke: "true"
+          fleet_member: "true"
   template:
     metadata:
       name: 'platform'

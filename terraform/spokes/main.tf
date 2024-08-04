@@ -52,6 +52,7 @@ locals {
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
+  argocd_namespace    = "argocd"
 
   gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_fleet_url
   gitops_fleet_basepath = data.terraform_remote_state.git.outputs.gitops_fleet_basepath
@@ -124,12 +125,15 @@ locals {
     local.oss_addons,
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
+    {fleet_member = true}
   )
 
   addons_metadata = merge(
     module.eks_blueprints_addons.gitops_metadata,
     {
       aws_karpenter_role_name = "${module.eks.cluster_name}-karpenter"
+      argocd_namespace        = local.argocd_namespace,
+      create_argocd_namespace = false
     },
     {
       aws_cluster_name = module.eks.cluster_name
@@ -215,6 +219,7 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
 }
 
 resource "kubernetes_secret" "git_secrets" {
+  depends_on = [time_sleep.wait_for_argocd_namespace_and_crds]
   for_each = {
     git-addons = {
       type                  = "git"
@@ -497,6 +502,7 @@ module "eks" {
 }
 
 resource "aws_eks_access_entry" "karpenter_node_access_entry" {
+  count = local.aws_addons.enable_karpenter ? 1 : 0
   cluster_name      = module.eks.cluster_name
   principal_arn     = module.eks_blueprints_addons.karpenter.node_iam_role_arn
   kubernetes_groups = []
