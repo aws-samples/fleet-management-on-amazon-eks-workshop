@@ -53,10 +53,10 @@ locals {
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
 
-  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
-  gitops_fleet_basepath = "fleet/"
-  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
-  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
+  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_fleet_url
+  gitops_fleet_basepath = data.terraform_remote_state.git.outputs.gitops_fleet_basepath
+  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
+  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
   gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
   gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
@@ -128,6 +128,9 @@ locals {
 
   addons_metadata = merge(
     module.eks_blueprints_addons.gitops_metadata,
+    {
+      aws_karpenter_role_name = "${module.eks.cluster_name}-karpenter"
+    },
     {
       aws_cluster_name = module.eks.cluster_name
       aws_region       = local.region
@@ -247,11 +250,11 @@ resource "kubernetes_secret" "git_secrets" {
 # GitOps Bridge: Bootstrap for Spoke Cluster
 ################################################################################
 # Wait ArgoCD CRDs and "argocd" namespace to be created by hub cluster to this spoke cluster
-# resource "time_sleep" "wait_for_argocd_namespace_and_crds" {
-#   create_duration = "7m"
+resource "time_sleep" "wait_for_argocd_namespace_and_crds" {
+  create_duration = "7m"
 
-#   depends_on = [aws_secretsmanager_secret_version.argocd_cluster_secret_version]
-# }
+  depends_on = [aws_secretsmanager_secret_version.argocd_cluster_secret_version]
+}
 module "gitops_bridge_bootstrap_spoke" {
   source = "gitops-bridge-dev/gitops-bridge/helm"
 
@@ -264,7 +267,7 @@ module "gitops_bridge_bootstrap_spoke" {
   }
   apps = local.argocd_apps
 
-  # depends_on = [time_sleep.wait_for_argocd_namespace_and_crds]
+  depends_on = [time_sleep.wait_for_argocd_namespace_and_crds]
 }
 
 ################################################################################
@@ -448,6 +451,9 @@ module "eks" {
       min_size     = 3
       max_size     = 10
       desired_size = 3
+      iam_role_additional_policies = {
+          cloudwatch_agent_server_policy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      }
     }
   }
 
@@ -455,6 +461,10 @@ module "eks" {
   cluster_addons = {
     coredns    = {}
     kube-proxy = {}
+    amazon-cloudwatch-observability = {
+      most_recent    = true
+      before_compute = true
+    }
     eks-pod-identity-agent = {
       most_recent    = true
       before_compute = true
@@ -484,6 +494,16 @@ module "eks" {
     # (i.e. - at most, only one security group should have this tag in your account)
     "karpenter.sh/discovery" = local.name
   })
+}
+
+resource "aws_eks_access_entry" "karpenter_node_access_entry" {
+  cluster_name      = module.eks.cluster_name
+  principal_arn     = module.eks_blueprints_addons.karpenter.node_iam_role_arn
+  kubernetes_groups = []
+  type              = "EC2_LINUX"
+  lifecycle {
+    ignore_changes = [kubernetes_groups]
+  }
 }
 
 module "ebs_csi_driver_irsa" {

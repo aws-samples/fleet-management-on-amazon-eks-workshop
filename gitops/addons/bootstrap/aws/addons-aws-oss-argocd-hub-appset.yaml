@@ -15,7 +15,7 @@ spec:
               values:
                 addonChart: argo-cd
                 # anything not staging or prod use this version
-                addonChartVersion: 5.51.1
+                addonChartVersion: 7.3.11
                 addonChartRepository: https://argoproj.github.io/argo-helm
               selector:
                 matchExpressions:
@@ -27,13 +27,13 @@ spec:
                 matchLabels:
                   environment: staging
               values:
-                addonChartVersion: 5.51.1
+                addonChartVersion: 7.3.11
           - clusters:
               selector:
                 matchLabels:
                   environment: prod
               values:
-                addonChartVersion: 5.51.1
+                addonChartVersion: 7.3.11
   template:
     metadata:
       name: addon-{{.name}}-aws-{{.values.addonChart}}
@@ -53,20 +53,11 @@ spec:
               - $values/{{.metadata.annotations.addons_repo_basepath}}charts/addons/{{.values.addonChart}}/values.yaml
               - $values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml
               - $values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml
-            values: |
-              controller:
-                serviceAccount:
-                  annotations:
-                    eks.amazonaws.com/role-arn: '{{.metadata.annotations.argocd_iam_role_arn}}'
-              server:
-                serviceAccount:
-                  annotations:
-                    eks.amazonaws.com/role-arn: '{{.metadata.annotations.argocd_iam_role_arn}}'
       destination:
         namespace: '{{default "argocd" .metadata.annotations.argocd_namespace}}'
         name: '{{.name}}'
       syncPolicy:
         automated: {}
         syncOptions:
-          - CreateNamespace=true
+          - CreateNamespace='{{default true .metadata.annotations.create_argocd_namespace}}'
           - ServerSideApply=true  # Big CRDs.

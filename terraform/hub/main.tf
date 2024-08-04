@@ -48,10 +48,10 @@ locals {
   gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
   gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
-  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
-  gitops_fleet_basepath = "fleet/"
-  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
-  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
+  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_fleet_url
+  gitops_fleet_basepath = data.terraform_remote_state.git.outputs.gitops_fleet_basepath
+  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
+  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
   argocd_namespace    = "argocd"
@@ -81,9 +81,10 @@ locals {
     enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
   }
   oss_addons = {
-    enable_argocd                          = try(var.addons.enable_argocd, true)
+    enable_argocd                          = try(var.addons.enable_argocd, false)
     enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
     enable_argo_events                     = try(var.addons.enable_argo_events, false)
     enable_argo_workflows                  = try(var.addons.enable_argo_workflows, false)
@@ -103,7 +104,7 @@ locals {
     local.aws_addons,
     local.oss_addons,
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name }
+    { aws_cluster_name = module.eks.cluster_name },
   )
 
   addons_metadata = merge(
@@ -115,7 +116,8 @@ locals {
       aws_vpc_id       = module.vpc.vpc_id
     },
     {
-      argocd_namespace = local.argocd_namespace
+      argocd_namespace        = local.argocd_namespace,
+      create_argocd_namespace = false
     },
     {
       addons_repo_url      = local.gitops_addons_url
@@ -271,16 +273,22 @@ module "eks" {
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
-
       min_size     = 2
       max_size     = 6
       desired_size = 2
+      iam_role_additional_policies = {
+          cloudwatch_agent_server_policy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      }
     }
   }
   # EKS Addons
   cluster_addons = {
     coredns    = {}
     kube-proxy = {}
+    amazon-cloudwatch-observability = {
+      most_recent    = true
+      before_compute = true
+    }
     eks-pod-identity-agent = {
       most_recent    = true
       before_compute = true

@@ -22,6 +22,7 @@ variable "addons" {
   default = {
     enable_metrics_server               = true
     enable_external_secrets             = true
-    enable_argocd                       = true
+    enable_aws_argocd                   = true
+    enable_karpenter                    = true
   }
 }
