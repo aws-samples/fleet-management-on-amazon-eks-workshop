@@ -20,7 +20,7 @@ variable "gitops_addons_revision" {
 }
 variable "gitops_addons_repo_name" {
   description = "Git repository name for addons"
-  default     = "gitops-addons"
+  default     = "fleet-gitops-addons"
 }
 
 variable "gitops_platform_basepath" {
@@ -37,7 +37,7 @@ variable "gitops_platform_revision" {
 }
 variable "gitops_platform_repo_name" {
   description = "Git repository name for platform"
-  default     = "gitops-platform"
+  default     = "fleet-gitops-platform"
 }
 
 variable "gitops_workload_basepath" {
@@ -54,5 +54,5 @@ variable "gitops_workload_revision" {
 }
 variable "gitops_workload_repo_name" {
   description = "Git repository name for workload"
-  default     = "gitops-apps"
+  default     = "fleet-gitops-apps"
 }
