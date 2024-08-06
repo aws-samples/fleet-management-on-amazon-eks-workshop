@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
 
-  context_prefix = "gitops-bridge"
+  context_prefix = "fleet-gitops-bridge"
 
   gitops_workload_repo_name = var.gitops_workload_repo_name
   gitops_workload_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
@@ -65,7 +65,7 @@ resource "random_string" "secret_suffix" {
   special = false # Set to true if you want to include special characters
   upper   = true  # Set to true if you want uppercase letters in the string
   lower   = true  # Set to true if you want lowercase letters in the string
-  number  = true  # Set to true if you want numbers in the string
+  #number  = true  # Set to true if you want numbers in the string
 }
 resource "aws_secretsmanager_secret" "codecommit_key" {
   name = "codecommit-key-${random_string.secret_suffix.result}"

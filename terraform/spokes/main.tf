@@ -45,7 +45,7 @@ provider "helm" {
 }
 
 locals {
-  name            = "spoke-${terraform.workspace}"
+  name            = "fleet-spoke-${terraform.workspace}"
   environment     = terraform.workspace
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
