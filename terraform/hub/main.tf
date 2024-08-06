@@ -36,7 +36,7 @@ provider "kubernetes" {
 }
 
 locals {
-  name            = "hub-cluster"
+  name            = "fleet-hub-cluster"
   environment     = "control-plane"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
