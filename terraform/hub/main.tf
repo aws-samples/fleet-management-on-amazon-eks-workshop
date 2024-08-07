@@ -48,15 +48,10 @@ locals {
   gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
   gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
-  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
-  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
-  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
-  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
-
-  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
-  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
-  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
-  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
+  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_fleet_url
+  gitops_fleet_basepath = data.terraform_remote_state.git.outputs.gitops_fleet_basepath
+  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
+  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
   argocd_namespace    = "argocd"
@@ -86,9 +81,10 @@ locals {
     enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
   }
   oss_addons = {
-    enable_argocd                          = try(var.addons.enable_argocd, true)
+    enable_argocd                          = try(var.addons.enable_argocd, false)
     enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
     enable_argo_events                     = try(var.addons.enable_argo_events, false)
     enable_argo_workflows                  = try(var.addons.enable_argo_workflows, false)
@@ -108,7 +104,7 @@ locals {
     local.aws_addons,
     local.oss_addons,
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name }
+    { aws_cluster_name = module.eks.cluster_name },
   )
 
   addons_metadata = merge(
@@ -120,7 +116,8 @@ locals {
       aws_vpc_id       = module.vpc.vpc_id
     },
     {
-      argocd_namespace = local.argocd_namespace
+      argocd_namespace        = local.argocd_namespace,
+      create_argocd_namespace = false
     },
     {
       addons_repo_url      = local.gitops_addons_url
@@ -129,22 +126,16 @@ locals {
       addons_repo_revision = local.gitops_addons_revision
     },
     {
-      platform_repo_url      = local.gitops_platform_url
-      platform_repo_basepath = local.gitops_platform_basepath
-      platform_repo_path     = local.gitops_platform_path
-      platform_repo_revision = local.gitops_platform_revision
+      fleet_repo_url      = local.gitops_fleet_url
+      fleet_repo_basepath = local.gitops_fleet_basepath
+      fleet_repo_path     = local.gitops_fleet_path
+      fleet_repo_revision = local.gitops_fleet_revision
     },
-    {
-      workload_repo_url      = local.gitops_workload_url
-      workload_repo_basepath = local.gitops_workload_basepath
-      workload_repo_path     = local.gitops_workload_path
-      workload_repo_revision = local.gitops_workload_revision
-    }
   )
 
   argocd_apps = {
     addons   = file("${path.module}/bootstrap/addons.yaml")
-    platform = file("${path.module}/bootstrap/platform.yaml")
+    fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
   tags = {
@@ -172,19 +163,12 @@ resource "kubernetes_secret" "git_secrets" {
       sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
-    git-platform = {
+    git-fleet = {
       type                  = "git"
-      url                   = local.gitops_platform_url
+      url                   = local.gitops_fleet_url
       sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
-    git-workloads = {
-      type                  = "git"
-      url                   = local.gitops_workload_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
-      insecureIgnoreHostKey = "true"
-    }
-
   }
   metadata {
     name      = each.key
@@ -289,16 +273,22 @@ module "eks" {
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
-
       min_size     = 2
       max_size     = 6
       desired_size = 2
+      iam_role_additional_policies = {
+          cloudwatch_agent_server_policy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      }
     }
   }
   # EKS Addons
   cluster_addons = {
     coredns    = {}
     kube-proxy = {}
+    amazon-cloudwatch-observability = {
+      most_recent    = true
+      before_compute = true
+    }
     eks-pod-identity-agent = {
       most_recent    = true
       before_compute = true

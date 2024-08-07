@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: namespaces
+  namespace: argocd
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              workloads: 'true'
+          values:
+            chart: teams
+      - git:
+          repoURL: '{{metadata.annotations.platform_repo_url}}'
+          revision: '{{metadata.annotations.platform_repo_revision}}'
+          directories:
+            - path: '{{metadata.annotations.platform_repo_basepath}}teams/*'
+
+  template:
+    metadata:
+      name: 'namespaces-{{metadata.labels.environment}}-{{path.basename}}'
+      labels:
+        environment: '{{metadata.labels.environment}}'
+        team: '{{path.basename}}'
+        workloads: 'true'
+    spec:
+      project: default
+      source:
+        repoURL: '{{metadata.annotations.platform_repo_url}}'
+        path: '{{metadata.annotations.platform_repo_basepath}}charts/{{values.chart}}'
+        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+        helm:
+          releaseName: '{{path.basename}}'
+          valueFiles:
+          - '../../teams/{{path.basename}}/{{metadata.labels.environment}}-values.yaml'
+      destination:
+        name: '{{name}}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+        retry:
+          backoff:
+            duration: 1m
+          limit: 100
+        syncOptions:
+          - CreateNamespace=true
