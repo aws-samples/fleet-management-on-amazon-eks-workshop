@@ -15,7 +15,7 @@ fi
 env=$1
 echo "Destroying $env ..."
 
-terraform -chdir=$SCRIPTDIR workspace select $env
+terraform -chdir=$SCRIPTDIR workspace select -or-create $env 
 # Delete the Ingress/SVC before removing the addons
 TMPFILE=$(mktemp)
 terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"

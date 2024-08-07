@@ -48,9 +48,9 @@ sed -i '' s/"dynamodb                 = false"/"dynamodb                 = true"
 
 Apply the IaC to create the IAM Roles for each Addon, and enable the Helm Chart to be deploy by GitOps
 ```shell
-terraform -chdir=$WORKSHOP_DIR/terraform/spokes workspace select staging
+terraform -chdir=$WORKSHOP_DIR/terraform/spokes workspace select -or-create staging
 terraform -chdir=$WORKSHOP_DIR/terraform/spokes apply -var-file="workspaces/staging.tfvars" -auto-approve
-terraform -chdir=$WORKSHOP_DIR/terraform/spokes workspace select prod
+terraform -chdir=$WORKSHOP_DIR/terraform/spokes workspace select -or-create prod
 terraform -chdir=$WORKSHOP_DIR/terraform/spokes apply -var-file="workspaces/prod.tfvars" -auto-approve
 ```
 

@@ -17,6 +17,5 @@ env=$1
 echo "Deploying $env with "workspaces/${env}.tfvars" ..."
 
 terraform -chdir=$SCRIPTDIR init --upgrade
-terraform -chdir=$SCRIPTDIR workspace new $env || true
-terraform -chdir=$SCRIPTDIR workspace select $env
+terraform -chdir=$SCRIPTDIR workspace select -or-create $env
 terraform -chdir=$SCRIPTDIR apply -var-file="workspaces/${env}.tfvars" -auto-approve
