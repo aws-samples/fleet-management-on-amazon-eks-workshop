@@ -13,7 +13,7 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   echo "No outputs found, skipping kubectl delete"
   source "$TMPFILE"
-  kubectl delete svc -n argocd argo-cd-argocd-server
+  kubectl delete svc -n argocd argo-cd-argocd-server || true
 fi
 
 
@@ -25,7 +25,7 @@ echo "remove VPC endpoints"
 VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-hub-cluster" --query "Vpcs[*].VpcId" --output text)
 echo $VPCID
 for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
-    aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint
+    aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
 done
 
 echo "remove Dandling security groups"
@@ -41,7 +41,7 @@ else
     # Loop through the security group IDs and delete each security group
     for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
         echo "Deleting security group $group_id"
-        aws ec2 delete-security-group --group-id "$group_id"
+        aws ec2 delete-security-group --group-id "$group_id" || true
     done
 fi
 
