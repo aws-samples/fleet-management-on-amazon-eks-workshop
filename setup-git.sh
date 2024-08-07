@@ -16,6 +16,8 @@ gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -
 gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
 gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
 
+cat /root/.ssh/config
+
 git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
