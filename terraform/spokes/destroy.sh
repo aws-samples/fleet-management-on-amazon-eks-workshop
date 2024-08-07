@@ -30,5 +30,12 @@ fi
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap_hub" -auto-approve -var-file="workspaces/${env}.tfvars"
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks_blueprints_addons" -auto-approve -var-file="workspaces/${env}.tfvars"
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks" -auto-approve -var-file="workspaces/${env}.tfvars"
+
+echo "remove VPC endpoints"
+VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-spoke${env}" --query "Vpcs[*].VpcId" --output text)
+echo $VPCID
+for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
+    aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint
+done
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve -var-file="workspaces/${env}.tfvars"
 terraform -chdir=$SCRIPTDIR destroy -auto-approve -var-file="workspaces/${env}.tfvars"
