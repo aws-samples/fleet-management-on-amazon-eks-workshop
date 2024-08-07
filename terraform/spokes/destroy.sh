@@ -33,27 +33,31 @@ terraform -chdir=$SCRIPTDIR destroy -target="module.eks" -auto-approve -var-file
 
 echo "remove VPC endpoints"
 VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-spoke-${env}" --query "Vpcs[*].VpcId" --output text)
-echo $VPCID
-for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
-    aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
-done
 
-echo "remove Dandling security groups"
-# Get the list of security group IDs associated with the VPC
-security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[*].GroupId" --output json)
+if [ -n "$VPCID" ]; then
+    echo "VPC ID: $VPCID"
 
-# Check if any security groups were found
-if [ -z "$security_group_ids" ]; then
-    echo "No security groups found in VPC $VPCID"
-else
-    echo "security_group_ids=$security_group_ids"
-
-    # Loop through the security group IDs and delete each security group
-    for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
-        echo "Deleting security group $group_id"
-        aws ec2 delete-security-group --group-id "$group_id" || true
+    for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
+        aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
     done
+
+    echo "remove Dangling security groups"
+    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[*].GroupId" --output json)
+
+    if [ -n "$security_group_ids" ]; then
+        echo "security_group_ids=$security_group_ids"
+
+        for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
+            echo "Deleting security group $group_id"
+            aws ec2 delete-security-group --group-id "$group_id" || true
+        done
+    else
+        echo "No security groups found in VPC $VPCID"
+    fi
+else
+    echo "VPC with tag Name=fleet-spoke-${env} not found"
 fi
+
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve -var-file="workspaces/${env}.tfvars"
 terraform -chdir=$SCRIPTDIR destroy -auto-approve -var-file="workspaces/${env}.tfvars"
