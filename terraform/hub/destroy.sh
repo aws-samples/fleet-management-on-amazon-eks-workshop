@@ -28,5 +28,22 @@ for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$
     aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint
 done
 
+echo "remove Dandling security groups"
+# Get the list of security group IDs associated with the VPC
+security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[*].GroupId" --output json)
+
+# Check if any security groups were found
+if [ -z "$security_group_ids" ]; then
+    echo "No security groups found in VPC $VPCID"
+else
+    echo "security_group_ids=$security_group_ids"
+
+    # Loop through the security group IDs and delete each security group
+    for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
+        echo "Deleting security group $group_id"
+        aws ec2 delete-security-group --group-id "$group_id"
+    done
+fi
+
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -auto-approve
