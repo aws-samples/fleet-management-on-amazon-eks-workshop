@@ -11,6 +11,7 @@ ROOTDIR=$SCRIPTDIR
 
 # Deploy the infrastructure
 echo "Deploy Git"
+mkdir -p ~/.ssh
 ${ROOTDIR}/terraform/codecommit/deploy.sh
 echo "Configure Git"
 source ${ROOTDIR}/setup-git.sh

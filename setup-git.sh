@@ -16,7 +16,7 @@ gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -
 gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
 gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
 
-cat /root/.ssh/config
+cat ~/.ssh/config
 cat ~/.ssh/gitops_ssh.pem
 ssh-keyscan git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
