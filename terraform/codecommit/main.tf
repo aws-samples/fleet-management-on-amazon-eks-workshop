@@ -122,7 +122,7 @@ resource "null_resource" "append_string_block" {
 
       if grep -q "$start_marker" "$file"; then
         # if OSX #sed -i '' "/$start_marker/,/$end_marker/d" "$file"
-        sed -i '' "/$start_marker/,/$end_marker/d" "$file"
+        sed -i "/$start_marker/,/$end_marker/d" "$file"
       fi
     EOL
 
