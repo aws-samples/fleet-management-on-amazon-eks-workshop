@@ -17,8 +17,10 @@ gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -
 gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
 
 cat /root/.ssh/config
+cat ~/.ssh/gitops_ssh.pem
+ssh-keyscan git-codecommit.eu-west-1.amazonaws.com >> ~/.ssh/known_hosts
 
-git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+git clone -vvv ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
 mkdir ${GITOPS_DIR}/apps/frontend
