@@ -99,23 +99,23 @@ resource "null_resource" "append_string_block" {
     file       = pathexpand(local.git_private_ssh_key_config)
   }
 
-provisioner "local-exec" {
+  provisioner "local-exec" {
     when    = create
     command = <<-EOL
       start_marker="### START BLOCK AWS Workshop ###"
       end_marker="### END BLOCK AWS Workshop ###"
-      ssh_config_with_newlines="${replace(local.ssh_config, "\\n", "\n")}"
-      block="$start_marker\n$ssh_config_with_newlines\n$end_marker"
+      block="$start_marker\n${replace(local.ssh_config, "\\n", "\n")}\n$end_marker"
+      block_with_newlines="$(printf '%s' "$block" | sed 's/\\n/\'$'\n/g')"
       file="${self.triggers.file}"
 
       if ! grep -q "$start_marker" "$file"; then
-        echo "$block" >> "$file"
+        echo "$block_with_newlines" >> "$file"
       fi
     EOL
-}
+  }
 
 
-provisioner "local-exec" {
+  provisioner "local-exec" {
     when    = destroy
     command = <<-EOL
       start_marker="### START BLOCK AWS Workshop ###"
