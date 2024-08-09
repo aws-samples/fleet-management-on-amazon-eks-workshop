@@ -27,12 +27,12 @@ VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-hub-cluster"
 if [ -n "$VPCID" ]; then
     echo "VPC ID: $VPCID"
     for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
-      aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
+      aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
     done
 
     echo "remove Dandling security groups"
     # Get the list of security group IDs associated with the VPC
-    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[*].GroupId" --output json)
+    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[?not_null(GroupName)&&GroupName!='default'].GroupId" --output json)
 
     # Check if any security groups were found
     if [ -z "$security_group_ids" ]; then

@@ -42,7 +42,7 @@ if [ -n "$VPCID" ]; then
     done
 
     echo "remove Dangling security groups"
-    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[*].GroupId" --output json)
+    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[?not_null(GroupName)&&GroupName!='default'].GroupId" --output json)
 
     if [ -n "$security_group_ids" ]; then
         echo "security_group_ids=$security_group_ids"
