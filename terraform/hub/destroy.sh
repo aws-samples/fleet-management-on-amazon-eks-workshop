@@ -43,7 +43,7 @@ if [ -n "$VPCID" ]; then
       # Loop through the security group IDs and delete each security group
       for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
         echo "Deleting security group $group_id"
-        aws ec2 delete-security-group --group-id "$group_id" || true
+        aws ec2 delete-security-group --group-id "$group_id" || true
       done
     fi
 else
