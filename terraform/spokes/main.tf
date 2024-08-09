@@ -11,7 +11,7 @@ data "aws_iam_session_context" "current" {
 
 # Reading parameter created by hub cluster to allow access of argocd to spoke clusters
 data "aws_ssm_parameter" "argocd_hub_role" {
-  name = "/hub/argocd-hub-role"
+  name = "/fleet-hub/argocd-hub-role"
 }
 
 ################################################################################

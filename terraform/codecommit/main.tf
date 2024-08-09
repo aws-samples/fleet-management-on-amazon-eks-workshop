@@ -76,6 +76,8 @@ resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
   secret_string = tls_private_key.gitops.private_key_pem
 }
 
+//TODO create a secret to put the private_key_pem
+
 resource "local_file" "ssh_private_key" {
   content         = tls_private_key.gitops.private_key_pem
   filename        = pathexpand(local.git_private_ssh_key)

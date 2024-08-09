@@ -352,7 +352,7 @@ module "vpc" {
 
 # Creating parameter for argocd hub role for the spoke clusters to read
 resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/hub/argocd-hub-role"
+  name  = "/fleet-hub/argocd-hub-role"
   type  = "String"
   value = aws_iam_role.argocd_hub.arn
 }
