@@ -10,7 +10,7 @@ ROOTDIR=$SCRIPTDIR
 echo "youyou DEBUG"
 id
 pwd
-export TF_VAR_ssh_key_basepath="/home/ec2-user/.ssh"
+#export TF_VAR_ssh_key_basepath="/home/ec2-user/.ssh"
 
 # Deploy the infrastructure
 echo "Deploy Git"
