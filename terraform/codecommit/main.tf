@@ -80,6 +80,10 @@ resource "local_file" "ssh_private_key" {
   content         = tls_private_key.gitops.private_key_pem
   filename        = pathexpand(local.git_private_ssh_key)
   file_permission = "0600"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "local_file" "ssh_config" {
