@@ -7,6 +7,6 @@ spec:
   provider:
     aws:
       service: SecretsManager
-      region: eu-west-2
+      region: us-west-2
       secretsManager:
         forceDeleteWithoutRecovery: true

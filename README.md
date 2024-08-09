@@ -21,7 +21,7 @@ Run the following command create git repository in CodeCommit and create 3 EKS C
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 export AWS_DEFAULT_REGION="us-west-2"
 export WORKING_DIR="$HOME/environment" #For local dev; export WORKING_DIR="$PWD/environment"
-export WORKSHOP_DIR="$WORKING_DIR/argocd-on-amazon-eks-workshop" #For local dev; export WORKSHOP_DIR="$PWD"
+export WORKSHOP_DIR="$WORKING_DIR/fleet-management-on-amazon-eks-workshop" #For local dev; export WORKSHOP_DIR="$PWD"
 export GITOPS_DIR="$WORKING_DIR/gitops-repos"
 git clone https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop $WORKSHOP_DIR
 cd $WORKSHOP_DIR
