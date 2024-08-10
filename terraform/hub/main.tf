@@ -178,7 +178,7 @@ resource "kubernetes_secret" "git_secrets" {
     git-fleet = {
       type                  = "git"
       url                   = local.gitops_fleet_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      sshPrivateKey         = local.git_private_ssh_key_content
       insecureIgnoreHostKey = "true"
     }
   }
