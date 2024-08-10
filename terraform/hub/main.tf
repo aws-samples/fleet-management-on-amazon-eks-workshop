@@ -54,7 +54,7 @@ locals {
   gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
   gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
-  git_private_ssh_key_content = data.terraform_remote_state.git.outputs.git_private_ssh_key_content
+  git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
   argocd_namespace    = "argocd"
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
@@ -172,13 +172,13 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = local.git_private_ssh_key_content
+      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
     git-fleet = {
       type                  = "git"
       url                   = local.gitops_fleet_url
-      sshPrivateKey         = local.git_private_ssh_key_content
+      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
       insecureIgnoreHostKey = "true"
     }
   }
