@@ -35,6 +35,10 @@ provider "kubernetes" {
   }
 }
 
+data "aws_secretsmanager_secret_version" "git_private_ssh_key" {
+  secret_id = "ssh-private-key-fleet-workshop"
+}
+
 locals {
   name            = "fleet-hub-cluster"
   environment     = "control-plane"
@@ -58,7 +62,10 @@ locals {
   gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
   gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
 
-  git_private_ssh_key_content = data.terraform_remote_state.git.outputs.git_private_ssh_key_content
+  #git_private_ssh_key_content = data.terraform_remote_state.git.outputs.git_private_ssh_key_content
+  git_private_ssh_key_content = data.aws_secretsmanager_secret_version.git_private_ssh_key.secret_string
+
+  
   argocd_namespace    = "argocd"
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)

@@ -11,11 +11,6 @@ output "ssh_host" {
   value = local.ssh_host
 }
 
-output "git_private_ssh_key_content" {
-  value     = local_file.ssh_private_key.content
-  sensitive = true
-}
-
 output "gitops_addons_url" {
   value = "${local.gitops_addons_org}/${local.gitops_addons_repo}"
 }

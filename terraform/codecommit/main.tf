@@ -76,7 +76,15 @@ resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
   secret_string = tls_private_key.gitops.private_key_pem
 }
 
-//TODO create a secret to put the private_key_pem
+//TODO create a secret to put the tls_private_key.gitops.private_key_pem
+resource "aws_secretsmanager_secret" "ssh_private_key" {
+  name = "ssh-private-key-fleet-workshop}"
+}
+resource "aws_secretsmanager_secret_version" "ssh_private_key_secret_version" {
+  secret_id     = aws_secretsmanager_secret.ssh_private_key.id
+  secret_string = tls_private_key.gitops.private_key_pem
+} 
+
 
 resource "local_file" "ssh_private_key" {
   content         = tls_private_key.gitops.private_key_pem
