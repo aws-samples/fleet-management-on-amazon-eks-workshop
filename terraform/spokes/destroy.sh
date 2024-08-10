@@ -37,23 +37,8 @@ VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-spoke-${env}
 if [ -n "$VPCID" ]; then
     echo "VPC ID: $VPCID"
 
-    for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
-        aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
-    done
+    aws-delete-vpc -vpc-id=$VPCID
 
-    echo "remove Dangling security groups"
-    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[?not_null(GroupName)&&GroupName!='default'].GroupId" --output json)
-
-    if [ -n "$security_group_ids" ]; then
-        echo "security_group_ids=$security_group_ids"
-
-        for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
-            echo "Deleting security group $group_id"
-            aws ec2 delete-security-group --group-id "$group_id" || true
-        done
-    else
-        echo "No security groups found in VPC $VPCID"
-    fi
 else
     echo "VPC with tag Name=fleet-spoke-${env} not found"
 fi
