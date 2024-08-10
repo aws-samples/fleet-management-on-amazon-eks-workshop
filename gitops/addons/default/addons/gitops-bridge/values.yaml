@@ -1,0 +1,14 @@
+# values for the addon
+addons:
+  external_secrets:
+    values:
+      serviceAccount:
+        name: '{{.metadata.annotations.external_secrets_service_account}}'
+        annotations:
+          eks.amazonaws.com/role-arn: ''
+  karpenter:
+    values:
+      serviceAccount:
+        name: '{{.metadata.annotations.karpenter_service_account}}'
+        annotations:
+          eks.amazonaws.com/role-arn: ''

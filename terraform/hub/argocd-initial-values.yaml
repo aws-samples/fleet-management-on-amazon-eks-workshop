@@ -1,0 +1,11 @@
+global:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+controller:
+  env:
+    - name: ARGOCD_SYNC_WAVE_DELAY
+      value: '30'
+server:
+  service:
+    type: LoadBalancer

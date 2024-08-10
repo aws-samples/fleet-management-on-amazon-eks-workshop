@@ -38,6 +38,7 @@ provider "kubernetes" {
 locals {
   name            = "hub-cluster"
   environment     = "control-plane"
+  tenant          = "tenant1"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
@@ -103,6 +104,7 @@ locals {
   addons = merge(
     local.aws_addons,
     local.oss_addons,
+    { tenant = local.tenant },
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
   )
@@ -131,11 +133,17 @@ locals {
       fleet_repo_path     = local.gitops_fleet_path
       fleet_repo_revision = local.gitops_fleet_revision
     },
+    {
+      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      karpenter_sqs_queue_name = module.karpenter.queue_name
+      karpenter_service_account = module.karpenter.service_account
+      karpenter_namespace = module.karpenter.namespace
+    }
   )
 
   argocd_apps = {
-    addons   = file("${path.module}/bootstrap/addons.yaml")
-    fleet    = file("${path.module}/bootstrap/fleet.yaml")
+    addons    = var.enable_addon_selector ? file("${path.module}/bootstrap/addons.yaml"): templatefile("${path.module}/bootstrap/addons.tpl.yaml", {addons: local.addons})
+    #fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
   tags = {
@@ -144,12 +152,16 @@ locals {
   }
 }
 
+output "karpenter_node_iam_role_name" {
+  value = module.karpenter.node_iam_role_name
+
+}
 
 ################################################################################
 # GitOps Bridge: Private ssh keys for git
 ################################################################################
 resource "kubernetes_namespace" "argocd" {
-  depends_on = [module.eks_blueprints_addons]
+  depends_on = [module.eks]
   metadata {
     name = local.argocd_namespace
   }
@@ -194,16 +206,12 @@ module "gitops_bridge_bootstrap" {
 
   apps = local.argocd_apps
   argocd = {
+    name = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "7.3.11"
+    chart_version    = "7.4.1"
+    values = [file("${path.module}/argocd-initial-values.yaml")]
     timeout          = 600
     create_namespace = false
-    set = [
-      {
-        name  = "server.service.type"
-        value = "LoadBalancer"
-      }
-    ]
   }
   depends_on = [kubernetes_secret.git_secrets]
 }
@@ -239,7 +247,8 @@ module "eks_blueprints_addons" {
   enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
   enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
   enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
-  enable_karpenter                    = local.aws_addons.enable_karpenter
+  # using pod identity for karpenter we don't need this
+  #enable_karpenter                    = local.aws_addons.enable_karpenter
   enable_velero                       = local.aws_addons.enable_velero
   enable_aws_gateway_api_controller   = local.aws_addons.enable_aws_gateway_api_controller
 
@@ -252,7 +261,7 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.20.0"
+  version = "~> 20.23.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
@@ -264,7 +273,23 @@ module "eks" {
     [data.aws_iam_session_context.current.issuer_arn]
 
   ))
-  
+
+  access_entries = {
+    # One access entry with a policy associated
+    argocd = {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+
+      policy_associations = {
+        argocd = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
@@ -276,18 +301,28 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      iam_role_additional_policies = {
-          cloudwatch_agent_server_policy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-      }
+      taints = local.aws_addons.enable_karpenter ? {
+        dedicated = {
+          key    = "CriticalAddonsOnly"
+          operator   = "Exists"
+          effect    = "NO_SCHEDULE"
+        }
+      } : {}
     }
   }
   # EKS Addons
   cluster_addons = {
-    coredns    = {}
-    kube-proxy = {}
+    coredns    = {
+      most_recent    = true
+    }
+    kube-proxy = {
+      most_recent    = true
+    }
     amazon-cloudwatch-observability = {
       most_recent    = true
-      before_compute = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent    = true
     }
     eks-pod-identity-agent = {
       most_recent    = true
@@ -309,7 +344,35 @@ module "eks" {
       })
     }
   }
-  tags = merge(local.tags, {})
+  node_security_group_tags = merge(local.tags, {
+    # NOTE - if creating multiple security groups with this module, only tag the
+    # security group that Karpenter should utilize with the following tag
+    # (i.e. - at most, only one security group should have this tag in your account)
+    "karpenter.sh/discovery" = local.name
+  })
+  tags = local.tags
+}
+################################################################################
+# Karpenter
+################################################################################
+
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "~> 20.23.0"
+
+  cluster_name = module.eks.cluster_name
+
+  enable_pod_identity             = true
+  create_pod_identity_association = true
+
+  namespace = "karpenter"
+
+  # Used to attach additional IAM policies to the Karpenter node IAM role
+  node_iam_role_additional_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+
+  tags = local.tags
 }
 
 ################################################################################
@@ -335,6 +398,8 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
+    # Tags subnets for Karpenter auto-discovery
+    "karpenter.sh/discovery" = local.name
   }
 
   tags = local.tags

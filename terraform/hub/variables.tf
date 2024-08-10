@@ -7,7 +7,7 @@ variable "vpc_cidr" {
 variable "kubernetes_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.30"
+  default     = "1.29"
 }
 
 variable "kms_key_admin_roles" {
@@ -20,9 +20,18 @@ variable "addons" {
   description = "Kubernetes addons"
   type        = any
   default = {
+    enable_aws_load_balancer_controller = true
+    enable_aws_ebs_csi_resources        = true # generate gp2 and gp3 storage classes for ebs-csi
     enable_metrics_server               = true
     enable_external_secrets             = true
-    enable_aws_argocd                   = true
+    enable_argocd                       = true
+    enable_kyverno                      = true
     enable_karpenter                    = true
   }
+}
+
+variable "enable_addon_selector" {
+  description = "select addons using cluster selector"
+  type        = bool
+  default     = false
 }

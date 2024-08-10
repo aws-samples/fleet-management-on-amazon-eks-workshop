@@ -125,3 +125,48 @@ resource "aws_eks_pod_identity_association" "eso_sa" {
   service_account = "external-secrets-sa"
   role_arn        = aws_iam_role.eso.arn
 }
+
+
+################################################################################
+# CloudWatch Observability EKS Access
+################################################################################
+module "aws_cloudwatch_observability_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "aws-cloudwatch-observability"
+
+  attach_aws_cloudwatch_observability_policy = true
+
+  associations = {
+    association_1 = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "amazon-cloudwatch"
+      service_account = "cloudwatch-agent"
+    }
+  }
+
+  tags = local.tags
+}
+
+
+################################################################################
+# EBS CSI EKS Access
+################################################################################
+module "aws_ebs_csi_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "aws-ebs-csi"
+
+  attach_aws_ebs_csi_policy = true
+  aws_ebs_csi_kms_arns      = ["arn:aws:kms:*:*:key/1234abcd-12ab-34cd-56ef-1234567890ab"]
+
+  associations = {
+    association_1 = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "kube-system"
+      service_account = "ebs-csi-controller-sa"
+    }
+  }
+
+  tags = local.tags
+}
