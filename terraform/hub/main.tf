@@ -36,7 +36,7 @@ provider "kubernetes" {
 }
 
 locals {
-  name            = "hub-cluster"
+  name            = "fleet-hub-cluster"
   environment     = "control-plane"
   tenant          = "tenant1"
   region          = data.aws_region.current.id
@@ -54,7 +54,7 @@ locals {
   gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
   gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
-  git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
+  git_private_ssh_key_content = data.terraform_remote_state.git.outputs.git_private_ssh_key_content
   argocd_namespace    = "argocd"
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
@@ -172,7 +172,7 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      sshPrivateKey         = local.git_private_ssh_key_content
       insecureIgnoreHostKey = "true"
     }
     git-fleet = {
@@ -407,7 +407,7 @@ module "vpc" {
 
 # Creating parameter for argocd hub role for the spoke clusters to read
 resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/hub/argocd-hub-role"
+  name  = "/fleet-hub/argocd-hub-role"
   type  = "String"
   value = aws_iam_role.argocd_hub.arn
 }

@@ -11,7 +11,7 @@ data "aws_iam_session_context" "current" {
 
 # Reading parameter created by hub cluster to allow access of argocd to spoke clusters
 data "aws_ssm_parameter" "argocd_hub_role" {
-  name = "/hub/argocd-hub-role"
+  name = "/fleet-hub/argocd-hub-role"
 }
 
 ################################################################################
@@ -45,7 +45,7 @@ provider "helm" {
 }
 
 locals {
-  name            = "spoke-${terraform.workspace}"
+  name            = "fleet-spoke-${terraform.workspace}"
   environment     = terraform.workspace
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
@@ -193,7 +193,7 @@ locals {
 }
 
 resource "aws_secretsmanager_secret" "spoke_cluster_secret" {
-  name                    = "hub-cluster/spoke-${terraform.workspace}"
+  name                    = "fleet-hub-cluster/fleet-spoke-${terraform.workspace}"
   recovery_window_in_days = 0
 }
 

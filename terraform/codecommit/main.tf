@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
 
-  context_prefix = "gitops-bridge"
+  context_prefix = "fleet-gitops-bridge"
 
   gitops_fleet_repo_name = var.gitops_fleet_repo_name
   gitops_fleet_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
@@ -74,7 +74,7 @@ resource "random_string" "secret_suffix" {
   special = false # Set to true if you want to include special characters
   upper   = true  # Set to true if you want uppercase letters in the string
   lower   = true  # Set to true if you want lowercase letters in the string
-  number  = true  # Set to true if you want numbers in the string
+  #number  = true  # Set to true if you want numbers in the string
 }
 resource "aws_secretsmanager_secret" "codecommit_key" {
   name = "codecommit-key-${random_string.secret_suffix.result}"
@@ -85,10 +85,16 @@ resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
   secret_string = tls_private_key.gitops.private_key_pem
 }
 
+//TODO create a secret to put the private_key_pem
+
 resource "local_file" "ssh_private_key" {
   content         = tls_private_key.gitops.private_key_pem
   filename        = pathexpand(local.git_private_ssh_key)
   file_permission = "0600"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "local_file" "ssh_config" {
@@ -96,6 +102,9 @@ resource "local_file" "ssh_config" {
   content         = local.ssh_config
   filename        = pathexpand(local.git_private_ssh_key_config)
   file_permission = "0600"
+
+  # Ensure that the local_file resource is created/updated after the local-exec provisioner
+  depends_on = [null_resource.append_string_block] 
 }
 
 resource "null_resource" "append_string_block" {
@@ -110,14 +119,16 @@ resource "null_resource" "append_string_block" {
     command = <<-EOL
       start_marker="### START BLOCK AWS Workshop ###"
       end_marker="### END BLOCK AWS Workshop ###"
-      block="$start_marker\n${local.ssh_config}\n$end_marker"
+      block="$start_marker\n${replace(local.ssh_config, "\\n", "\n")}\n$end_marker"
+      block_with_newlines="$(printf '%s' "$block" | sed 's/\\n/\'$'\n/g')"
       file="${self.triggers.file}"
 
       if ! grep -q "$start_marker" "$file"; then
-        echo "$block" >> "$file"
+        echo "$block_with_newlines" >> "$file"
       fi
     EOL
   }
+
 
   provisioner "local-exec" {
     when    = destroy
@@ -127,7 +138,8 @@ resource "null_resource" "append_string_block" {
       file="${self.triggers.file}"
 
       if grep -q "$start_marker" "$file"; then
-        sed -i '' "/$start_marker/,/$end_marker/d" "$file"
+        # if OSX #sed -i '' "/$start_marker/,/$end_marker/d" "$file"
+        sed -i "/$start_marker/,/$end_marker/d" "$file"
       fi
     EOL
 
