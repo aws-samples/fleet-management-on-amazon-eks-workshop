@@ -22,7 +22,7 @@ terraform -chdir=$SCRIPTDIR destroy -target="module.eks_blueprints_addons" -auto
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks" -auto-approve
 
 echo "remove VPC endpoints"
-VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-spoke-${env}" --query "Vpcs[*].VpcId" --output text)
+VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-hub-cluster" --query "Vpcs[*].VpcId" --output text)
 if [ -n "$VPCID" ]; then
     echo "VPC ID: $VPCID"
 
