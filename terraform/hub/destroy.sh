@@ -42,7 +42,7 @@ if [ -n "$VPCID" ]; then
     aws-delete-vpc -vpc-id=$VPCID
 
 else
-    echo "VPC with tag Name=fleet-spoke-${env} not found"
+    echo "VPC with tag Name=fleet-hub-cluster not found"
 fi   
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve
