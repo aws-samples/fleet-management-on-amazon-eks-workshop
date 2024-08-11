@@ -426,7 +426,7 @@ module "eks" {
     var.kms_key_admin_roles,
     [data.aws_iam_session_context.current.issuer_arn]
   ))
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
@@ -434,12 +434,24 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 
   access_entries = {
-    # One access entry with a policy associated
+    # This is the role that will be assume by the hub cluster role to access the spoke cluster
     argocd = {
       principal_arn = aws_iam_role.spoke.arn
 
       policy_associations = {
         argocd = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+    admin = {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+
+      policy_associations = {
+        admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
             type = "cluster"

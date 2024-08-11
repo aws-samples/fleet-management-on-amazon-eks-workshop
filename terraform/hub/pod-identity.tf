@@ -1,131 +1,69 @@
-data "aws_iam_policy_document" "eks_assume" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["pods.eks.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole", "sts:TagSession"]
-  }
-}
-
-data "aws_iam_policy_document" "aws_assume_policy" {
-  statement {
-    effect    = "Allow"
-    resources = ["*"]
-    actions   = ["sts:AssumeRole", "sts:TagSession"]
-  }
-}
-
-resource "aws_iam_policy" "aws_assume_policy" {
-  name        = "${module.eks.cluster_name}-pod-identity-aws-assume"
-  description = "IAM Policy for Pod Identity"
-  policy      = data.aws_iam_policy_document.aws_assume_policy.json
-  tags        = local.tags
-}
-
 ################################################################################
 # ArgoCD EKS Access
 ################################################################################
+module "argocd_hub_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
 
-resource "aws_iam_role" "argocd_hub" {
-  name               = "${module.eks.cluster_name}-argocd-hub"
-  assume_role_policy = data.aws_iam_policy_document.eks_assume.json
-}
+  name = "argocd"
 
-resource "aws_iam_role_policy_attachment" "argo_aws_assume_policy" {
-  role       = aws_iam_role.argocd_hub.name
-  policy_arn = aws_iam_policy.aws_assume_policy.arn
-}
-resource "aws_eks_pod_identity_association" "argocd_app_controller" {
-  cluster_name    = module.eks.cluster_name
-  namespace       = "argocd"
-  service_account = "argocd-application-controller"
-  role_arn        = aws_iam_role.argocd_hub.arn
-}
-resource "aws_eks_pod_identity_association" "argocd_api_server" {
-  cluster_name    = module.eks.cluster_name
-  namespace       = "argocd"
-  service_account = "argocd-server"
-  role_arn        = aws_iam_role.argocd_hub.arn
-}
+  attach_custom_policy      = true
+  policy_statements = [
+    {
+      sid       = "ArgoCD"
+      actions   = ["sts:AssumeRole", "sts:TagSession"]
+      resources = ["*"]
+    }
+  ]
 
+  # Pod Identity Associations
+  association_defaults = {
+    namespace       = "argocd"
+  }
+  associations = {
+    controller = {
+      cluster_name = module.eks.cluster_name
+      service_account = "argocd-application-controller"
+    }
+    server = {
+      cluster_name = module.eks.cluster_name
+      service_account = "argocd-server"
+    }
+  }
 
+  tags = local.tags
+}
+# Creating parameter for argocd hub role for the spoke clusters to read
+resource "aws_ssm_parameter" "argocd_hub_role" {
+  name  = "/fleet-hub/argocd-hub-role"
+  type  = "String"
+  value = module.argocd_hub_pod_identity.iam_role_arn
+}
 
 ################################################################################
-# ESO EKS Access
+# External Secrets EKS Access
 ################################################################################
+module "external_secrets_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
 
-resource "aws_iam_role" "eso" {
-  name               = "${module.eks.cluster_name}-eso"
-  assume_role_policy = data.aws_iam_policy_document.eks_assume.json
-}
+  name = "external-secrets"
 
-data "aws_iam_policy_document" "eso" {
-  statement {
-    effect    = "Allow"
-    actions   = ["secretsmanager:ListSecrets"]
-    resources = ["*"]
+  attach_external_secrets_policy        = true
+  external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
+  external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
+  external_secrets_kms_key_arns         = ["arn:aws:kms:*:*:key/*"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
+  external_secrets_create_permission    = false
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = local.external_secrets.namespace
+      service_account = local.external_secrets.service_account
+    }
   }
 
-  statement {
-    actions   = ["ssm:DescribeParameters"]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "secretsmanager:GetResourcePolicy",
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:DescribeSecret",
-    "secretsmanager:ListSecretVersionIds"]
-    resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*",
-    ]
-  }
-  statement {
-    effect = "Allow"
-    actions = [
-    "kms:Decrypt", ]
-    resources = [
-      "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*",
-    ]
-  }
-  statement {
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameter",
-    "ssm:GetParameters", ]
-    resources = [
-      "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*",
-    ]
-  }
+  tags = local.tags
 }
-
-# ## Create the IAM policy with the document created above
-resource "aws_iam_policy" "eso" {
-  name   = "${module.eks.cluster_name}-eso"
-  policy = data.aws_iam_policy_document.eso.json
-}
-
-resource "aws_iam_role_policy_attachment" "eso_aws_assume_policy" {
-  role       = aws_iam_role.eso.name
-  policy_arn = aws_iam_policy.aws_assume_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "eso" {
-  role       = aws_iam_role.eso.name
-  policy_arn = aws_iam_policy.eso.arn
-}
-
-resource "aws_eks_pod_identity_association" "eso_sa" {
-  cluster_name    = module.eks.cluster_name
-  namespace       = "external-secrets"
-  service_account = "external-secrets-sa"
-  role_arn        = aws_iam_role.eso.arn
-}
-
 
 ################################################################################
 # CloudWatch Observability EKS Access
@@ -137,8 +75,9 @@ module "aws_cloudwatch_observability_pod_identity" {
 
   attach_aws_cloudwatch_observability_policy = true
 
+  # Pod Identity Associations
   associations = {
-    association_1 = {
+    addon = {
       cluster_name = module.eks.cluster_name
       namespace       = "amazon-cloudwatch"
       service_account = "cloudwatch-agent"
@@ -147,7 +86,6 @@ module "aws_cloudwatch_observability_pod_identity" {
 
   tags = local.tags
 }
-
 
 ################################################################################
 # EBS CSI EKS Access
@@ -158,14 +96,38 @@ module "aws_ebs_csi_pod_identity" {
   name = "aws-ebs-csi"
 
   attach_aws_ebs_csi_policy = true
-  aws_ebs_csi_kms_arns      = ["arn:aws:kms:*:*:key/1234abcd-12ab-34cd-56ef-1234567890ab"]
+  aws_ebs_csi_kms_arns      = ["arn:aws:kms:*:*:key/*"]
 
+  # Pod Identity Associations
   associations = {
-    association_1 = {
+    addon = {
       cluster_name = module.eks.cluster_name
       namespace       = "kube-system"
       service_account = "ebs-csi-controller-sa"
     }
+  }
+
+  tags = local.tags
+}
+
+################################################################################
+# Karpenter EKS Access
+################################################################################
+
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "~> 20.23.0"
+
+  cluster_name = module.eks.cluster_name
+
+  enable_pod_identity             = true
+  create_pod_identity_association = true
+
+  namespace = "karpenter"
+
+  # Used to attach additional IAM policies to the Karpenter node IAM role
+  node_iam_role_additional_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 
   tags = local.tags

@@ -44,6 +44,11 @@ locals {
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
 
+  external_secrets = {
+    namespace       = "external-secrets"
+    service_account = "external-secrets-sa"
+  }
+
   gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
   gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
   gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
@@ -134,10 +139,15 @@ locals {
       fleet_repo_revision = local.gitops_fleet_revision
     },
     {
+
       karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
       karpenter_sqs_queue_name = module.karpenter.queue_name
       karpenter_service_account = module.karpenter.service_account
       karpenter_namespace = module.karpenter.namespace
+    },
+    {
+      external_secrets_namespace = local.external_secrets.namespace
+      external_secrets_service_account = local.external_secrets.service_account
     }
   )
 
@@ -230,9 +240,6 @@ module "eks_blueprints_addons" {
 
   # Using GitOps Bridge
   create_kubernetes_resources = false
-  external_secrets = {
-    create_role = false
-  }
 
   # EKS Blueprints Addons
   enable_cert_manager                 = local.aws_addons.enable_cert_manager
@@ -242,7 +249,8 @@ module "eks_blueprints_addons" {
   enable_aws_privateca_issuer         = local.aws_addons.enable_aws_privateca_issuer
   enable_cluster_autoscaler           = local.aws_addons.enable_cluster_autoscaler
   enable_external_dns                 = local.aws_addons.enable_external_dns
-  enable_external_secrets             = local.aws_addons.enable_external_secrets
+  # using pod identity for external secrets we don't need this
+  #enable_external_secrets             = local.aws_addons.enable_external_secrets
   enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
   enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
   enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
@@ -266,21 +274,18 @@ module "eks" {
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
   cluster_endpoint_public_access = true
+  authentication_mode            = "API"
 
-  kms_key_administrators = distinct(concat([
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"],
-    var.kms_key_admin_roles,
-    [data.aws_iam_session_context.current.issuer_arn]
-
-  ))
+  # Disabling encryption for workshop purposes
+  cluster_encryption_config = {}
 
   access_entries = {
     # One access entry with a policy associated
-    argocd = {
+    admin = {
       principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
 
       policy_associations = {
-        argocd = {
+        admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
           access_scope = {
             type = "cluster"
@@ -352,28 +357,7 @@ module "eks" {
   })
   tags = local.tags
 }
-################################################################################
-# Karpenter
-################################################################################
 
-module "karpenter" {
-  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 20.23.0"
-
-  cluster_name = module.eks.cluster_name
-
-  enable_pod_identity             = true
-  create_pod_identity_association = true
-
-  namespace = "karpenter"
-
-  # Used to attach additional IAM policies to the Karpenter node IAM role
-  node_iam_role_additional_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  }
-
-  tags = local.tags
-}
 
 ################################################################################
 # Supporting Resources
@@ -405,9 +389,3 @@ module "vpc" {
   tags = local.tags
 }
 
-# Creating parameter for argocd hub role for the spoke clusters to read
-resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/fleet-hub/argocd-hub-role"
-  type  = "String"
-  value = aws_iam_role.argocd_hub.arn
-}
