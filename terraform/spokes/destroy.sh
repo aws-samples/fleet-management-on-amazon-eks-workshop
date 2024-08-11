@@ -42,8 +42,8 @@ if [ -n "$VPCID" ]; then
         endpoint_exists=$(aws ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
 
         if [ -n "$endpoint_exists" ]; then
-            echo "Deleting VPC endpoint $vpc_endpoint_id..."
-            aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$vpc_endpoint_id"
+            echo "Deleting VPC endpoint $endpoint_exists..."
+            aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
         fi
     done
 
@@ -53,7 +53,7 @@ if [ -n "$VPCID" ]; then
 
 else
     echo "VPC with tag Name=fleet-spoke-${env} not found"
-fi
+fi 
 
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve -var-file="workspaces/${env}.tfvars"
