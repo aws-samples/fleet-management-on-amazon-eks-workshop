@@ -1,6 +1,6 @@
+data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {}
-data "aws_region" "current" {}
 data "aws_iam_session_context" "current" {
   # This data source provides information on the IAM source role of an STS assumed role
   # For non-role ARNs, this data source simply passes the ARN through issuer ARN
@@ -43,10 +43,19 @@ locals {
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  argocd_namespace    = "argocd"
 
   external_secrets = {
     namespace       = "external-secrets"
     service_account = "external-secrets-sa"
+  }
+  aws_load_balancer_controller = {
+    namespace       = "kube-system"
+    service_account = "aws-load-balancer-controller-sa"
+  }
+  karpenter = {
+    namespace       = "karpenter"
+    service_account = "karpenter"
   }
 
   gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
@@ -60,7 +69,7 @@ locals {
   gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
 
   git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
-  argocd_namespace    = "argocd"
+
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
     enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
@@ -139,15 +148,18 @@ locals {
       fleet_repo_revision = local.gitops_fleet_revision
     },
     {
-
+      karpenter_namespace = local.karpenter.namespace
+      karpenter_service_account = local.karpenter.service_account
       karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
       karpenter_sqs_queue_name = module.karpenter.queue_name
-      karpenter_service_account = module.karpenter.service_account
-      karpenter_namespace = module.karpenter.namespace
     },
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
+    },
+    {
+      aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
+      aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     }
   )
 
@@ -158,14 +170,10 @@ locals {
 
   tags = {
     Blueprint  = local.name
-    GithubRepo = "github.com/csantanapr/terraform-gitops-bridge"
+    GithubRepo = "github.com/gitops-bridge-dev/gitops-bridge"
   }
 }
 
-output "karpenter_node_iam_role_name" {
-  value = module.karpenter.node_iam_role_name
-
-}
 
 ################################################################################
 # GitOps Bridge: Private ssh keys for git
@@ -251,7 +259,8 @@ module "eks_blueprints_addons" {
   enable_external_dns                 = local.aws_addons.enable_external_dns
   # using pod identity for external secrets we don't need this
   #enable_external_secrets             = local.aws_addons.enable_external_secrets
-  enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
+  # using pod identity for external secrets we don't need this
+  #enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
   enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
   enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
   enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
@@ -279,6 +288,11 @@ module "eks" {
   # Disabling encryption for workshop purposes
   cluster_encryption_config = {}
 
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  enable_cluster_creator_admin_permissions = true
+
   access_entries = {
     # One access entry with a policy associated
     admin = {
@@ -295,10 +309,6 @@ module "eks" {
     }
   }
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_groups = {
     initial = {
@@ -315,6 +325,7 @@ module "eks" {
       } : {}
     }
   }
+
   # EKS Addons
   cluster_addons = {
     coredns    = {

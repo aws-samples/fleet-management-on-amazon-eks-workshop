@@ -766,6 +766,11 @@ addons:
         - key: enable_kyverno
           operator: In
           values: ['true']
+    resources:
+      path: charts/resources/kyverno
+      helm:
+        valuesObject:
+          environment: '{{.metadata.labels.environment}}'
   prometheus_adapter:
     enabled: false
     releaseName: prometheus-adapter
