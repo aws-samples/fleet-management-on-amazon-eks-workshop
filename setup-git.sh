@@ -22,8 +22,9 @@ SSH_CONFIG_FILE="$HOME/.ssh/config"
 SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 
-aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq -r .private_key
-BLOCK=$(aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq -r .ssh_config)
+SECRET_ID=$(aws ssm get-parameter --name "/fleet-hub/ssh-secrets-fleet-workshop" --query "Parameter.Value" --output text)
+aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .private_key
+BLOCK=$(aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .ssh_config)
 
 if [ ! -f "$SSH_CONFIG_FILE" ]; then
     echo "Creating $SSH_CONFIG_FILE"

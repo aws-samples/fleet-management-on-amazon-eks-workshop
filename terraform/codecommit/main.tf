@@ -85,8 +85,16 @@ resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
 #   secret_string = tls_private_key.gitops.private_key_pem
 # } 
 
+# we store in parameter store the name of the sercretmanager secret which needs to be random (7 days for deletion)
+resource "aws_ssm_parameter" "argocd_hub_role" {
+  name  = "/fleet-hub/ssh-secrets-fleet-workshop"
+  type  = "String"
+  value = "ssh-secrets-fleet-workshop-${random_string.secret_suffix.result}"
+}
 resource "aws_secretsmanager_secret" "ssh_secrets" {
-  name = "ssh-secrets-fleet-workshop"
+  name = "ssh-secrets-fleet-workshop-${random_string.secret_suffix.result}"
+  kms_key_id              = "aws/secretsmanager"
+  recovery_window_in_days = 0 # Set to 0 to disable recovery window  
 }
 
 resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
