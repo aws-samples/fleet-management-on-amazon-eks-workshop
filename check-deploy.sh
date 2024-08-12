@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 #set -x
-List of clusters to check
+# List of clusters to check
 clusters=("fleet-hub-cluster" "fleet-spoke-prod" "fleet-spoke-staging")
 
 # Check if EKS clusters exist
@@ -386,7 +386,7 @@ fi
 echo ""
 
 # List of parameter names to check
-parameter_names=("/fleet-hub/argocd-hub-role")
+parameter_names=("/fleet-hub/argocd-hub-role" "/fleet-hub/ssh-secrets-fleet-workshop")
 
 # Check if SSM parameters exist
 echo "Checking if SSM parameters exist..."

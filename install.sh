@@ -14,7 +14,7 @@ echo "Deploy Git"
 mkdir -p ~/.ssh
 ${ROOTDIR}/terraform/codecommit/deploy.sh
 echo "Configure Git"
-source ${ROOTDIR}/setup-git.sh
+# source ${ROOTDIR}/setup-git.sh
 # echo "Deploy Hub Cluster"
 # ${ROOTDIR}/terraform/hub/deploy.sh
 # echo "Deploy Spoke Staging"
