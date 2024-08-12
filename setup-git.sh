@@ -38,7 +38,7 @@ if ! grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
   echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"    
 fi
 
-cat ~/.ssh/config || true
+cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com >> ~/.ssh/known_hosts
 

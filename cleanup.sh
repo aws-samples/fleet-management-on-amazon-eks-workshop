@@ -35,7 +35,7 @@ remove_files_and_blocks() {
     # Remove AWS Workshop block from SSH config file
     if [ -f "$SSH_CONFIG_FILE" ]; then
         if grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
-            sed -i "/$SSH_CONFIG_START_BLOCK/,/$SSH_CONFIG_END_BLOCK/d" "$SSH_CONFIG_FILE"
+            sed -i.bak "/$SSH_CONFIG_START_BLOCK/,/$SSH_CONFIG_END_BLOCK/d" "$SSH_CONFIG_FILE"
             echo "Removed AWS Workshop block from $SSH_CONFIG_FILE"
         else
             echo "AWS Workshop block not found in $SSH_CONFIG_FILE"
