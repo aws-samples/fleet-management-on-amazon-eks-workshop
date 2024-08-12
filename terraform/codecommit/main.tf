@@ -93,8 +93,6 @@ resource "aws_ssm_parameter" "argocd_hub_role" {
 }
 resource "aws_secretsmanager_secret" "ssh_secrets" {
   name = "ssh-secrets-fleet-workshop-${random_string.secret_suffix.result}"
-  kms_key_id              = "aws/secretsmanager"
-  recovery_window_in_days = 0 # Set to 0 to disable recovery window  
 }
 
 resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
