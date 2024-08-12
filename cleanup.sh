@@ -18,7 +18,7 @@ ${ROOTDIR}/terraform/codecommit/destroy.sh
 
 # Variables
 SSH_PRIVATE_KEY_FILE="$HOME/.ssh/gitops_ssh.pem"
-SSH_CONFIG_FILE="$HOME/.ssh/config2"
+SSH_CONFIG_FILE="$HOME/.ssh/config"
 SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 
