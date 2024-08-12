@@ -56,7 +56,7 @@ git -C ${GITOPS_DIR}/apps push  || true
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
 mkdir -p ${GITOPS_DIR}/platform/charts && cp -r gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
-git -C ${GITOPS_DIR}/platform add. || true
+git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push || true
 
