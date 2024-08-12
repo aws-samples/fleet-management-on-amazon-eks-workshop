@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-
+set -x
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
@@ -15,6 +15,27 @@ mkdir -p ${GITOPS_DIR}
 gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_workload_url)"
 gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
 gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
+
+
+SSH_PRIVATE_KEY_FILE="$HOME/.ssh/gitops_ssh.pem"
+SSH_CONFIG_FILE="$HOME/.ssh/config2"
+SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
+SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
+
+aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq -r .private_key
+BLOCK=$(aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq -r .ssh_config)
+
+if [ ! -f "$SSH_CONFIG_FILE" ]; then
+    echo "Creating $SSH_CONFIG_FILE"
+    mkdir -p "$HOME/.ssh"
+    touch "$SSH_CONFIG_FILE"
+fi
+
+if ! grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
+  echo -e "$SSH_CONFIG_START_BLOCK" >> "$SSH_CONFIG_FILE"
+  echo -e "$BLOCK" >> "$SSH_CONFIG_FILE"
+  echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"    
+fi
 
 cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true

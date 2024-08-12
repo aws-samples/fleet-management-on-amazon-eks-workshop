@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-
+set -x
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
-# For AWS EC2 override with
-echo "youyou DEBUG"
 id
 pwd
-#export TF_VAR_ssh_key_basepath="/home/ec2-user/.ssh"
 
 # Deploy the infrastructure
 echo "Deploy Git"

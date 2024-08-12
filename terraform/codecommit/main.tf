@@ -97,6 +97,9 @@ resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
   })
 }
 
+#To get thoses ressources :
+#aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq .private_key
+#aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq .ssh_config
 
 # resource "local_file" "ssh_private_key" {
 #   content         = tls_private_key.gitops.private_key_pem
