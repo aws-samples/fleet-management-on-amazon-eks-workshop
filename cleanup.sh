@@ -9,10 +9,10 @@ ROOTDIR=$SCRIPTDIR
 
 go install github.com/isovalent/aws-delete-vpc@latest
 
-#${ROOTDIR}/terraform/spokes/destroy.sh prod
-#${ROOTDIR}/terraform/spokes/destroy.sh staging
-#${ROOTDIR}/terraform/hub/destroy.sh
-#${ROOTDIR}/terraform/codecommit/destroy.sh
+${ROOTDIR}/terraform/spokes/destroy.sh prod
+${ROOTDIR}/terraform/spokes/destroy.sh staging
+${ROOTDIR}/terraform/hub/destroy.sh
+${ROOTDIR}/terraform/codecommit/destroy.sh
 
 
 
