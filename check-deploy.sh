@@ -5,7 +5,6 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 ASK_DELETE=${ASK_DELETE:-false}
-ACCEPT_DELETE=${ACCEPT_DELETE:-false}
 
 Check if the user is authenticated with AWS
 aws sts get-caller-identity > /dev/null 2>&1
@@ -548,8 +547,8 @@ if [ "$ASK_DELETE" = true ]; then
                         case "$service" in
                             "kms")
                                 # Delete KMS key
-                                aws kms disable-key --key-id "$arn"
-                                aws kms schedule-key-deletion --key-id "$arn" --pending-window-in-days 7
+                                aws kms disable-key --key-id "$arn" || true
+                                aws kms schedule-key-deletion --key-id "$arn" --pending-window-in-days 7 || true
                                 ;;
                             "eks")
                                 # Delete EKS access entry
@@ -564,12 +563,12 @@ if [ "$ASK_DELETE" = true ]; then
                                     "launch-template")
                                         # Delete EC2 launch template
                                         launch_template_id=$(echo "$arn" | cut -d'/' -f2)
-                                        aws ec2 delete-launch-template --launch-template-id "$launch_template_id"
+                                        aws ec2 delete-launch-template --launch-template-id "$launch_template_id" || true
                                         ;;
                                     "elastic-ip")
                                         # Release Elastic IP
                                         allocation_id=$(echo "$arn" | cut -d'/' -f3)
-                                        aws ec2 release-address --allocation-id "$allocation_id"
+                                        aws ec2 release-address --allocation-id "$allocation_id" || true
                                         ;;
                                 esac
                                 ;;
