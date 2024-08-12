@@ -6,7 +6,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 ASK_DELETE=${ASK_DELETE:-false}
 
-Check if the user is authenticated with AWS
+#Check if the user is authenticated with AWS
 aws sts get-caller-identity > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: You are not authenticated with AWS. Please configure your AWS credentials and try again."
