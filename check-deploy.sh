@@ -634,38 +634,3 @@ if [[ "$ASK_DELETE" == "true" && ${#vpcs_to_delete[@]} -gt 0 ]]; then
 else
     echo "No VPCs found to delete."
 fi
-
-
-# Check if the CloudFormation stack "TeamStack" exists
-stack_exists=$(aws cloudformation describe-stacks --stack-name TeamStack 2>/dev/null)
-if [ -n "$stack_exists" ]; then
-    echo -e "${GREEN}CloudFormation stack 'TeamStack' exists.${NC}"
-else
-    echo -e "${RED}CloudFormation stack 'TeamStack' does not exist.${NC}"
-fi
-
-# Prompt user to delete the stack if ASK_DELETE=true or ACCEPT_DELETE=yes
-if [ "$ASK_DELETE" = "true" ]; then
-    if [ -n "$stack_exists" ]; then
-        if [ "$ACCEPT_DELETE" != "true" ]; then
-            read -p "Do you want to delete the CloudFormation stack 'TeamStack'? (y/n) " choice
-        else
-            choice="y"
-        fi
-        case "$choice" in
-            y|Y)
-                echo "Deleting CloudFormation stack 'TeamStack'..."
-                BUCKET_RESOURCE=$(aws cloudformation describe-stack-resources --stack-name TeamStack --query "StackResources[?ResourceType=='AWS::S3::Bucket'].LogicalResourceId" --output text)
-                aws cloudformation delete-stack --stack-name TeamStack --retain-resources $BUCKET_RESOURCE
-                ;;
-            n|N)
-                echo "Skipping CloudFormation stack deletion."
-                ;;
-            *)
-                echo "Invalid choice. Skipping CloudFormation stack deletion."
-                ;;
-        esac
-    fi
-else
-    echo "ASK_DELETE and ACCEPT_DELETE are not set. CloudFormation stack will not be deleted."
-fi
