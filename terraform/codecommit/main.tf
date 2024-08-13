@@ -65,7 +65,6 @@ resource "random_string" "secret_suffix" {
   special = false # Set to true if you want to include special characters
   upper   = true  # Set to true if you want uppercase letters in the string
   lower   = true  # Set to true if you want lowercase letters in the string
-  #number  = true  # Set to true if you want numbers in the string
 }
 resource "aws_secretsmanager_secret" "codecommit_key" {
   name = "codecommit-key-${random_string.secret_suffix.result}"
@@ -75,15 +74,6 @@ resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
   secret_id     = aws_secretsmanager_secret.codecommit_key.id
   secret_string = tls_private_key.gitops.private_key_pem
 }
-
-//TODO create a secret to put the tls_private_key.gitops.private_key_pem
-# resource "aws_secretsmanager_secret" "ssh_private_key" {
-#   name = "ssh-private-key-fleet-workshop"
-# }
-# resource "aws_secretsmanager_secret_version" "ssh_private_key_secret_version" {
-#   secret_id     = aws_secretsmanager_secret.ssh_private_key.id
-#   secret_string = tls_private_key.gitops.private_key_pem
-# } 
 
 # we store in parameter store the name of the sercretmanager secret which needs to be random (7 days for deletion)
 resource "aws_ssm_parameter" "argocd_hub_role" {
@@ -102,70 +92,6 @@ resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
     ssh_config  = local.ssh_config
   })
 }
-
-#To get thoses ressources :
-#aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq .private_key
-#aws secretsmanager get-secret-value --secret-id ssh-secrets-fleet-workshop --query SecretString --output text | jq .ssh_config
-
-# resource "local_file" "ssh_private_key" {
-#   content         = tls_private_key.gitops.private_key_pem
-#   filename        = pathexpand(local.git_private_ssh_key)
-#   file_permission = "0600"
-
-#   lifecycle {
-#     prevent_destroy = true
-#   }
-# }
-
-# resource "local_file" "ssh_config" {
-#   count           = local.ssh_key_basepath == "/home/ec2-user/.ssh" ? 1 : 0
-#   content         = local.ssh_config
-#   filename        = pathexpand(local.git_private_ssh_key_config)
-#   file_permission = "0600"
-
-#   # Ensure that the local_file resource is created/updated after the local-exec provisioner
-#   depends_on = [null_resource.append_string_block] 
-# }
-
-# resource "null_resource" "append_string_block" {
-#   count = local.ssh_key_basepath == "/home/ec2-user/.ssh" ? 0 : 1
-#   triggers = {
-#     always_run = "${timestamp()}"
-#     file       = pathexpand(local.git_private_ssh_key_config)
-#   }
-
-#   provisioner "local-exec" {
-#     when    = create
-#     command = <<-EOL
-#       start_marker="### START BLOCK AWS Workshop ###"
-#       end_marker="### END BLOCK AWS Workshop ###"
-#       block="$start_marker\n${replace(local.ssh_config, "\\n", "\n")}\n$end_marker"
-#       block_with_newlines="$(printf '%s' "$block" | sed 's/\\n/\'$'\n/g')"
-#       file="${self.triggers.file}"
-
-#       if ! grep -q "$start_marker" "$file"; then
-#         echo "$block_with_newlines" >> "$file"
-#       fi
-#     EOL
-#   }
-
-
-#   provisioner "local-exec" {
-#     when    = destroy
-#     command = <<-EOL
-#       start_marker="### START BLOCK AWS Workshop ###"
-#       end_marker="### END BLOCK AWS Workshop ###"
-#       file="${self.triggers.file}"
-
-#       if grep -q "$start_marker" "$file"; then
-#         # if OSX #sed -i '' "/$start_marker/,/$end_marker/d" "$file"
-#         sed -i "/$start_marker/,/$end_marker/d" "$file"
-#       fi
-#     EOL
-
-#   }
-# }
-
 
 data "aws_iam_policy_document" "gitops_access" {
   statement {
