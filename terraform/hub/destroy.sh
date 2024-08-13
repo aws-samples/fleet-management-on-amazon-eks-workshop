@@ -6,6 +6,8 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 [[ -n "${DEBUG:-}" ]] && set -x
 
+terraform -chdir=$SCRIPTDIR init --upgrade
+
 # Delete the Ingress/SVC before removing the addons
 TMPFILE=$(mktemp)
 terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
@@ -15,7 +17,6 @@ if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
   kubectl delete svc -n argocd argo-cd-argocd-server || true
 fi
-
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks_blueprints_addons" -auto-approve
