@@ -15,6 +15,10 @@ mkdir -p ~/.ssh
 ${ROOTDIR}/terraform/codecommit/deploy.sh
 echo "Configure Git"
 source ${ROOTDIR}/setup-git.sh
+
+echo "youyou - check identity"
+aws sts get-caller-identity
+
 echo "Deploy Hub Cluster"
 ${ROOTDIR}/terraform/hub/deploy.sh
 echo "Deploy Spoke Staging"
