@@ -46,7 +46,7 @@ cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
-git clone -vvv ${gitops_workload_url} ${GITOPS_DIR}/apps
+git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
 mkdir -p ${GITOPS_DIR}/apps/frontend
@@ -57,6 +57,7 @@ git -C ${GITOPS_DIR}/apps push  || true
 
 # populate platform repository
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
+pwd
 mkdir -p ${GITOPS_DIR}/platform/charts && cp -r gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
 git -C ${GITOPS_DIR}/platform add . || true
