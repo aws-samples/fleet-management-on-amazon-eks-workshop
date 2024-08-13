@@ -45,9 +45,9 @@ cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
 git clone -vvv ${gitops_workload_url} ${GITOPS_DIR}/apps
-mkdir ${GITOPS_DIR}/apps/backend
+mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
-mkdir ${GITOPS_DIR}/apps/frontend
+mkdir -p ${GITOPS_DIR}/apps/frontend
 touch ${GITOPS_DIR}/apps/frontend/.keep
 git -C ${GITOPS_DIR}/apps add . || true
 git -C ${GITOPS_DIR}/apps commit -m "initial commit" || true
