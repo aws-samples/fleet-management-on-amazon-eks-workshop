@@ -58,6 +58,9 @@ git -C ${GITOPS_DIR}/apps push  || true
 # populate platform repository
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
 pwd
+echo "youyou"
+echo $ROOTDIR
+cd $ROOTDIR
 mkdir -p ${GITOPS_DIR}/platform/charts && cp -r gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
 git -C ${GITOPS_DIR}/platform add . || true
