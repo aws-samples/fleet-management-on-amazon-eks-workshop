@@ -44,7 +44,7 @@ chmod 600 $SSH_PRIVATE_KEY_FILE
 
 cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true
-ssh-keyscan git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com >> ~/.ssh/known_hosts
+ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
 git clone -vvv ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
