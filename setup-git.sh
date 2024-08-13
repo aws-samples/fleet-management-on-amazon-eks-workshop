@@ -25,7 +25,7 @@ SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 SECRET_ID=$(aws ssm get-parameter --name "/fleet-hub/ssh-secrets-fleet-workshop" --query "Parameter.Value" --output text)
 aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 chmod 600 $SSH_CONFIG_FILE
-chmod 600 $SSH_PRIVATE_KEY_FILE
+
 BLOCK=$(aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .ssh_config)
 
 if [ ! -f "$SSH_CONFIG_FILE" ]; then
@@ -39,6 +39,7 @@ if ! grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
   echo -e "$BLOCK" >> "$SSH_CONFIG_FILE"
   echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"    
 fi
+chmod 600 $SSH_PRIVATE_KEY_FILE
 
 cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true
