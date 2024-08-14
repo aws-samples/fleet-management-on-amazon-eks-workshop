@@ -305,6 +305,11 @@ module "eks" {
     initial = {
       instance_types = ["m5.large"]
 
+    # Attach additional IAM policies to the Karpenter node IAM role
+    iam_role_additional_policies = {
+      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    }
+
       min_size     = 2
       max_size     = 6
       desired_size = 2
