@@ -12,7 +12,7 @@ pwd
 # Deploy the infrastructure
 echo "Deploy Git"
 mkdir -p ~/.ssh
-${ROOTDIR}/terraform/codecommit/deploy.sh
+DEBUG=$DEBUG ${ROOTDIR}/terraform/codecommit/deploy.sh
 echo "Configure Git"
 source ${ROOTDIR}/setup-git.sh
 
@@ -42,10 +42,10 @@ source ${ROOTDIR}/setup-git.sh
 # fi
 
 echo "Deploy Hub Cluster"
-${ROOTDIR}/terraform/hub/deploy.sh
+DEBUG=$DEBUG ${ROOTDIR}/terraform/hub/deploy.sh
 echo "Deploy Spoke Staging"
-${ROOTDIR}/terraform/spokes/deploy.sh staging
+DEBUG=$DEBUG ${ROOTDIR}/terraform/spokes/deploy.sh staging
 echo "Deploy Spoke Prod"
-${ROOTDIR}/terraform/spokes/deploy.sh prod
+DEBUG=$DEBUG ${ROOTDIR}/terraform/spokes/deploy.sh prod
 echo "Configure Kubectl"
 source ${ROOTDIR}/setup-kubectx.sh
