@@ -47,7 +47,7 @@ spec:
           repoURL: '{{values.addonChartRepository}}'
           targetRevision: '{{values.addonChartVersion}}'
           helm:
-            releaseName: '{{values.addonChart}}'
+            releaseName: '{{values.addonChartRepositoryNamespace}}'
             ignoreMissingValueFiles: true
             valueFiles:
               - $values/{{metadata.annotations.fleet_repo_basepath}}charts/{{values.addonChart}}/values.yaml

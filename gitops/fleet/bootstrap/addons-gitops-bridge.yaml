@@ -1,8 +1,8 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: cluster-addons
-  namespace: argocd
+  name: cluster-addons-spoke
 spec:
   syncPolicy:
     preserveResourcesOnDeletion: true
@@ -13,10 +13,10 @@ spec:
   - clusters:
       selector:
         matchLabels:
-          fleet_member: control-plane
+          fleet_member: spoke
   template:
     metadata:
-      name: cluster-addons
+      name: 'cluster-addons-{{.nameNormalized}}'
     spec:
       project: default
       sources:
@@ -28,22 +28,13 @@ spec:
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
         helm:
           valuesObject:
-            selectorMatchLabels:
-              environment: control-plane
-              fleet_member: control-plane
+            namespace: kube-fleet
             repoURLValuesBasePath: '{{.metadata.annotations.addons_repo_basepath}}'
             repoURLValuesRevision: '{{.metadata.annotations.addons_repo_revision}}'
             repoURLGitBasePath: '{{.metadata.annotations.addons_repo_basepath}}stacks/'
             repoURLGitRevision: '{{.metadata.annotations.addons_repo_revision}}'
-            useSelector: false
+            useSelector: true
             useStack: true
-            addons:
-%{ for key, value in addons ~}
-%{ if substr(key, 0, 7) == "enable_" && value == true ~}
-              ${replace(key, "enable_", "")}:
-                enabled: ${value}
-%{ endif ~}
-%{ endfor ~}
           ignoreMissingValueFiles: true
           valueFiles:
             - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/gitops-bridge/values.yaml'
@@ -53,7 +44,7 @@ spec:
             - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/gitops-bridge/values.yaml'
             - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.nameNormalized}}/addons/values.yaml'
       destination:
-        namespace: argocd
+        namespace: kube-fleet
         name: '{{.name}}'
       syncPolicy:
         automated:
