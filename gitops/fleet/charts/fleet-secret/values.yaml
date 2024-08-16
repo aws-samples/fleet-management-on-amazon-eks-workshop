@@ -1,15 +1,32 @@
 secretStore:
-  enabled: true
+  enabled: false
   kind: "SecretStore"
   name: "aws-secrets-manager"
   region: ""
 
 externalSecret:
-  enabled: true
-  name: "fleet-eks-secret-store"
-  kind: "SecretStore"
+  enabled: false
+  secretStoreRefName: "fleet-eks-secret-store"
+  secretStoreRefKind: "SecretStore"
   server: "spoke"
   fleet_member: "spoke"
   secretManagerSecretName: ""
 
 
+gitSecrets:
+  enabled: false
+  secretStoreRefName: "fleet-eks-secret-store"
+  secretStoreRefKind: "SecretStore"
+  externalSecrets:
+    addons:
+      secretName: "git-addons"
+      secretManagerSecretName: ""
+    fleet:
+      secretName: "git-fleet"
+      secretManagerSecretName: ""
+    platform:
+      secretName: "git-platform"
+      secretManagerSecretName: ""
+    workloads:
+      secretName: "git-workloads"
+      secretManagerSecretName: ""

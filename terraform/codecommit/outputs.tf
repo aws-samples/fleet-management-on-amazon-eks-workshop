@@ -1,3 +1,5 @@
+
+# TODO: Remove all this output this information will only be accesible thru aws secrets manager
 output "gitops_fleet_url" {
   value = "${local.gitops_fleet_org}/${local.gitops_fleet_repo}"
 }

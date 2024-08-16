@@ -25,7 +25,6 @@ data "aws_secretsmanager_secret_version" "git_data_version_workload" {
   secret_id = data.aws_secretsmanager_secret.git_data_workload.id
 }
 
-
 locals {
   gitops_addons_url      = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).url
   gitops_addons_basepath = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).basepath

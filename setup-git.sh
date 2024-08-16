@@ -13,6 +13,8 @@ cd $ROOTDIR
 rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
+
+# TODO: move to aws secret manager
 gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_workload_url)"
 gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
 gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
@@ -24,6 +26,7 @@ SSH_CONFIG_FILE="$HOME/.ssh/config"
 SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 
+# TODO: Update to allow each git repo have a unique ssh private key
 SECRET_ID="git-ssh-secrets-fleet-workshop"
 aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 

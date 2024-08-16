@@ -130,24 +130,29 @@ locals {
       addons_repo_basepath = local.gitops_addons_basepath
       addons_repo_path     = local.gitops_addons_path
       addons_repo_revision = local.gitops_addons_revision
+      addons_repo_secret_key = var.secret_name_git_data_addons
     },
     {
       fleet_repo_url      = local.gitops_fleet_url
       fleet_repo_basepath = local.gitops_fleet_basepath
       fleet_repo_path     = local.gitops_fleet_path
       fleet_repo_revision = local.gitops_fleet_revision
+      fleet_repo_secret_key = var.secret_name_git_data_fleet
+
     },
     {
       platform_repo_url      = local.gitops_platform_url
       platform_repo_basepath = local.gitops_platform_basepath
       platform_repo_path     = local.gitops_platform_path
       platform_repo_revision = local.gitops_platform_revision
+      platform_repo_secret_key = var.secret_name_git_data_platform
     },
     {
       workload_repo_url      = local.gitops_workload_url
       workload_repo_basepath = local.gitops_workload_basepath
       workload_repo_path     = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
+      workload_repo_secret_key = var.secret_name_git_data_workload
     },
     {
       karpenter_namespace = local.karpenter.namespace
