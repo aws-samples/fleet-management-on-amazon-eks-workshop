@@ -25,6 +25,8 @@ spec:
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
         helm:
           valuesObject:
+            selectorMatchLabels:
+              cluster_name: fleet-hub-cluster
             repoURLValuesBasePath: '{{.metadata.annotations.addons_repo_basepath}}'
             repoURLValuesRevision: '{{.metadata.annotations.addons_repo_revision}}'
             repoURLGitBasePath: '{{.metadata.annotations.addons_repo_basepath}}stacks/'

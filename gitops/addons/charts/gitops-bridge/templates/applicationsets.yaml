@@ -24,6 +24,7 @@
 {{- $templatePatch := .Values.templatePatch -}}
 {{- $applyNestedSelectors := .Values.applyNestedSelectors -}}
 {{- $hasapplyNestedSelectors := hasKey .Values "applyNestedSelectors" -}}
+{{- $selectorMatchLabels := .Values.selectorMatchLabels -}}
 
 {{- range $name, $addon := .Values.addons }}
 {{- if or $useSelector $addon.enabled }}
@@ -97,6 +98,9 @@ spec:
               selector:
                 matchLabels:
                   argocd.argoproj.io/secret-type: cluster
+                  {{- if $selectorMatchLabels -}}
+                  {{- toYaml $selectorMatchLabels | nindent 18 }}
+                  {{- end }}
               {{- if and $addon.selector $useSelector }}
                 {{- toYaml $addon.selector | nindent 16 }}
               {{- end }}
