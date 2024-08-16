@@ -1,0 +1,15 @@
+secretStore:
+  enabled: true
+  kind: "SecretStore"
+  name: "aws-secrets-manager"
+  region: ""
+
+externalSecret:
+  enabled: true
+  name: "fleet-eks-secret-store"
+  kind: "SecretStore"
+  server: "spoke"
+  fleet_member: "spoke"
+  secretManagerSecretName: ""
+
+

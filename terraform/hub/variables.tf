@@ -35,3 +35,28 @@ variable "enable_addon_selector" {
   type        = bool
   default     = false
 }
+
+
+variable "secret_name_git_data_fleet" {
+  description = "Secret name for Git data fleet"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-fleet"
+}
+
+variable "secret_name_git_data_addons" {
+  description = "Secret name for Git data addons"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-addons"
+}
+
+variable "secret_name_git_data_platform" {
+  description = "Secret name for Git data platform"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-platform"
+}
+
+variable "secret_name_git_data_workload" {
+  description = "Secret name for Git data workload"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-workload"
+}

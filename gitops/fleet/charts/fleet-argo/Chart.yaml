@@ -1,6 +1,0 @@
-apiVersion: v2
-name: fleet
-description: A Helm Chart to bootstrap platform admin environments for Argo and Addons
-version: 1.0.0
-type: application
-

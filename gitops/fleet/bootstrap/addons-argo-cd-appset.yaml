@@ -21,7 +21,7 @@ spec:
                 matchExpressions:
                   - key: fleet_member
                     operator: In
-                    values: ['true']
+                    values: ['spoke']
           - clusters:
               selector:
                 matchLabels:
@@ -54,7 +54,7 @@ spec:
               - $values/{{metadata.annotations.fleet_repo_basepath}}environments/{{metadata.labels.environment}}/{{values.addonChart}}/values.yaml
               - $values/{{metadata.annotations.fleet_repo_basepath}}clusters/{{name}}/{{values.addonChart}}/values.yaml
       destination:
-        namespace: '{{values.addonChartRepositoryNamespace}}'
+        namespace: "kube-fleet"
         name: '{{name}}'
       syncPolicy:
         automated:

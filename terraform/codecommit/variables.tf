@@ -6,6 +6,36 @@ variable "ssh_key_basepath" {
   default = "~/.ssh"
 }
 
+variable "secret_name_ssh_secrets" {
+  description = "Secret name for SSH secrets"
+  type        = string
+  default     = "git-ssh-secrets-fleet-workshop"
+}
+
+variable "secret_name_git_data_fleet" {
+  description = "Secret name for Git data fleet"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-fleet"
+}
+
+variable "secret_name_git_data_addons" {
+  description = "Secret name for Git data addons"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-addons"
+}
+
+variable "secret_name_git_data_platform" {
+  description = "Secret name for Git data platform"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-platform"
+}
+
+variable "secret_name_git_data_workload" {
+  description = "Secret name for Git data workload"
+  type        = string
+  default     = "eks-fleet-workshop/git-data-workload"
+}
+
 
 variable "gitops_fleet_basepath" {
   description = "Git repository base path for addons"

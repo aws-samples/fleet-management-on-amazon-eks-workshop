@@ -69,82 +69,93 @@ resource "tls_private_key" "gitops" {
   rsa_bits  = 4096
 }
 
-resource "random_string" "secret_suffix" {
-  length  = 5     # Length of the random string
-  special = false # Set to true if you want to include special characters
-  upper   = true  # Set to true if you want uppercase letters in the string
-  lower   = true  # Set to true if you want lowercase letters in the string
-  #number  = true  # Set to true if you want numbers in the string
-}
-resource "aws_secretsmanager_secret" "codecommit_key" {
-  name = "codecommit-key-${random_string.secret_suffix.result}"
+
+resource "aws_secretsmanager_secret" "ssh_secrets" {
+  name = var.secret_name_ssh_secrets
+  recovery_window_in_days = 0
 }
 
-resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
-  secret_id     = aws_secretsmanager_secret.codecommit_key.id
-  secret_string = tls_private_key.gitops.private_key_pem
+resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
+  secret_id = aws_secretsmanager_secret.ssh_secrets.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    ssh_config  = local.ssh_config
+  })
 }
 
-//TODO create a secret to put the private_key_pem
-
-resource "local_file" "ssh_private_key" {
-  content         = tls_private_key.gitops.private_key_pem
-  filename        = pathexpand(local.git_private_ssh_key)
-  file_permission = "0600"
-
-  lifecycle {
-    prevent_destroy = true
-  }
+resource "aws_secretsmanager_secret" "git_data_fleet" {
+  name = var.secret_name_git_data_fleet
+  recovery_window_in_days = 0
 }
 
-resource "local_file" "ssh_config" {
-  count           = local.ssh_key_basepath == "/home/ec2-user/.ssh" ? 1 : 0
-  content         = local.ssh_config
-  filename        = pathexpand(local.git_private_ssh_key_config)
-  file_permission = "0600"
-
-  # Ensure that the local_file resource is created/updated after the local-exec provisioner
-  depends_on = [null_resource.append_string_block] 
+resource "aws_secretsmanager_secret_version" "git_data_version_fleet" {
+  secret_id = aws_secretsmanager_secret.git_data_fleet.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_fleet_org}/${local.gitops_fleet_repo}"
+    org = local.gitops_fleet_org
+    repo = local.gitops_fleet_repo
+    basepath = var.gitops_fleet_basepath
+    path = var.gitops_fleet_path
+    revision = var.gitops_fleet_revision
+  })
 }
 
-resource "null_resource" "append_string_block" {
-  count = local.ssh_key_basepath == "/home/ec2-user/.ssh" ? 0 : 1
-  triggers = {
-    always_run = "${timestamp()}"
-    file       = pathexpand(local.git_private_ssh_key_config)
-  }
 
-  provisioner "local-exec" {
-    when    = create
-    command = <<-EOL
-      start_marker="### START BLOCK AWS Workshop ###"
-      end_marker="### END BLOCK AWS Workshop ###"
-      block="$start_marker\n${replace(local.ssh_config, "\\n", "\n")}\n$end_marker"
-      block_with_newlines="$(printf '%s' "$block" | sed 's/\\n/\'$'\n/g')"
-      file="${self.triggers.file}"
-
-      if ! grep -q "$start_marker" "$file"; then
-        echo "$block_with_newlines" >> "$file"
-      fi
-    EOL
-  }
-
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = <<-EOL
-      start_marker="### START BLOCK AWS Workshop ###"
-      end_marker="### END BLOCK AWS Workshop ###"
-      file="${self.triggers.file}"
-
-      if grep -q "$start_marker" "$file"; then
-        # if OSX #sed -i '' "/$start_marker/,/$end_marker/d" "$file"
-        sed -i "/$start_marker/,/$end_marker/d" "$file"
-      fi
-    EOL
-
-  }
+resource "aws_secretsmanager_secret" "git_data_addons" {
+  name = var.secret_name_git_data_addons
+  recovery_window_in_days = 0
 }
+
+resource "aws_secretsmanager_secret_version" "git_data_version_addons" {
+  secret_id = aws_secretsmanager_secret.git_data_addons.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_addons_org}/${local.gitops_addons_repo}"
+    org = local.gitops_addons_org
+    repo = local.gitops_addons_repo
+    basepath = var.gitops_addons_basepath
+    path = var.gitops_addons_path
+    revision = var.gitops_addons_revision
+  })
+}
+
+resource "aws_secretsmanager_secret" "git_data_platform" {
+  name = var.secret_name_git_data_platform
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_platform" {
+  secret_id = aws_secretsmanager_secret.git_data_platform.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_platform_org}/${local.gitops_platform_repo}"
+    org = local.gitops_platform_org
+    repo = local.gitops_platform_repo
+    basepath = var.gitops_platform_basepath
+    path = var.gitops_platform_path
+    revision = var.gitops_platform_revision
+  })
+}
+
+resource "aws_secretsmanager_secret" "git_data_workload" {
+  name = var.secret_name_git_data_workload
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_workload" {
+  secret_id = aws_secretsmanager_secret.git_data_workload.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_workload_org}/${local.gitops_workload_repo}"
+    org = local.gitops_workload_org
+    repo = local.gitops_workload_repo
+    basepath = var.gitops_workload_basepath
+    path = var.gitops_workload_path
+    revision = var.gitops_workload_revision
+  })
+}
+
 
 
 data "aws_iam_policy_document" "gitops_access" {

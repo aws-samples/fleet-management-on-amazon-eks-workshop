@@ -10,7 +10,7 @@ spec:
   - clusters:
       selector:
         matchLabels:
-          fleet_member: "true"
+          fleet_member: "spoke"
   template:
     metadata:
       name: 'cluster-addons'

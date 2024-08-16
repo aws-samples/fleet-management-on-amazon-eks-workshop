@@ -16,9 +16,14 @@ module "external_secrets_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = local.external_secrets.namespace
       service_account = local.external_secrets.service_account
+    },
+    fleet = {
+      cluster_name    = module.eks.cluster_name
+      namespace       = local.external_secrets.namespace_fleet
+      service_account = local.external_secrets.service_account_fleet
     }
   }
 

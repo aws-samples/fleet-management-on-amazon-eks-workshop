@@ -27,8 +27,10 @@ locals {
   argocd_namespace    = "argocd"
 
   external_secrets = {
-    namespace       = "external-secrets"
-    service_account = "external-secrets-sa"
+    namespace             = "external-secrets"
+    service_account       = "external-secrets-sa"
+    namespace_fleet       = "kube-fleet"
+    service_account_fleet = "external-secrets-kube-fleet-sa"
   }
   aws_load_balancer_controller = {
     namespace       = "kube-system"
@@ -90,8 +92,7 @@ locals {
     local.oss_addons,
     { tenant = local.tenant },
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name },
-    {fleet_member = true}
+    { aws_cluster_name = module.eks.cluster_name }
   )
 
   addons_metadata = merge(
@@ -111,6 +112,8 @@ locals {
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
+      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
+      external_secrets_service_account_fleet = local.external_secrets.service_account_fleet
     },
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
@@ -260,16 +263,21 @@ module "eks" {
     spoke = {
       instance_types = ["m5.large"]
 
+      # Attach additional IAM policies to the Karpenter node IAM role
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+
       min_size     = 3
       max_size     = 10
       desired_size = 3
-      taints = local.aws_addons.enable_karpenter ? {
-        dedicated = {
-          key    = "CriticalAddonsOnly"
-          operator   = "Exists"
-          effect    = "NO_SCHEDULE"
-        }
-      } : {}
+      # taints = local.aws_addons.enable_karpenter ? {
+      #   dedicated = {
+      #     key    = "CriticalAddonsOnly"
+      #     operator   = "Exists"
+      #     effect    = "NO_SCHEDULE"
+      #   }
+      # } : {}
     }
   }
 

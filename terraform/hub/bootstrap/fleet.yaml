@@ -10,7 +10,7 @@ spec:
   - clusters:
       selector:
         matchLabels:
-          environment: control-plane
+          fleet_member: control-plane
   template:
     metadata:
       name: 'fleet'

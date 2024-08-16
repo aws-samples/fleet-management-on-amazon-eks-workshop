@@ -39,6 +39,7 @@ locals {
   name            = "fleet-hub-cluster"
   environment     = "control-plane"
   tenant          = "tenant1"
+  fleet_member    = "control-plane"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
@@ -57,18 +58,6 @@ locals {
     namespace       = "karpenter"
     service_account = "karpenter"
   }
-
-  gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
-  gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
-  gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
-  gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
-
-  gitops_fleet_url      = data.terraform_remote_state.git.outputs.gitops_fleet_url
-  gitops_fleet_basepath = data.terraform_remote_state.git.outputs.gitops_fleet_basepath
-  gitops_fleet_path     = data.terraform_remote_state.git.outputs.gitops_fleet_path
-  gitops_fleet_revision = data.terraform_remote_state.git.outputs.gitops_fleet_revision
-
-  git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
 
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
@@ -119,6 +108,7 @@ locals {
     local.aws_addons,
     local.oss_addons,
     { tenant = local.tenant },
+    { fleet_member = local.fleet_member },
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
   )
@@ -148,6 +138,18 @@ locals {
       fleet_repo_revision = local.gitops_fleet_revision
     },
     {
+      platform_repo_url      = local.gitops_platform_url
+      platform_repo_basepath = local.gitops_platform_basepath
+      platform_repo_path     = local.gitops_platform_path
+      platform_repo_revision = local.gitops_platform_revision
+    },
+    {
+      workload_repo_url      = local.gitops_workload_url
+      workload_repo_basepath = local.gitops_workload_basepath
+      workload_repo_path     = local.gitops_workload_path
+      workload_repo_revision = local.gitops_workload_revision
+    },
+    {
       karpenter_namespace = local.karpenter.namespace
       karpenter_service_account = local.karpenter.service_account
       karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
@@ -165,7 +167,7 @@ locals {
 
   argocd_apps = {
     addons    = var.enable_addon_selector ? file("${path.module}/bootstrap/addons.yaml"): templatefile("${path.module}/bootstrap/addons.tpl.yaml", {addons: local.addons})
-    #fleet    = file("${path.module}/bootstrap/fleet.yaml")
+    fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
   tags = {
@@ -190,13 +192,25 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      sshPrivateKey         = local.gitops_addons_private_key
       insecureIgnoreHostKey = "true"
     }
     git-fleet = {
       type                  = "git"
       url                   = local.gitops_fleet_url
-      sshPrivateKey         = file(pathexpand(local.git_private_ssh_key))
+      sshPrivateKey         = local.gitops_fleet_private_key
+      insecureIgnoreHostKey = "true"
+    }
+    git-platform = {
+      type                  = "git"
+      url                   = local.gitops_platform_url
+      sshPrivateKey         = local.gitops_platform_private_key
+      insecureIgnoreHostKey = "true"
+    }
+    git-workloads = {
+      type                  = "git"
+      url                   = local.gitops_workload_url
+      sshPrivateKey         = local.gitops_workload_private_key
       insecureIgnoreHostKey = "true"
     }
   }
@@ -313,16 +327,22 @@ module "eks" {
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
+
+      # Attach additional IAM policies to the Karpenter node IAM role
+      iam_role_additional_policies = {
+         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      taints = local.aws_addons.enable_karpenter ? {
-        dedicated = {
-          key    = "CriticalAddonsOnly"
-          operator   = "Exists"
-          effect    = "NO_SCHEDULE"
-        }
-      } : {}
+      # taints = local.aws_addons.enable_karpenter ? {
+      #   dedicated = {
+      #     key    = "CriticalAddonsOnly"
+      #     operator   = "Exists"
+      #     effect    = "NO_SCHEDULE"
+      #   }
+      # } : {}
     }
   }
 

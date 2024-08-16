@@ -6,6 +6,7 @@
 *.tfstate.*
 tfstate.*
 .terraform
+gitops-repos/
 
 # Crash log files
 crash.log
