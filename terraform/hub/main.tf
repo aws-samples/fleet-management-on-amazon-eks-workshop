@@ -35,6 +35,18 @@ provider "kubernetes" {
   }
 }
 
+data "aws_ssm_parameter" "ssh_secrets_name" {
+  name = "/fleet-hub/ssh-secrets-fleet-workshop"
+}
+
+data "aws_secretsmanager_secret" "ssh_secrets" {
+  name = data.aws_ssm_parameter.ssh_secrets_name.value
+}
+
+data "aws_secretsmanager_secret_version" "git_private_ssh_key" {
+  secret_id = data.aws_secretsmanager_secret.ssh_secrets.id
+}
+
 locals {
   name            = "fleet-hub-cluster"
   environment     = "control-plane"
@@ -58,7 +70,10 @@ locals {
   gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
   gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
 
-  git_private_ssh_key_content = data.terraform_remote_state.git.outputs.git_private_ssh_key_content
+  git_private_ssh_key_json = jsondecode(data.aws_secretsmanager_secret_version.git_private_ssh_key.secret_string)
+  git_private_ssh_key_content = local.git_private_ssh_key_json["private_key"]
+
+  
   argocd_namespace    = "argocd"
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
@@ -289,6 +304,11 @@ module "eks" {
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
+
+    # Attach additional IAM policies to the Karpenter node IAM role
+    iam_role_additional_policies = {
+      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    }
 
       min_size     = 2
       max_size     = 6

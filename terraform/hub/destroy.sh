@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -uo pipefail
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 [[ -n "${DEBUG:-}" ]] && set -x
+
+terraform -chdir=$SCRIPTDIR init --upgrade
 
 # Delete the Ingress/SVC before removing the addons
 TMPFILE=$(mktemp)
@@ -16,39 +18,33 @@ if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   kubectl delete svc -n argocd argo-cd-argocd-server || true
 fi
 
-
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks_blueprints_addons" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -target="module.eks" -auto-approve
 
 echo "remove VPC endpoints"
 VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=fleet-hub-cluster" --query "Vpcs[*].VpcId" --output text)
-
 if [ -n "$VPCID" ]; then
     echo "VPC ID: $VPCID"
-    for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
-      aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint || true
+
+    echo "Cleaning VPC endpoints if exists..."
+    vpc_endpoint_names=("com.amazonaws.eu-west-1.guardduty-data" "com.amazonaws.eu-west-1.ssm" "com.amazonaws.eu-west-1.ec2messages" "com.amazonaws.eu-west-1.ssmmessages" "com.amazonaws.eu-west-1.s3")
+    for endpoint_name in "${vpc_endpoint_names[@]}"; do
+        endpoint_exists=$(aws ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
+
+        if [ -n "$endpoint_exists" ]; then
+            echo "Deleting VPC endpoint $endpoint_exists..."
+            aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
+        fi
     done
 
-    echo "remove Dandling security groups"
-    # Get the list of security group IDs associated with the VPC
-    security_group_ids=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPCID" --query "SecurityGroups[?not_null(GroupName)&&GroupName!='default'].GroupId" --output json)
 
-    # Check if any security groups were found
-    if [ -z "$security_group_ids" ]; then
-      echo "No security groups found in VPC $VPCID"
-    else
-      echo "security_group_ids=$security_group_ids"
+    echo "Cleaning VPC $VPCID"
+    aws-delete-vpc -vpc-id=$VPCID
 
-      # Loop through the security group IDs and delete each security group
-      for group_id in $(echo "$security_group_ids" | jq -r '.[]'); do
-        echo "Deleting security group $group_id"
-        aws ec2 delete-security-group --group-id "$group_id" || true
-      done
-    fi
 else
     echo "VPC with tag Name=fleet-hub-cluster not found"
-fi    
+fi   
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -auto-approve

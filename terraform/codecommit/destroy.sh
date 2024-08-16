@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -uo pipefail
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(cd ${SCRIPTDIR}/..; pwd )"
@@ -10,6 +10,7 @@ ROOTDIR="$(cd ${SCRIPTDIR}/..; pwd )"
 # export TF_VAR_ssh_key_basepath="/home/ec2-user/.ssh"
 
 echo "Destroying AWS git resources"
+terraform -chdir=$SCRIPTDIR init --upgrade
 terraform -chdir=$SCRIPTDIR destroy -auto-approve
 destroy_output=$(terraform -chdir=$SCRIPTDIR  destroy -auto-approve 2>&1)
 if [[ $? -eq 0 && $destroy_output == *"Destroy complete!"* ]]; then
