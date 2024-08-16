@@ -23,7 +23,6 @@ locals {
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
-  git_private_ssh_key = data.terraform_remote_state.git.outputs.git_private_ssh_key
   argocd_namespace    = "argocd"
 
   external_secrets = {
