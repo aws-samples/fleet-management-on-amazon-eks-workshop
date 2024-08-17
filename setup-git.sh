@@ -2,12 +2,14 @@
 
 set -euo pipefail
 set -x
+set -x
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
 GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/gitops-repos}
 
+cd $ROOTDIR
 cd $ROOTDIR
 # Reset directory
 rm -rf ${GITOPS_DIR}
@@ -50,10 +52,14 @@ chmod 600 $SSH_PRIVATE_KEY_FILE
 cat ~/.ssh/config || true
 cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
+ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
 git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
+git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
+mkdir -p ${GITOPS_DIR}/apps/frontend
 mkdir -p ${GITOPS_DIR}/apps/frontend
 touch ${GITOPS_DIR}/apps/frontend/.keep
 git -C ${GITOPS_DIR}/apps add . || true
@@ -64,6 +70,7 @@ git -C ${GITOPS_DIR}/apps push  || true
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
 mkdir -p ${GITOPS_DIR}/platform/charts && cp -r gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
+git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push || true

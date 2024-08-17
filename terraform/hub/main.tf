@@ -35,6 +35,18 @@ provider "kubernetes" {
   }
 }
 
+data "aws_ssm_parameter" "ssh_secrets_name" {
+  name = "/fleet-hub/ssh-secrets-fleet-workshop"
+}
+
+data "aws_secretsmanager_secret" "ssh_secrets" {
+  name = data.aws_ssm_parameter.ssh_secrets_name.value
+}
+
+data "aws_secretsmanager_secret_version" "git_private_ssh_key" {
+  secret_id = data.aws_secretsmanager_secret.ssh_secrets.id
+}
+
 locals {
   name            = "fleet-hub-cluster"
   environment     = "control-plane"

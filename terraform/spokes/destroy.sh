@@ -57,7 +57,7 @@ if [ -n "$VPCID" ]; then
 
 else
     echo "VPC with tag Name=fleet-spoke-${env} not found"
-fi
+fi 
 
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve -var-file="workspaces/${env}.tfvars"
