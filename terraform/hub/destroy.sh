@@ -47,21 +47,6 @@ if [ -n "$VPCID" ]; then
     aws-delete-vpc -vpc-id=$VPCID
 
 
-    echo "Cleaning VPC endpoints if exists..."
-    vpc_endpoint_names=("com.amazonaws.eu-west-1.guardduty-data" "com.amazonaws.eu-west-1.ssm" "com.amazonaws.eu-west-1.ec2messages" "com.amazonaws.eu-west-1.ssmmessages" "com.amazonaws.eu-west-1.s3")
-    for endpoint_name in "${vpc_endpoint_names[@]}"; do
-        endpoint_exists=$(aws ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
-
-        if [ -n "$endpoint_exists" ]; then
-            echo "Deleting VPC endpoint $endpoint_exists..."
-            aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
-        fi
-    done
-
-
-    echo "Cleaning VPC $VPCID"
-    aws-delete-vpc -vpc-id=$VPCID
-
 else
     echo "VPC with tag Name=fleet-hub-cluster not found"
 fi
