@@ -16,12 +16,10 @@ rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
 
-# TODO: move to aws secret manager
-gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_workload_url)"
-gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
-gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
-gitops_fleet_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_fleet_url)"
-
+gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-workload --query SecretString --output text | jq -r .url)"
+gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-platform --query SecretString --output text | jq -r .url)"
+gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id eks-fleet-workshop/git-data-addons --query SecretString --output text | jq -r .url)"
+gitops_fleet_url="$(aws secretsmanager   get-secret-value  --secret-id eks-fleet-workshop/git-data-fleet --query SecretString --output text | jq -r .url)"
 
 SSH_PRIVATE_KEY_FILE="$HOME/.ssh/gitops_ssh.pem"
 SSH_CONFIG_FILE="$HOME/.ssh/config"
