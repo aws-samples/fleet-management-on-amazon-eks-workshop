@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fleet
+  namespace: argocd
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          fleet_member: control-plane
+  template:
+    metadata:
+      name: 'fleet'
+    spec:
+      project: default
+      source:
+        repoURL: '{{metadata.annotations.fleet_repo_url}}'
+        path: '{{metadata.annotations.fleet_repo_basepath}}{{metadata.annotations.fleet_repo_path}}'
+        targetRevision: '{{metadata.annotations.fleet_repo_revision}}'
+        directory:
+          recurse: true
+      destination:
+        namespace: 'argocd'
+        name: '{{name}}'
+      syncPolicy:
+        automated:
+          allowEmpty: true

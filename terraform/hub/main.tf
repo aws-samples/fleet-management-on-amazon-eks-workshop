@@ -1,6 +1,6 @@
+data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {}
-data "aws_region" "current" {}
 data "aws_iam_session_context" "current" {
   # This data source provides information on the IAM source role of an STS assumed role
   # For non-role ARNs, this data source simply passes the ARN through issuer ARN
@@ -35,46 +35,31 @@ provider "kubernetes" {
   }
 }
 
-data "aws_ssm_parameter" "ssh_secrets_name" {
-  name = "/fleet-hub/ssh-secrets-fleet-workshop"
-}
-
-data "aws_secretsmanager_secret" "ssh_secrets" {
-  name = data.aws_ssm_parameter.ssh_secrets_name.value
-}
-
-data "aws_secretsmanager_secret_version" "git_private_ssh_key" {
-  secret_id = data.aws_secretsmanager_secret.ssh_secrets.id
-}
 
 locals {
   name            = "fleet-hub-cluster"
   environment     = "control-plane"
+  tenant          = "tenant1"
+  fleet_member    = "control-plane"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
-
-  gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
-  gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
-  gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
-  gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
-
-  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
-  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
-  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
-  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
-
-  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
-  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
-  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
-  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
-
-  git_private_ssh_key_json = jsondecode(data.aws_secretsmanager_secret_version.git_private_ssh_key.secret_string)
-  git_private_ssh_key_content = local.git_private_ssh_key_json["private_key"]
-
-  
   argocd_namespace    = "argocd"
+
+  external_secrets = {
+    namespace       = "external-secrets"
+    service_account = "external-secrets-sa"
+  }
+  aws_load_balancer_controller = {
+    namespace       = "kube-system"
+    service_account = "aws-load-balancer-controller-sa"
+  }
+  karpenter = {
+    namespace       = "karpenter"
+    service_account = "karpenter"
+  }
+
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
     enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
@@ -101,9 +86,10 @@ locals {
     enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
   }
   oss_addons = {
-    enable_argocd                          = try(var.addons.enable_argocd, true)
+    enable_argocd                          = try(var.addons.enable_argocd, false)
     enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
     enable_argo_events                     = try(var.addons.enable_argo_events, false)
     enable_argo_workflows                  = try(var.addons.enable_argo_workflows, false)
@@ -122,8 +108,10 @@ locals {
   addons = merge(
     local.aws_addons,
     local.oss_addons,
+    { tenant = local.tenant },
+    { fleet_member = local.fleet_member },
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name }
+    { aws_cluster_name = module.eks.cluster_name },
   )
 
   addons_metadata = merge(
@@ -135,36 +123,62 @@ locals {
       aws_vpc_id       = module.vpc.vpc_id
     },
     {
-      argocd_namespace = local.argocd_namespace
+      argocd_namespace        = local.argocd_namespace,
+      create_argocd_namespace = false
     },
     {
       addons_repo_url      = local.gitops_addons_url
       addons_repo_basepath = local.gitops_addons_basepath
       addons_repo_path     = local.gitops_addons_path
       addons_repo_revision = local.gitops_addons_revision
+      addons_repo_secret_key = var.secret_name_git_data_addons
+    },
+    {
+      fleet_repo_url      = local.gitops_fleet_url
+      fleet_repo_basepath = local.gitops_fleet_basepath
+      fleet_repo_path     = local.gitops_fleet_path
+      fleet_repo_revision = local.gitops_fleet_revision
+      fleet_repo_secret_key = var.secret_name_git_data_fleet
+
     },
     {
       platform_repo_url      = local.gitops_platform_url
       platform_repo_basepath = local.gitops_platform_basepath
       platform_repo_path     = local.gitops_platform_path
       platform_repo_revision = local.gitops_platform_revision
+      platform_repo_secret_key = var.secret_name_git_data_platform
     },
     {
       workload_repo_url      = local.gitops_workload_url
       workload_repo_basepath = local.gitops_workload_basepath
       workload_repo_path     = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
+      workload_repo_secret_key = var.secret_name_git_data_workload
+    },
+    {
+      karpenter_namespace = local.karpenter.namespace
+      karpenter_service_account = local.karpenter.service_account
+      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      karpenter_sqs_queue_name = module.karpenter.queue_name
+    },
+    {
+      external_secrets_namespace = local.external_secrets.namespace
+      external_secrets_service_account = local.external_secrets.service_account
+    },
+    {
+      aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
+      aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     }
   )
 
   argocd_apps = {
-    addons   = file("${path.module}/bootstrap/addons.yaml")
-    platform = file("${path.module}/bootstrap/platform.yaml")
+    addons    = var.enable_addon_selector ? file("${path.module}/bootstrap/addons.yaml"): templatefile("${path.module}/bootstrap/addons.tpl.yaml", {addons: local.addons})
+    fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
   tags = {
     Blueprint  = local.name
-    GithubRepo = "github.com/csantanapr/terraform-gitops-bridge"
+    GithubRepo = "github.com/gitops-bridge-dev/gitops-bridge"
   }
 }
 
@@ -173,7 +187,7 @@ locals {
 # GitOps Bridge: Private ssh keys for git
 ################################################################################
 resource "kubernetes_namespace" "argocd" {
-  depends_on = [module.eks_blueprints_addons]
+  depends_on = [module.eks]
   metadata {
     name = local.argocd_namespace
   }
@@ -184,22 +198,27 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = local.git_private_ssh_key_content
+      sshPrivateKey         = local.gitops_addons_private_key
+      insecureIgnoreHostKey = "true"
+    }
+    git-fleet = {
+      type                  = "git"
+      url                   = local.gitops_fleet_url
+      sshPrivateKey         = local.gitops_fleet_private_key
       insecureIgnoreHostKey = "true"
     }
     git-platform = {
       type                  = "git"
       url                   = local.gitops_platform_url
-      sshPrivateKey         = local.git_private_ssh_key_content
+      sshPrivateKey         = local.gitops_platform_private_key
       insecureIgnoreHostKey = "true"
     }
     git-workloads = {
       type                  = "git"
       url                   = local.gitops_workload_url
-      sshPrivateKey         = local.git_private_ssh_key_content
+      sshPrivateKey         = local.gitops_workload_private_key
       insecureIgnoreHostKey = "true"
     }
-
   }
   metadata {
     name      = each.key
@@ -225,16 +244,12 @@ module "gitops_bridge_bootstrap" {
 
   apps = local.argocd_apps
   argocd = {
+    name = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "7.3.11"
+    chart_version    = "7.4.1"
+    values = [file("${path.module}/argocd-initial-values.yaml")]
     timeout          = 600
     create_namespace = false
-    set = [
-      {
-        name  = "server.service.type"
-        value = "LoadBalancer"
-      }
-    ]
   }
   depends_on = [kubernetes_secret.git_secrets]
 }
@@ -253,9 +268,6 @@ module "eks_blueprints_addons" {
 
   # Using GitOps Bridge
   create_kubernetes_resources = false
-  external_secrets = {
-    create_role = false
-  }
 
   # EKS Blueprints Addons
   enable_cert_manager                 = local.aws_addons.enable_cert_manager
@@ -265,12 +277,15 @@ module "eks_blueprints_addons" {
   enable_aws_privateca_issuer         = local.aws_addons.enable_aws_privateca_issuer
   enable_cluster_autoscaler           = local.aws_addons.enable_cluster_autoscaler
   enable_external_dns                 = local.aws_addons.enable_external_dns
-  enable_external_secrets             = local.aws_addons.enable_external_secrets
-  enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
+  # using pod identity for external secrets we don't need this
+  #enable_external_secrets             = local.aws_addons.enable_external_secrets
+  # using pod identity for external secrets we don't need this
+  #enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
   enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
   enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
   enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
-  enable_karpenter                    = local.aws_addons.enable_karpenter
+  # using pod identity for karpenter we don't need this
+  #enable_karpenter                    = local.aws_addons.enable_karpenter
   enable_velero                       = local.aws_addons.enable_velero
   enable_aws_gateway_api_controller   = local.aws_addons.enable_aws_gateway_api_controller
 
@@ -283,42 +298,74 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.20.0"
+  version = "~> 20.23.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
   cluster_endpoint_public_access = true
+  authentication_mode            = "API"
 
-  kms_key_administrators = distinct(concat([
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"],
-    var.kms_key_admin_roles,
-    [data.aws_iam_session_context.current.issuer_arn]
+  # Disabling encryption for workshop purposes
+  cluster_encryption_config = {}
 
-  ))
-  
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
   enable_cluster_creator_admin_permissions = true
 
+  access_entries = {
+    # One access entry with a policy associated
+    admin = {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
+
+
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
 
-    # Attach additional IAM policies to the Karpenter node IAM role
-    iam_role_additional_policies = {
-      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    }
+      # Attach additional IAM policies to the Karpenter node IAM role
+      iam_role_additional_policies = {
+         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
 
       min_size     = 2
       max_size     = 6
       desired_size = 2
+      # taints = local.aws_addons.enable_karpenter ? {
+      #   dedicated = {
+      #     key    = "CriticalAddonsOnly"
+      #     operator   = "Exists"
+      #     effect    = "NO_SCHEDULE"
+      #   }
+      # } : {}
     }
   }
+
   # EKS Addons
   cluster_addons = {
-    coredns    = {}
-    kube-proxy = {}
+    coredns    = {
+      most_recent    = true
+    }
+    kube-proxy = {
+      most_recent    = true
+    }
+    amazon-cloudwatch-observability = {
+      most_recent    = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent    = true
+    }
     eks-pod-identity-agent = {
       most_recent    = true
       before_compute = true
@@ -339,8 +386,15 @@ module "eks" {
       })
     }
   }
-  tags = merge(local.tags, {})
+  node_security_group_tags = merge(local.tags, {
+    # NOTE - if creating multiple security groups with this module, only tag the
+    # security group that Karpenter should utilize with the following tag
+    # (i.e. - at most, only one security group should have this tag in your account)
+    "karpenter.sh/discovery" = local.name
+  })
+  tags = local.tags
 }
+
 
 ################################################################################
 # Supporting Resources
@@ -365,14 +419,10 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
+    # Tags subnets for Karpenter auto-discovery
+    "karpenter.sh/discovery" = local.name
   }
 
   tags = local.tags
 }
 
-# Creating parameter for argocd hub role for the spoke clusters to read
-resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/fleet-hub/argocd-hub-role"
-  type  = "String"
-  value = aws_iam_role.argocd_hub.arn
-}

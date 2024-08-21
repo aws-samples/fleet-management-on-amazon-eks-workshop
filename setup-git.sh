@@ -2,28 +2,32 @@
 
 set -euo pipefail
 set -x
+
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
 GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/gitops-repos}
 
+
 cd $ROOTDIR
 # Reset directory
 rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
-gitops_workload_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_workload_url)"
-gitops_platform_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_platform_url)"
-gitops_addons_url="$(terraform -chdir=${ROOTDIR}/terraform/codecommit output -raw gitops_addons_url)"
 
+gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-workload --query SecretString --output text | jq -r .url)"
+gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-platform --query SecretString --output text | jq -r .url)"
+gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id eks-fleet-workshop/git-data-addons --query SecretString --output text | jq -r .url)"
+gitops_fleet_url="$(aws secretsmanager   get-secret-value  --secret-id eks-fleet-workshop/git-data-fleet --query SecretString --output text | jq -r .url)"
 
 SSH_PRIVATE_KEY_FILE="$HOME/.ssh/gitops_ssh.pem"
 SSH_CONFIG_FILE="$HOME/.ssh/config"
 SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 
-SECRET_ID=$(aws ssm get-parameter --name "/fleet-hub/ssh-secrets-fleet-workshop" --query "Parameter.Value" --output text)
+# TODO: Update to allow each git repo have a unique ssh private key
+SECRET_ID="git-ssh-secrets-fleet-workshop"
 aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 
 BLOCK=$(aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .ssh_config)
@@ -37,7 +41,7 @@ fi
 if ! grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
   echo -e "$SSH_CONFIG_START_BLOCK" >> "$SSH_CONFIG_FILE"
   echo -e "$BLOCK" >> "$SSH_CONFIG_FILE"
-  echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"    
+  echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"
 fi
 
 chmod 600 $SSH_CONFIG_FILE
@@ -69,3 +73,9 @@ cp -r ${ROOTDIR}/gitops/addons/* ${GITOPS_DIR}/addons/
 git -C ${GITOPS_DIR}/addons add . || true
 git -C ${GITOPS_DIR}/addons commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/addons push  || true
+
+git clone ${gitops_fleet_url} ${GITOPS_DIR}/fleet
+cp -r ${ROOTDIR}/gitops/fleet/* ${GITOPS_DIR}/fleet/
+git -C ${GITOPS_DIR}/fleet add . || true
+git -C ${GITOPS_DIR}/fleet commit -m "initial commit" || true
+git -C ${GITOPS_DIR}/fleet push || true

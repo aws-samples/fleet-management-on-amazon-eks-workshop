@@ -14,58 +14,32 @@ data "aws_ssm_parameter" "argocd_hub_role" {
   name = "/fleet-hub/argocd-hub-role"
 }
 
-################################################################################
-# Kubernetes Access for Spoke Cluster
-################################################################################
-
-provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", local.region]
-  }
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = module.eks.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      # This requires the awscli to be installed locally where Terraform is executed
-      args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", local.region]
-    }
-  }
-}
 
 locals {
   name            = "fleet-spoke-${terraform.workspace}"
   environment     = terraform.workspace
+  tenant          = "tenant1"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  argocd_namespace    = "argocd"
 
-  gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
-  gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
-  gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
-  gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
+  external_secrets = {
+    namespace             = "external-secrets"
+    service_account       = "external-secrets-sa"
+    namespace_fleet       = "kube-fleet"
+    service_account_fleet = "external-secrets-kube-fleet-sa"
+  }
+  aws_load_balancer_controller = {
+    namespace       = "kube-system"
+    service_account = "aws-load-balancer-controller-sa"
+  }
+  karpenter = {
+    namespace       = "karpenter"
+    service_account = "karpenter"
+  }
 
-  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
-  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
-  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
-  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
-
-  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
-  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
-  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
-  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
 
   aws_addons = {
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
@@ -93,8 +67,8 @@ locals {
     enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
   }
-
   oss_addons = {
     enable_argocd                          = try(var.addons.enable_argocd, false)
     enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
@@ -112,21 +86,16 @@ locals {
     enable_secrets_store_csi_driver        = try(var.addons.enable_secrets_store_csi_driver, false)
     enable_vpa                             = try(var.addons.enable_vpa, false)
   }
-
   addons = merge(
     local.aws_addons,
     local.oss_addons,
+    { tenant = local.tenant },
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name },
-    { workloads = true }
+    { aws_cluster_name = module.eks.cluster_name }
   )
 
   addons_metadata = merge(
     module.eks_blueprints_addons.gitops_metadata,
-    module.eks_ack_addons.gitops_metadata,
-    {
-      aws_karpenter_role_name = "${module.eks.cluster_name}-karpenter"
-    },
     {
       aws_cluster_name = module.eks.cluster_name
       aws_region       = local.region
@@ -134,22 +103,20 @@ locals {
       aws_vpc_id       = module.vpc.vpc_id
     },
     {
-      platform_repo_url      = local.gitops_platform_url
-      platform_repo_basepath = local.gitops_platform_basepath
-      platform_repo_path     = local.gitops_platform_path
-      platform_repo_revision = local.gitops_platform_revision
+      karpenter_namespace = local.karpenter.namespace
+      karpenter_service_account = local.karpenter.service_account
+      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      karpenter_sqs_queue_name = module.karpenter.queue_name
     },
     {
-      addons_repo_url      = local.gitops_addons_url
-      addons_repo_basepath = local.gitops_addons_basepath
-      addons_repo_path     = local.gitops_addons_path
-      addons_repo_revision = local.gitops_addons_revision
+      external_secrets_namespace = local.external_secrets.namespace
+      external_secrets_service_account = local.external_secrets.service_account
+      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
+      external_secrets_service_account_fleet = local.external_secrets.service_account_fleet
     },
     {
-      workload_repo_url      = local.gitops_workload_url
-      workload_repo_basepath = local.gitops_workload_basepath
-      workload_repo_path     = local.gitops_workload_path
-      workload_repo_revision = local.gitops_workload_revision
+      aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
+      aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     }
   )
 
@@ -186,82 +153,6 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
 }
 
 ################################################################################
-# EKS ACK Addons
-################################################################################
-module "eks_ack_addons" {
-  source = "aws-ia/eks-ack-addons/aws"
-
-  cluster_name      = module.eks.cluster_name
-  cluster_endpoint  = module.eks.cluster_endpoint
-  oidc_provider_arn = module.eks.oidc_provider_arn
-
-  # Using GitOps Bridge
-  create_kubernetes_resources = false
-
-  # ACK Controllers to enable
-  enable_apigatewayv2      = try(local.aws_addons.enable_ack_apigatewayv2, false)
-  enable_dynamodb          = try(local.aws_addons.enable_ack_dynamodb, false)
-  enable_s3                = try(local.aws_addons.enable_ack_s3, false)
-  enable_rds               = try(local.aws_addons.enable_ack_rds, false)
-  enable_prometheusservice = try(local.aws_addons.enable_ack_prometheusservice, false)
-  enable_emrcontainers     = try(local.aws_addons.enable_ack_emrcontainers, false)
-  enable_sfn               = try(local.aws_addons.enable_ack_sfn, false)
-  enable_eventbridge       = try(local.aws_addons.enable_ack_eventbridge, false)
-
-  tags = local.tags
-}
-
-################################################################################
-# Dynamo DB IAM Role
-################################################################################
-locals {
-  table_name = local.environment == "prod" ? "Items-Prod" : "Items-Staging"
-}
-
-module "dynamodb_workshop_irsa_aws" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.14"
-
-  role_name = "carts-${local.environment}-role"
-
-  role_policy_arns = {
-    dynamodb = aws_iam_policy.dynamodb_workshop.arn
-  }
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["carts:carts"]
-    }
-  }
-
-  tags = local.tags
-}
-
-resource "aws_iam_policy" "dynamodb_workshop" {
-  name_prefix = "argocd-workshop"
-  description = "IAM policy for ArgoCD on EKS Workshop DynamoDB"
-  path        = "/"
-  policy      = data.aws_iam_policy_document.dynamodb_workshop.json
-
-  tags = local.tags
-}
-
-data "aws_iam_policy_document" "dynamodb_workshop" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "dynamodb:*"
-    ]
-
-    resources = [
-      "arn:aws:dynamodb:${local.region}:${data.aws_caller_identity.current.account_id}:table/${local.table_name}",
-      "arn:aws:dynamodb:${local.region}:${data.aws_caller_identity.current.account_id}:table/${local.table_name}/index/*"
-    ]
-  }
-}
-
-################################################################################
 # ArgoCD EKS Access
 ################################################################################
 resource "aws_iam_role" "spoke" {
@@ -284,7 +175,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 ################################################################################
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.0"
+  version = "~> 1.16.3"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -302,19 +193,17 @@ module "eks_blueprints_addons" {
   enable_aws_privateca_issuer         = local.aws_addons.enable_aws_privateca_issuer
   enable_cluster_autoscaler           = local.aws_addons.enable_cluster_autoscaler
   enable_external_dns                 = local.aws_addons.enable_external_dns
-  enable_external_secrets             = local.aws_addons.enable_external_secrets
-  enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
+  # using pod identity for external secrets we don't need this
+  #enable_external_secrets             = local.aws_addons.enable_external_secrets
+  # using pod identity for external secrets we don't need this
+  #enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
   enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
   enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
   enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
-  enable_karpenter                    = local.aws_addons.enable_karpenter
+  # using pod identity for karpenter we don't need this
+  #enable_karpenter                    = local.aws_addons.enable_karpenter
   enable_velero                       = local.aws_addons.enable_velero
   enable_aws_gateway_api_controller   = local.aws_addons.enable_aws_gateway_api_controller
-
-  karpenter_node = {
-    # Use static name so that it matches what is defined in `karpenter.yaml` example manifest
-    iam_role_use_name_prefix = false
-  }
 
   tags = local.tags
 }
@@ -325,26 +214,23 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.20.0"
+  version = "~> 20.23.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
   cluster_endpoint_public_access = true
+  authentication_mode            = "API"
 
-  kms_key_administrators = distinct(concat([
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"],
-    var.kms_key_admin_roles,
-    [data.aws_iam_session_context.current.issuer_arn]
-  ))
-  
+  # Disabling encryption for workshop purposes
+  cluster_encryption_config = {}
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
-
 
   enable_cluster_creator_admin_permissions = true
 
   access_entries = {
-    # One access entry with a policy associated
+    # This is the role that will be assume by the hub cluster role to access the spoke cluster
     argocd = {
       principal_arn = aws_iam_role.spoke.arn
 
@@ -357,11 +243,29 @@ module "eks" {
         }
       }
     }
+    admin = {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
   }
+
 
   eks_managed_node_groups = {
     spoke = {
-      instance_types = ["c5.large"]
+      instance_types = ["m5.large"]
+
+      # Attach additional IAM policies to the Karpenter node IAM role
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
 
     # Attach additional IAM policies to the Karpenter node IAM role
     iam_role_additional_policies = {
@@ -371,13 +275,30 @@ module "eks" {
       min_size     = 3
       max_size     = 10
       desired_size = 3
+      # taints = local.aws_addons.enable_karpenter ? {
+      #   dedicated = {
+      #     key    = "CriticalAddonsOnly"
+      #     operator   = "Exists"
+      #     effect    = "NO_SCHEDULE"
+      #   }
+      # } : {}
     }
   }
 
   # EKS Addons
   cluster_addons = {
-    coredns    = {}
-    kube-proxy = {}
+    coredns    = {
+      most_recent    = true
+    }
+    kube-proxy = {
+      most_recent    = true
+    }
+    amazon-cloudwatch-observability = {
+      most_recent    = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent    = true
+    }
     eks-pod-identity-agent = {
       most_recent    = true
       before_compute = true
@@ -397,35 +318,16 @@ module "eks" {
         enableNetworkPolicy = "true"
       })
     }
-    aws-ebs-csi-driver = {
-      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
-    }
   }
-  tags = merge(local.tags, {
+  node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag
     # (i.e. - at most, only one security group should have this tag in your account)
     "karpenter.sh/discovery" = local.name
   })
-}
-
-module "ebs_csi_driver_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.20"
-
-  role_name_prefix = "${module.eks.cluster_name}-ebs-csi-"
-
-  attach_ebs_csi_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
-
   tags = local.tags
 }
+
 
 ################################################################################
 # Supporting Resources
@@ -456,3 +358,4 @@ module "vpc" {
 
   tags = local.tags
 }
+

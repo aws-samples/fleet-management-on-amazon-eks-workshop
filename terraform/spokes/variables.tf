@@ -12,9 +12,9 @@ variable "addons" {
   description = "EKS addons"
   type        = any
   default = {
-    enable_aws_load_balancer_controller = false
-    enable_ack_dynamodb                 = false
+    enable_aws_load_balancer_controller = true
     enable_metrics_server               = true
+    enable_karpenter                    = true
   }
 }
 

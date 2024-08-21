@@ -6,6 +6,8 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 [[ -n "${DEBUG:-}" ]] && set -x
 
+source "${ROOTDIR}/terraform/common.sh"
+
 terraform -chdir=$SCRIPTDIR init --upgrade
 
 # Delete the Ingress/SVC before removing the addons
@@ -13,9 +15,11 @@ TMPFILE=$(mktemp)
 terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
-  echo "No outputs found, skipping kubectl delete"
   source "$TMPFILE"
-  kubectl delete svc -n argocd argo-cd-argocd-server || true
+  scale_down_karpenter_nodes
+  kubectl delete svc -n argocd -l app.kubernetes.io/component=server
+  # metric server leaves this behind
+  kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap" -auto-approve
@@ -42,9 +46,10 @@ if [ -n "$VPCID" ]; then
     echo "Cleaning VPC $VPCID"
     aws-delete-vpc -vpc-id=$VPCID
 
+
 else
     echo "VPC with tag Name=fleet-hub-cluster not found"
-fi   
+fi
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.vpc" -auto-approve
 terraform -chdir=$SCRIPTDIR destroy -auto-approve

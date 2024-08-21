@@ -6,6 +6,8 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 [[ -n "${DEBUG:-}" ]] && set -x
 
+source "${ROOTDIR}/terraform/common.sh"
+
 if [[ $# -eq 0 ]] ; then
     echo "No arguments supplied"
     echo "Usage: destroy.sh <environment>"
@@ -22,10 +24,11 @@ TMPFILE=$(mktemp)
 terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
-  echo "No outputs found, skipping kubectl delete"
   source "$TMPFILE"
-  kubectl delete svc --all -n ui || true
-  kubectl delete -A tables.dynamodb.services.k8s.aws --all || true
+  scale_down_karpenter_nodes
+  kubectl delete svc -n argocd -l app.kubernetes.io/component=server
+  # metric server leaves this behind
+  kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap_hub" -auto-approve -var-file="workspaces/${env}.tfvars"

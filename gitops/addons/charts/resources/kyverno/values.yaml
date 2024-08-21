@@ -1,0 +1,8 @@
+disallowedrepos:
+  spec:
+    =(ephemeralContainers):
+    - image: "k8s.gcr.io/* | bar.io/*"
+    =(initContainers):
+    - image: "k8s.gcr.io/* | bar.io/*"
+    containers:
+    - image: "k8s.gcr.io/* | bar.io/*"

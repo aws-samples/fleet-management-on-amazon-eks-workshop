@@ -4,6 +4,10 @@ locals {
 
   context_prefix = "fleet-gitops-bridge"
 
+  gitops_fleet_repo_name = var.gitops_fleet_repo_name
+  gitops_fleet_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
+  gitops_fleet_repo      = "v1/repos/${local.gitops_fleet_repo_name}"
+
   gitops_workload_repo_name = var.gitops_workload_repo_name
   gitops_workload_org       = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
   gitops_workload_repo      = "v1/repos/${local.gitops_workload_repo_name}"
@@ -44,6 +48,11 @@ resource "aws_codecommit_repository" "addons" {
   description     = "CodeCommit repository for ArgoCD addons"
 }
 
+resource "aws_codecommit_repository" "fleet" {
+  repository_name = local.gitops_fleet_repo_name
+  description     = "CodeCommit repository for ArgoCD addons"
+}
+
 resource "aws_iam_user" "gitops" {
   name = "${local.context_prefix}-gitops"
   path = "/"
@@ -60,29 +69,10 @@ resource "tls_private_key" "gitops" {
   rsa_bits  = 4096
 }
 
-resource "random_string" "secret_suffix" {
-  length  = 5     # Length of the random string
-  special = false # Set to true if you want to include special characters
-  upper   = true  # Set to true if you want uppercase letters in the string
-  lower   = true  # Set to true if you want lowercase letters in the string
-}
-resource "aws_secretsmanager_secret" "codecommit_key" {
-  name = "codecommit-key-${random_string.secret_suffix.result}"
-}
 
-resource "aws_secretsmanager_secret_version" "private_key_secret_version" {
-  secret_id     = aws_secretsmanager_secret.codecommit_key.id
-  secret_string = tls_private_key.gitops.private_key_pem
-}
-
-# we store in parameter store the name of the sercretmanager secret which needs to be random (7 days for deletion)
-resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/fleet-hub/ssh-secrets-fleet-workshop"
-  type  = "String"
-  value = "ssh-secrets-fleet-workshop-${random_string.secret_suffix.result}"
-}
 resource "aws_secretsmanager_secret" "ssh_secrets" {
-  name = "ssh-secrets-fleet-workshop-${random_string.secret_suffix.result}"
+  name = var.secret_name_ssh_secrets
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
@@ -92,6 +82,81 @@ resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
     ssh_config  = local.ssh_config
   })
 }
+
+resource "aws_secretsmanager_secret" "git_data_fleet" {
+  name = var.secret_name_git_data_fleet
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_version_fleet" {
+  secret_id = aws_secretsmanager_secret.git_data_fleet.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_fleet_org}/${local.gitops_fleet_repo}"
+    org = local.gitops_fleet_org
+    repo = local.gitops_fleet_repo
+    basepath = var.gitops_fleet_basepath
+    path = var.gitops_fleet_path
+    revision = var.gitops_fleet_revision
+  })
+}
+
+
+resource "aws_secretsmanager_secret" "git_data_addons" {
+  name = var.secret_name_git_data_addons
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_version_addons" {
+  secret_id = aws_secretsmanager_secret.git_data_addons.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_addons_org}/${local.gitops_addons_repo}"
+    org = local.gitops_addons_org
+    repo = local.gitops_addons_repo
+    basepath = var.gitops_addons_basepath
+    path = var.gitops_addons_path
+    revision = var.gitops_addons_revision
+  })
+}
+
+resource "aws_secretsmanager_secret" "git_data_platform" {
+  name = var.secret_name_git_data_platform
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_platform" {
+  secret_id = aws_secretsmanager_secret.git_data_platform.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_platform_org}/${local.gitops_platform_repo}"
+    org = local.gitops_platform_org
+    repo = local.gitops_platform_repo
+    basepath = var.gitops_platform_basepath
+    path = var.gitops_platform_path
+    revision = var.gitops_platform_revision
+  })
+}
+
+resource "aws_secretsmanager_secret" "git_data_workload" {
+  name = var.secret_name_git_data_workload
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "git_data_workload" {
+  secret_id = aws_secretsmanager_secret.git_data_workload.id
+  secret_string = jsonencode({
+    private_key = tls_private_key.gitops.private_key_pem
+    url = "${local.gitops_workload_org}/${local.gitops_workload_repo}"
+    org = local.gitops_workload_org
+    repo = local.gitops_workload_repo
+    basepath = var.gitops_workload_basepath
+    path = var.gitops_workload_path
+    revision = var.gitops_workload_revision
+  })
+}
+
+
 
 data "aws_iam_policy_document" "gitops_access" {
   statement {
@@ -104,7 +169,8 @@ data "aws_iam_policy_document" "gitops_access" {
     resources = [
       aws_codecommit_repository.workloads.arn,
       aws_codecommit_repository.platform.arn,
-      aws_codecommit_repository.addons.arn
+      aws_codecommit_repository.addons.arn,
+      aws_codecommit_repository.fleet.arn
     ]
   }
 }
