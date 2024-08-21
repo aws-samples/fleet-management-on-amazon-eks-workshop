@@ -313,23 +313,6 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  access_entries = {
-    # One access entry with a policy associated
-    admin = {
-      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
-
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-  }
-
-
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.large"]
