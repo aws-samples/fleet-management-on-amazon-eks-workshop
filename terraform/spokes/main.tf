@@ -243,18 +243,6 @@ module "eks" {
         }
       }
     }
-    admin = {
-      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
-
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
   }
 
 
@@ -271,7 +259,7 @@ module "eks" {
     iam_role_additional_policies = {
       AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     }
-    
+
       min_size     = 3
       max_size     = 10
       desired_size = 3
