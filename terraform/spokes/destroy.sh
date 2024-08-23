@@ -50,11 +50,6 @@ if [ -n "$VPCID" ]; then
             aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
         fi
     done
-
-
-    echo "Cleaning VPC $VPCID"
-    aws-delete-vpc -vpc-id=$VPCID
-
 else
     echo "VPC with tag Name=fleet-spoke-${env} not found"
 fi 
