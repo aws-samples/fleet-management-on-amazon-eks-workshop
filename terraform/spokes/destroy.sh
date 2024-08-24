@@ -26,7 +26,7 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
   scale_down_karpenter_nodes
-  kubectl delete svc -n argocd -l app.kubernetes.io/component=server
+  kubectl delete svc -n kube-fleet -l app.kubernetes.io/component=server
   # metric server leaves this behind
   kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
@@ -50,11 +50,6 @@ if [ -n "$VPCID" ]; then
             aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
         fi
     done
-
-
-    echo "Cleaning VPC $VPCID"
-    aws-delete-vpc -vpc-id=$VPCID
-
 else
     echo "VPC with tag Name=fleet-spoke-${env} not found"
 fi 
