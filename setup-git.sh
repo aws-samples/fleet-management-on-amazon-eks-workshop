@@ -9,8 +9,6 @@ ROOTDIR=$SCRIPTDIR
 
 GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/gitops-repos}
 
-
-cd $ROOTDIR
 # Reset directory
 rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
@@ -47,8 +45,8 @@ fi
 chmod 600 $SSH_CONFIG_FILE
 chmod 600 $SSH_PRIVATE_KEY_FILE
 
-cat ~/.ssh/config || true
-cat ~/.ssh/gitops_ssh.pem || true
+# cat ~/.ssh/config || true
+# cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
 git clone ${gitops_workload_url} ${GITOPS_DIR}/apps

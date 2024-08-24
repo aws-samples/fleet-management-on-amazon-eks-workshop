@@ -73,3 +73,30 @@ scale_down_karpenter_nodes() {
 
 
 }
+
+
+# This is required for certain resources that are not managed by Terraform
+force_delete_vpc() {
+  VPC_NAME=$1
+  VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=${VPC_NAME}" --query "Vpcs[*].VpcId" --output text)
+  if [ -n "$VPCID" ]; then
+      echo "VPC ID: $VPCID"
+      echo "Cleaning VPC endpoints if exists..."
+      vpc_endpoint_names=("com.amazonaws.eu-west-1.guardduty-data" "com.amazonaws.eu-west-1.ssm" "com.amazonaws.eu-west-1.ec2messages" "com.amazonaws.eu-west-1.ssmmessages" "com.amazonaws.eu-west-1.s3")
+      for endpoint_name in "${vpc_endpoint_names[@]}"; do
+          endpoint_exists=$(aws ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
+          if [ -n "$endpoint_exists" ]; then
+              echo "Deleting VPC endpoint $endpoint_exists..."
+              aws ec2 delete-vpc-endpoints --vpc-endpoint-ids "$endpoint_exists"
+          fi
+      done
+
+      # check if aws-delete-vpc is available if not install it with go install github.com/megaproaktiv/aws-delete-vpc
+      if ! command -v aws-delete-vpc &> /dev/null; then
+          echo "aws-delete-vpc could not be found, installing it..."
+          go install github.com/isovalent/aws-delete-vpc@latest
+      fi
+      echo "Cleaning VPC $VPCID"
+      aws-delete-vpc -vpc-id=$VPCID
+  fi
+}
