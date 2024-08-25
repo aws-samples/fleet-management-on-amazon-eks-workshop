@@ -118,8 +118,10 @@ module "karpenter" {
   service_account = local.karpenter.service_account
 
   # Used to attach additional IAM policies to the Karpenter node IAM role
+  # Adding IAM policy needed for fluentbit
   node_iam_role_additional_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", 
+    CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
   }
 
   tags = local.tags
