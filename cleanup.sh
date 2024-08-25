@@ -7,8 +7,6 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
-go install github.com/isovalent/aws-delete-vpc@latest
-
 DEBUG=$DEBUG ${ROOTDIR}/terraform/spokes/destroy.sh prod
 DEBUG=$DEBUG ${ROOTDIR}/terraform/spokes/destroy.sh staging
 DEBUG=$DEBUG ${ROOTDIR}/terraform/hub/destroy.sh
