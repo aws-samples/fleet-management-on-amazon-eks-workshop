@@ -7,28 +7,17 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
-GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/gitops-repos}
+GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/environment/gitops-repos}
 
-# Reset directory
-rm -rf ${GITOPS_DIR}
-mkdir -p ${GITOPS_DIR}
-
-
-gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-workload --query SecretString --output text | jq -r .url)"
-gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id eks-fleet-workshop/git-data-platform --query SecretString --output text | jq -r .url)"
-gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id eks-fleet-workshop/git-data-addons --query SecretString --output text | jq -r .url)"
-gitops_fleet_url="$(aws secretsmanager   get-secret-value  --secret-id eks-fleet-workshop/git-data-fleet --query SecretString --output text | jq -r .url)"
-
+PROJECT_CONTECXT_PREFIX=${PROJECT_CONTECXT_PREFIX:-eks-fleet-workshop-gitops}
+SSH_SECRET_ID="${PROJECT_CONTECXT_PREFIX}-ssh-key"
 SSH_PRIVATE_KEY_FILE="$HOME/.ssh/gitops_ssh.pem"
 SSH_CONFIG_FILE="$HOME/.ssh/config"
 SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
+SSH_CONFIG_HOST="git-codecommit.*.amazonaws.com"
 
-# TODO: Update to allow each git repo have a unique ssh private key
-SECRET_ID="git-ssh-secrets-fleet-workshop"
-aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
-
-BLOCK=$(aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text | jq -r .ssh_config)
+aws secretsmanager get-secret-value --secret-id $SSH_SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 
 if [ ! -f "$SSH_CONFIG_FILE" ]; then
     echo "Creating $SSH_CONFIG_FILE"
@@ -38,7 +27,11 @@ fi
 
 if ! grep -q "$SSH_CONFIG_START_BLOCK" "$SSH_CONFIG_FILE"; then
   echo -e "$SSH_CONFIG_START_BLOCK" >> "$SSH_CONFIG_FILE"
-  echo -e "$BLOCK" >> "$SSH_CONFIG_FILE"
+cat >> $SSH_CONFIG_FILE << EOT
+# AWS Workshop https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop.git
+Host $SSH_CONFIG_HOST
+  IdentityFile $SSH_PRIVATE_KEY_FILE
+EOT
   echo -e "$SSH_CONFIG_END_BLOCK" >> "$SSH_CONFIG_FILE"
 fi
 
@@ -48,6 +41,18 @@ chmod 600 $SSH_PRIVATE_KEY_FILE
 # cat ~/.ssh/config || true
 # cat ~/.ssh/gitops_ssh.pem || true
 ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
+
+
+
+# Clone and initialize the gitops repositories
+gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTECXT_PREFIX}-workloads --query SecretString --output text | jq -r .url)"
+gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTECXT_PREFIX}-platform --query SecretString --output text | jq -r .url)"
+gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id ${PROJECT_CONTECXT_PREFIX}-addons --query SecretString --output text | jq -r .url)"
+gitops_fleet_url="$(aws secretsmanager   get-secret-value  --secret-id ${PROJECT_CONTECXT_PREFIX}-fleet --query SecretString --output text | jq -r .url)"
+
+# Reset directory
+rm -rf ${GITOPS_DIR}
+mkdir -p ${GITOPS_DIR}
 
 git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
@@ -60,8 +65,10 @@ git -C ${GITOPS_DIR}/apps push  || true
 
 # populate platform repository
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
-mkdir -p ${GITOPS_DIR}/platform/charts && cp -r gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
-mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
+mkdir -p ${GITOPS_DIR}/platform/charts
+cp -r ${ROOTDIR}/gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
+mkdir -p ${GITOPS_DIR}/platform/bootstrap
+cp -r ${ROOTDIR}/gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push || true

@@ -24,3 +24,15 @@ variable "kms_key_admin_roles" {
   default     = []
 
 }
+
+variable "project_context_prefix" {
+  description = "Prefix for project"
+  type        = string
+  default     = "eks-fleet-workshop-gitops"
+}
+
+variable "ssm_parameter_name_argocd_role_suffix" {
+  description = "SSM parameter name for ArgoCD role"
+  type        = string
+  default     = "argocd-central-role"
+}
