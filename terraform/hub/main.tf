@@ -87,6 +87,7 @@ locals {
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
     enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
+    enable_cw_prometheus                         = try(var.addons.enable_cw_prometheus, false)
   }
   oss_addons = {
     enable_argocd                          = try(var.addons.enable_argocd, false)
