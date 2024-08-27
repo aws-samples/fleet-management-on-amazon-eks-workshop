@@ -1,0 +1,8 @@
+# values for the addon
+addons:
+  aws_load_balancer_controller:
+    enabled: true
+  metrics_server:
+    enabled: true
+  karpenter:
+    enabled: true

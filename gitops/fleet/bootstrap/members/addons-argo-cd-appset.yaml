@@ -1,0 +1,52 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fleet-spoke-argocd
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            fleet_member: spoke
+        values:
+          addonChart: argo-cd
+          addonChartVersion: "7.3.11"
+          addonChartReleaseName: argocd
+          addonChartRepository: https://argoproj.github.io/argo-helm
+  template:
+    metadata:
+      name: 'fleet-spoke-argocd-{{.name}}'
+    spec:
+      project: default
+      sources:
+        - repoURL: '{{.metadata.annotations.addons_repo_url}}'
+          targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+          ref: values
+        - chart: '{{.values.addonChart}}'
+          repoURL: '{{.values.addonChartRepository}}'
+          targetRevision: '{{.values.addonChartVersion}}'
+          helm:
+            releaseName: '{{.values.addonChartReleaseName}}'
+            ignoreMissingValueFiles: true
+            valueFiles:
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml'
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml'
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml'
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml'
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml'
+              - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml'
+      destination:
+        name: '{{.name}}'
+        namespace: "argocd"
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: false
+        retry:
+          limit: -1
+        syncOptions:
+          - CreateNamespace=true

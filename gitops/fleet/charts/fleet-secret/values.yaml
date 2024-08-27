@@ -8,9 +8,10 @@ externalSecret:
   enabled: false
   secretStoreRefName: "fleet-eks-secret-store"
   secretStoreRefKind: "SecretStore"
-  server: "spoke"
+  server: "self"
   fleet_member: "spoke"
   secretManagerSecretName: ""
+  clusterName: ""
 
 
 gitSecrets:
@@ -20,9 +21,6 @@ gitSecrets:
   externalSecrets:
     addons:
       secretName: "git-addons"
-      secretManagerSecretName: ""
-    fleet:
-      secretName: "git-fleet"
       secretManagerSecretName: ""
     platform:
       secretName: "git-platform"

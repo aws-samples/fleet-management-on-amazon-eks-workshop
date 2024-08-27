@@ -1,0 +1,8 @@
+{{ range .Values.resources }}
+---
+{{ if typeIs "string" . }}
+    {{- tpl . $ }}
+{{- else }}
+    {{- toYaml . }}
+{{- end }}
+{{ end }}

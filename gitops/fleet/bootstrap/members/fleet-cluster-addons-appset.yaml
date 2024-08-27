@@ -1,8 +1,8 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: cluster-addons
-  namespace: argocd
+  name: fleet-cluster-addons
 spec:
   syncPolicy:
     preserveResourcesOnDeletion: true
@@ -10,42 +10,32 @@ spec:
   goTemplateOptions:
     - missingkey=error
   generators:
-  - clusters:
-      selector:
-        matchLabels:
-          fleet_member: control-plane
-      values:
-        addonChart: gitops-bridge
+    - clusters:
+        selector:
+          matchLabels:
+            fleet_member: spoke
+        values:
+          addonChart: gitops-bridge
   template:
     metadata:
-      name: cluster-addons
+      name: 'fleet-cluster-addons-{{.name}}'
     spec:
       project: default
       sources:
-      - ref: values
-        repoURL: '{{.metadata.annotations.addons_repo_url}}'
+      - repoURL: '{{.metadata.annotations.addons_repo_url}}'
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+        ref: values
       - repoURL: '{{.metadata.annotations.addons_repo_url}}'
         path: '{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}'
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
         helm:
           valuesObject:
-            selectorMatchLabels:
-              environment: control-plane
-              fleet_member: control-plane
             repoURLValuesBasePath: '{{.metadata.annotations.addons_repo_basepath}}'
             repoURLValuesRevision: '{{.metadata.annotations.addons_repo_revision}}'
             repoURLGitBasePath: '{{.metadata.annotations.addons_repo_basepath}}stacks/'
             repoURLGitRevision: '{{.metadata.annotations.addons_repo_revision}}'
             useSelector: false
             useStack: false
-            addons:
-%{ for key, value in addons ~}
-%{ if substr(key, 0, 7) == "enable_" && value == true ~}
-              ${replace(key, "enable_", "")}:
-                enabled: ${value}
-%{ endif ~}
-%{ endfor ~}
           ignoreMissingValueFiles: true
           valueFiles:
             - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml'
@@ -54,24 +44,6 @@ spec:
             - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml'
             - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml'
             - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml'
-      - repoURL: '{{.metadata.annotations.addons_repo_url}}'
-        path: '{{.metadata.annotations.addons_repo_basepath}}charts/passthrough'
-        targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
-        helm:
-          valuesObject:
-            resources:
-              secretStore:
-                apiVersion: external-secrets.io/v1beta1
-                kind: SecretStore
-                metadata:
-                  name:  aws-secrets-manager
-                spec:
-                  provider:
-                    aws:
-                      service: SecretsManager
-                      region: '{{.metadata.annotations.aws_region}}'
-                      secretsManager:
-                        forceDeleteWithoutRecovery: true
       destination:
         namespace: argocd
         name: '{{.name}}'
@@ -81,7 +53,8 @@ spec:
           allowEmpty: true
           prune: false
         retry:
-          limit: 100
+          limit: -1
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true  # Big CRDs.
+

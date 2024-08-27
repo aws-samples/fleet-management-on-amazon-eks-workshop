@@ -23,7 +23,7 @@ module "external_secrets_pod_identity" {
     fleet = {
       cluster_name    = module.eks.cluster_name
       namespace       = local.external_secrets.namespace_fleet
-      service_account = local.external_secrets.service_account_fleet
+      service_account = local.external_secrets.service_account
     }
   }
 
