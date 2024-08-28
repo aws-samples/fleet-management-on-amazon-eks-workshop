@@ -1,8 +1,8 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: fleet-cluster-addons
+  name: fleet-members-init
+  namespace: argocd
 spec:
   syncPolicy:
     preserveResourcesOnDeletion: true
@@ -10,20 +10,20 @@ spec:
   goTemplateOptions:
     - missingkey=error
   generators:
-    - clusters:
-        selector:
-          matchLabels:
-            fleet_member: spoke
-        values:
-          addonChart: gitops-bridge
+  - clusters:
+      selector:
+        matchLabels:
+          fleet_member: control-plane
+      values:
+        bootstrap: bootstrap/control-plane/members-init
   template:
     metadata:
-      name: 'fleet-cluster-addons-{{.name}}'
+      name: fleet-members-init
     spec:
       project: default
       sources:
       - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
-        path: '{{.metadata.annotations.fleet_repo_basepath}}bootstrap/{{.values.addonChart}}'
+        path: '{{.metadata.annotations.fleet_repo_basepath}}{{.values.bootstrap}}'
         targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
       destination:
         namespace: argocd
@@ -34,8 +34,7 @@ spec:
           allowEmpty: true
           prune: false
         retry:
-          limit: -1
+          limit: 100
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true  # Big CRDs.
-

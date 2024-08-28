@@ -21,7 +21,7 @@ spec:
         path: '{{metadata.annotations.fleet_repo_basepath}}{{metadata.annotations.fleet_repo_path}}/control-plane'
         targetRevision: '{{metadata.annotations.fleet_repo_revision}}'
         directory:
-          recurse: true
+          recurse: false
       destination:
         namespace: 'argocd'
         name: '{{name}}'
