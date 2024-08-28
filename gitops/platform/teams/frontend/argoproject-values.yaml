@@ -9,13 +9,16 @@ projects:
   description: Team Project
   destinations:
   - namespace: ui
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: assets
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: ui
-    name: spoke-staging
+    name: fleet-spoke-staging
   - namespace: assets
-    name: spoke-staging
+    name: fleet-spoke-staging
+  - namespace: "*"
+    server: 'https://kubernetes.default.svc'
+  # TODO temporary allowing local deployments above
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
   - group: ''
