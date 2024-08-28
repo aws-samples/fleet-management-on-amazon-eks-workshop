@@ -2,7 +2,12 @@
 addons:
   aws_load_balancer_controller:
     enabled: true
+  aws_ebs_csi_resources:
+    enabled: true
   metrics_server:
     enabled: true
   karpenter:
     enabled: true
+  kyverno:
+    enabled: true
+
