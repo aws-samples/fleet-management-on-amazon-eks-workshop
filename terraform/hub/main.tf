@@ -174,7 +174,7 @@ locals {
   )
 
   argocd_apps = {
-    addons    = var.enable_addon_selector ? file("${path.module}/bootstrap/addons.yaml"): templatefile("${path.module}/bootstrap/addons.tpl.yaml", {addons: local.addons})
+    addons    = file("${path.module}/bootstrap/addons.yaml")
     fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
