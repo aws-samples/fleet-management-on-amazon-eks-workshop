@@ -26,7 +26,7 @@ repoURLValuesBasePath: ""
 project: default
 namespace: argocd
 useSelector: false
-useStack: true
+useStack: false
 useStackChart: true
 syncPolicy:
   automated:
@@ -771,6 +771,67 @@ addons:
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
+
+
+  kyverno_policy_reporter:
+    enabled: false
+    releaseName: kyverno-policy-reporter
+    namespace: '{{default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
+    chart: policy-reporter
+    repoUrl: https://kyverno.github.io/policy-reporter
+    targetRevision: "2.24.1"
+    selector:
+      matchExpressions:
+        - key: enable_kyverno_policy_reporter
+          operator: In
+          values: ['true']
+    values: 
+      serviceAccount:
+        name: policy-reporter
+
+      kyverno-plugin:
+        enabled: true
+      ui:
+        enabled: true
+        service:
+          annotations:
+            service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
+            service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
+            service.beta.kubernetes.io/aws-load-balancer-type: 'external'
+          type: LoadBalancer
+          port: 80        
+      target:
+        securityHub:
+          accountID: '{{.metadata.annotations.aws_account_id}}'
+          region: '{{.metadata.annotations.aws_region}}'
+          productName: '{{.metadata.annotations.aws_cluster_name}}'
+          skipExistingOnStartup: true
+          delayInSeconds: 10
+          customFields:
+            cluster: '{{.metadata.annotations.aws_cluster_name}}'
+            region: '{{.metadata.annotations.aws_region}}'
+            account: '{{.metadata.annotations.aws_account_id}}'
+            eks_console_url: 'https://{{.metadata.annotations.aws_region}}.console.aws.amazon.com/eks/home?region={{.metadata.annotations.aws_region}}#/clusters/{{.metadata.annotations.aws_cluster_name}}?selectedTab=cluster-resources-tab&selectedResourceId=namespaces'
+          minimumPriority: 'warning'
+          cleanup: true          
+
+  kyverno_policies:
+    enabled: false
+    releaseName: kyverno-policies
+    namespace: '{{default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
+    chart: kyverno-policies
+    repoUrl: https://kyverno.github.io/kyverno
+    targetRevision: "3.2.5"
+    selector:
+      matchExpressions:
+        - key: enable_kyverno_policies
+          operator: In
+          values: ['true']
+    values: 
+      podSecurityStandard: restricted
+      validationFailureAction: Audit
+      skipBackgroundRequests: false
+
   prometheus_adapter:
     enabled: false
     releaseName: prometheus-adapter

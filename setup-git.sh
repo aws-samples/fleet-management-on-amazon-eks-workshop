@@ -55,6 +55,7 @@ rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
 git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+cp -r ${ROOTDIR}/gitops/apps/*  ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
 mkdir -p ${GITOPS_DIR}/apps/frontend

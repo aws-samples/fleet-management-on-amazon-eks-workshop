@@ -54,6 +54,31 @@ module "aws_cloudwatch_observability_pod_identity" {
 }
 
 ################################################################################
+# Kyverno Policy Reporter SecurityHub Access
+################################################################################
+module "kyverno_policy_reporter_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "kyverno-policy-reporter"
+
+  additional_policy_arns = {
+    AWSSecurityHub = "arn:aws:iam::aws:policy/AWSSecurityHubFullAccess"
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "kyverno"
+      service_account = "policy-reporter"
+    }
+  }
+
+  tags = local.tags
+}
+
+################################################################################
 # EBS CSI EKS Access
 ################################################################################
 module "aws_ebs_csi_pod_identity" {

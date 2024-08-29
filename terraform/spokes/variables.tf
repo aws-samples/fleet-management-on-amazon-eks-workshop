@@ -16,6 +16,9 @@ variable "addons" {
     enable_metrics_server               = true
     enable_karpenter                    = true
     enable_cw_prometheus                = true
+    enable_kyverno                      = true
+    enable_kyverno_policy_reporter      = true
+    enable_kyverno_policies             = true    
   }
 }
 
