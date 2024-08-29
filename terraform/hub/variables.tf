@@ -27,6 +27,7 @@ variable "addons" {
     enable_argocd                       = true
     enable_kyverno                      = true
     enable_karpenter                    = true
+    enable_cw_prometheus                = true
   }
 }
 

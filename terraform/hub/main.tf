@@ -88,6 +88,7 @@ locals {
     enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
     enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
+    enable_cw_prometheus                         = try(var.addons.enable_cw_prometheus, false)
   }
   oss_addons = {
     enable_argocd                          = try(var.addons.enable_argocd, false)
@@ -319,8 +320,10 @@ module "eks" {
       instance_types = ["m5.large"]
 
       # Attach additional IAM policies to the Karpenter node IAM role
+      # Adding IAM policy needed for fluentbit
       iam_role_additional_policies = {
-         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+         CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
       }
 
       min_size     = 2

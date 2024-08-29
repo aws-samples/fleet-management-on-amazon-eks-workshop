@@ -967,3 +967,14 @@ addons:
         name: '{{.metadata.annotations.ack_sfn_service_account}}'
         annotations:
           eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_sfn_iam_role_arn}}'
+  cw_prometheus:
+    enabled: false
+    namespace: '{{default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'
+    path: charts/cw-prometheus
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
+    targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+    selector:
+      matchExpressions:
+        - key: enable_cw_prometheus
+          operator: In
+          values: ['true']

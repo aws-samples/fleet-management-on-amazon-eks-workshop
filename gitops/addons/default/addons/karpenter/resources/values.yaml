@@ -4,10 +4,14 @@ environment: dev
 nodeGroups:
   nodes-default:
     instances:
-        categories:
-          - c
-          - m
-          - r
+      categories:
+        - c
+        - m
+        - r
+    limits:
+      cpu: 1000
+      memory: 1000Gi
+      nvidia.com/gpu: 0
 
 instances:
   minGeneration: 5
