@@ -1,0 +1,41 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fleet-members
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            fleet_member: spoke
+        values:
+          bootstrap: bootstrap/members
+  template:
+    metadata:
+      name: 'fleet-members-{{.name}}'
+    spec:
+      project: default
+      sources:
+      - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
+        path: '{{.metadata.annotations.fleet_repo_basepath}}{{.values.bootstrap}}'
+        targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
+      destination:
+        namespace: argocd
+        name: '{{.name}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          allowEmpty: true
+          prune: false
+        retry:
+          limit: -1
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true  # Big CRDs.
+

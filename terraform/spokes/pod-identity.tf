@@ -23,7 +23,7 @@ module "external_secrets_pod_identity" {
     fleet = {
       cluster_name    = module.eks.cluster_name
       namespace       = local.external_secrets.namespace_fleet
-      service_account = local.external_secrets.service_account_fleet
+      service_account = local.external_secrets.service_account
     }
   }
 
@@ -120,8 +120,8 @@ module "karpenter" {
   # Used to attach additional IAM policies to the Karpenter node IAM role
   # Adding IAM policy needed for fluentbit
   node_iam_role_additional_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", 
-    CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
   }
 
   tags = local.tags

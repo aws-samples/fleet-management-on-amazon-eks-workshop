@@ -1,3 +1,0 @@
-externalSecret:
-    secretName: "spoke-staging"
-    secretManagerSecretName: "fleet-hub-cluster/fleet-spoke-staging"

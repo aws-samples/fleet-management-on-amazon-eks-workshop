@@ -9,25 +9,28 @@ projects:
   description: Team Project
   destinations:
   - namespace: carts
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: catalog
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: checkout
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: orders
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: rabbitmq
-    name: spoke-prod
+    name: fleet-spoke-prod
   - namespace: carts
-    name: spoke-staging
+    name: fleet-spoke-staging
   - namespace: catalog
-    name: spoke-staging
+    name: fleet-spoke-staging
   - namespace: checkout
-    name: spoke-staging
+    name: fleet-spoke-staging
   - namespace: orders
-    name: spoke-staging
+    name: fleet-spoke-staging
   - namespace: rabbitmq
-    name: spoke-staging
+    name: fleet-spoke-staging
+  - namespace: "*"
+    server: 'https://kubernetes.default.svc'
+  # TODO temporary allowing local deployments above
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
   - group: ''

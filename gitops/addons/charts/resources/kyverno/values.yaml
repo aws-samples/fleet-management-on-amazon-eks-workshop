@@ -1,8 +1,8 @@
 disallowedrepos:
   spec:
     =(ephemeralContainers):
-    - image: "k8s.gcr.io/* | bar.io/*"
+    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | eu.foo.io/* | bar.io/*"
     =(initContainers):
-    - image: "k8s.gcr.io/* | bar.io/*"
+    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | eu.foo.io/* | bar.io/*"
     containers:
-    - image: "k8s.gcr.io/* | bar.io/*"
+    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | eu.foo.io/* | bar.io/*"

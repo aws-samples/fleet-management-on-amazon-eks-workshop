@@ -10,7 +10,12 @@ spec:
   goTemplateOptions:
     - missingkey=error
   generators:
-    - clusters: {}
+  - clusters:
+      selector:
+        matchLabels:
+          fleet_member: control-plane
+      values:
+        addonChart: gitops-bridge
   template:
     metadata:
       name: cluster-addons
@@ -21,24 +26,27 @@ spec:
         repoURL: '{{.metadata.annotations.addons_repo_url}}'
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
       - repoURL: '{{.metadata.annotations.addons_repo_url}}'
-        path: '{{.metadata.annotations.addons_repo_basepath}}charts/gitops-bridge'
+        path: '{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}'
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
         helm:
           valuesObject:
+            selectorMatchLabels:
+              environment: control-plane
+              fleet_member: control-plane
             repoURLValuesBasePath: '{{.metadata.annotations.addons_repo_basepath}}'
             repoURLValuesRevision: '{{.metadata.annotations.addons_repo_revision}}'
             repoURLGitBasePath: '{{.metadata.annotations.addons_repo_basepath}}stacks/'
             repoURLGitRevision: '{{.metadata.annotations.addons_repo_revision}}'
-            useSelector: true
+            useSelector: false
             useStack: false
           ignoreMissingValueFiles: true
           valueFiles:
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/gitops-bridge/values.yaml'
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/gitops-bridge/values.yaml'
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.nameNormalized}}/addons/values.yaml'
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/gitops-bridge/values.yaml'
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/gitops-bridge/values.yaml'
-            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.nameNormalized}}/addons/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml'
+            - '$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml'
       destination:
         namespace: argocd
         name: '{{.name}}'

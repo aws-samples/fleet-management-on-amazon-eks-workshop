@@ -59,6 +59,11 @@ mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
 mkdir -p ${GITOPS_DIR}/apps/frontend
 touch ${GITOPS_DIR}/apps/frontend/.keep
+
+# Deploy the app for this workshop
+# TODO: review with the team
+cp -r ${ROOTDIR}/gitops/apps/* ${GITOPS_DIR}/apps/
+
 git -C ${GITOPS_DIR}/apps add . || true
 git -C ${GITOPS_DIR}/apps commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/apps push  || true
@@ -69,6 +74,12 @@ mkdir -p ${GITOPS_DIR}/platform/charts
 cp -r ${ROOTDIR}/gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap
 cp -r ${ROOTDIR}/gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
+
+# Deploy the namespaces for this workshop
+# TODO: review with the team
+mkdir -p ${GITOPS_DIR}/platform/teams
+cp -r ${ROOTDIR}/gitops/platform/teams/*  ${GITOPS_DIR}/platform/teams/
+
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push || true

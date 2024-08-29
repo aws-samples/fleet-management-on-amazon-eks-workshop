@@ -29,8 +29,7 @@ locals {
   external_secrets = {
     namespace             = "external-secrets"
     service_account       = "external-secrets-sa"
-    namespace_fleet       = "kube-fleet"
-    service_account_fleet = "external-secrets-kube-fleet-sa"
+    namespace_fleet       = "argocd"
   }
   aws_load_balancer_controller = {
     namespace       = "kube-system"
@@ -114,7 +113,7 @@ locals {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
       external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
-      external_secrets_service_account_fleet = local.external_secrets.service_account_fleet
+      external_secrets_service_account_fleet = local.external_secrets.service_account
     },
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
@@ -256,7 +255,7 @@ module "eks" {
       # Adding IAM policy needed for fluentbit
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-        CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
+        CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
       }
 
       min_size     = 2

@@ -1,0 +1,2 @@
+clusterName: "fleet-spoke-prod"
+secretManagerSecretName: "fleet-hub-cluster/fleet-spoke-prod"

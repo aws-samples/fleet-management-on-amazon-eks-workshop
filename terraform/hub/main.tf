@@ -174,7 +174,7 @@ locals {
   )
 
   argocd_apps = {
-    addons    = var.enable_addon_selector ? file("${path.module}/bootstrap/addons.yaml"): templatefile("${path.module}/bootstrap/addons.tpl.yaml", {addons: local.addons})
+    addons    = file("${path.module}/bootstrap/addons.yaml")
     fleet    = file("${path.module}/bootstrap/fleet.yaml")
   }
 
@@ -323,7 +323,7 @@ module "eks" {
       # Adding IAM policy needed for fluentbit
       iam_role_additional_policies = {
          AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-         CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
+         CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
       }
 
       min_size     = 2

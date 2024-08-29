@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-set -x
+set -eo pipefail
+
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR=$SCRIPTDIR
-[[ -n "${DEBUG:-}" ]] && set -x
-
-id
-pwd
+DEBUG="${DEBUG:-}"
+[[ -n "${DEBUG}" ]] && set -x
+set -u
 
 # Deploy the infrastructure
-echo "Deploy Git"
-mkdir -p ~/.ssh
+echo "Deploy Git and IAM Roles"
 DEBUG=$DEBUG ${ROOTDIR}/terraform/common/deploy.sh
 echo "Configure Git"
 source ${ROOTDIR}/setup-git.sh

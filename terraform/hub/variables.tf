@@ -31,12 +31,6 @@ variable "addons" {
   }
 }
 
-variable "enable_addon_selector" {
-  description = "select addons using cluster selector"
-  type        = bool
-  default     = false
-}
-
 
 variable "secret_name_git_data_addons" {
   description = "Secret name for Git data addons"

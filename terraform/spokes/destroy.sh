@@ -26,7 +26,13 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
   scale_down_karpenter_nodes
-  kubectl delete svc -A -l app.kubernetes.io/component=server
+  # delete all load balancers
+  kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
+  grep LoadBalancer | \
+  while read -r name namespace type; do
+    echo "Deleting service $name in namespace $namespace of type $type"
+    kubectl delete service "$name" -n "$namespace"
+  done
   # metric server leaves this behind
   kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
