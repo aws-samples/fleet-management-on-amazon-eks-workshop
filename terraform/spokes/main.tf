@@ -11,11 +11,12 @@ data "aws_iam_session_context" "current" {
 
 # Reading parameter created by hub cluster to allow access of argocd to spoke clusters
 data "aws_ssm_parameter" "argocd_hub_role" {
-  name = "/fleet-hub/argocd-hub-role"
+  name = "${local.context_prefix}-${var.ssm_parameter_name_argocd_role_suffix}"
 }
 
 
 locals {
+  context_prefix = var.project_context_prefix
   name            = "fleet-spoke-${terraform.workspace}"
   environment     = terraform.workspace
   tenant          = "tenant1"
@@ -248,7 +249,7 @@ module "eks" {
 
 
   eks_managed_node_groups = {
-    spoke = {
+    "${local.name}" = {
       instance_types = ["m5.large"]
 
       # Attach additional IAM policies to the Karpenter node IAM role
@@ -258,9 +259,10 @@ module "eks" {
         CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy" 
       }
 
-      min_size     = 3
-      max_size     = 10
-      desired_size = 3
+      min_size     = 2
+      max_size     = 6
+      desired_size = 2
+
       # taints = local.aws_addons.enable_karpenter ? {
       #   dedicated = {
       #     key    = "CriticalAddonsOnly"

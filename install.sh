@@ -12,7 +12,7 @@ pwd
 # Deploy the infrastructure
 echo "Deploy Git"
 mkdir -p ~/.ssh
-DEBUG=$DEBUG ${ROOTDIR}/terraform/codecommit/deploy.sh
+DEBUG=$DEBUG ${ROOTDIR}/terraform/common/deploy.sh
 echo "Configure Git"
 source ${ROOTDIR}/setup-git.sh
 echo "Deploy Hub Cluster"

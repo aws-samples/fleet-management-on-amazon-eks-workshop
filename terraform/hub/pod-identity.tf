@@ -122,43 +122,22 @@ module "karpenter" {
   tags = local.tags
 }
 ################################################################################
-# ArgoCD EKS Access
+# ArgoCD EKS Pod Identity Association
 ################################################################################
-module "argocd_hub_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
-
-  name = "argocd"
-
-  attach_custom_policy      = true
-  policy_statements = [
-    {
-      sid       = "ArgoCD"
-      actions   = ["sts:AssumeRole", "sts:TagSession"]
-      resources = ["*"]
-    }
-  ]
-
-  # Pod Identity Associations
-  association_defaults = {
-    namespace       = "argocd"
-  }
-  associations = {
-    controller = {
-      cluster_name = module.eks.cluster_name
-      service_account = "argocd-application-controller"
-    }
-    server = {
-      cluster_name = module.eks.cluster_name
-      service_account = "argocd-server"
-    }
-  }
-
+data "aws_ssm_parameter" "argocd_hub_role" {
+  name = "${local.context_prefix}-${var.ssm_parameter_name_argocd_role_suffix}"
+}
+resource "aws_eks_pod_identity_association" "argocd_controller" {
+  cluster_name    = module.eks.cluster_name
+  namespace       = "argocd"
+  service_account = "argocd-application-controller"
+  role_arn        = data.aws_ssm_parameter.argocd_hub_role.value
   tags = local.tags
 }
-# Creating parameter for argocd hub role for the spoke clusters to read
-resource "aws_ssm_parameter" "argocd_hub_role" {
-  name  = "/fleet-hub/argocd-hub-role"
-  type  = "String"
-  value = module.argocd_hub_pod_identity.iam_role_arn
+resource "aws_eks_pod_identity_association" "argocd_server" {
+  cluster_name    = module.eks.cluster_name
+  namespace       = "argocd"
+  service_account = "argocd-server"
+  role_arn        = data.aws_ssm_parameter.argocd_hub_role.value
+  tags = local.tags
 }

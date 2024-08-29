@@ -1,3 +1,0 @@
-Host git-codecommit.*.amazonaws.com
-  User AIDAQHD7FQNYJAAN2ADTK
-  IdentityFile ~/.ssh/gitops_ssh.pem

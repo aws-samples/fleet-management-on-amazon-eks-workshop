@@ -38,26 +38,39 @@ variable "enable_addon_selector" {
 }
 
 
-variable "secret_name_git_data_fleet" {
-  description = "Secret name for Git data fleet"
-  type        = string
-  default     = "eks-fleet-workshop/git-data-fleet"
-}
-
 variable "secret_name_git_data_addons" {
   description = "Secret name for Git data addons"
   type        = string
-  default     = "eks-fleet-workshop/git-data-addons"
+  default     = "eks-fleet-workshop-gitops-addons"
+}
+
+variable "secret_name_git_data_fleet" {
+  description = "Secret name for Git data fleet"
+  type        = string
+  default     = "eks-fleet-workshop-gitops-fleet"
 }
 
 variable "secret_name_git_data_platform" {
   description = "Secret name for Git data platform"
   type        = string
-  default     = "eks-fleet-workshop/git-data-platform"
+  default     = "eks-fleet-workshop-gitops-platform"
 }
 
-variable "secret_name_git_data_workload" {
-  description = "Secret name for Git data workload"
+variable "secret_name_git_data_workloads" {
+  description = "Secret name for Git data workloads"
   type        = string
-  default     = "eks-fleet-workshop/git-data-workload"
+  default     = "eks-fleet-workshop-gitops-workloads"
+}
+
+
+variable "project_context_prefix" {
+  description = "Prefix for project"
+  type        = string
+  default     = "eks-fleet-workshop-gitops"
+}
+
+variable "ssm_parameter_name_argocd_role_suffix" {
+  description = "SSM parameter name for ArgoCD role"
+  type        = string
+  default     = "argocd-central-role"
 }

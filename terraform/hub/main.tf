@@ -37,6 +37,7 @@ provider "kubernetes" {
 
 
 locals {
+  context_prefix = var.project_context_prefix
   name            = "fleet-hub-cluster"
   environment     = "control-plane"
   tenant          = "tenant1"
@@ -132,14 +133,14 @@ locals {
       addons_repo_basepath = local.gitops_addons_basepath
       addons_repo_path     = local.gitops_addons_path
       addons_repo_revision = local.gitops_addons_revision
-      addons_repo_secret_key = var.secret_name_git_data_addons
+      addons_repo_secret_key = local.gitops_addons_repo_secret_key
     },
     {
       fleet_repo_url      = local.gitops_fleet_url
       fleet_repo_basepath = local.gitops_fleet_basepath
       fleet_repo_path     = local.gitops_fleet_path
       fleet_repo_revision = local.gitops_fleet_revision
-      fleet_repo_secret_key = var.secret_name_git_data_fleet
+      fleet_repo_secret_key = local.gitops_fleet_repo_secret_key
 
     },
     {
@@ -147,14 +148,14 @@ locals {
       platform_repo_basepath = local.gitops_platform_basepath
       platform_repo_path     = local.gitops_platform_path
       platform_repo_revision = local.gitops_platform_revision
-      platform_repo_secret_key = var.secret_name_git_data_platform
+      platform_repo_secret_key = local.gitops_platform_repo_secret_key
     },
     {
       workload_repo_url      = local.gitops_workload_url
       workload_repo_basepath = local.gitops_workload_basepath
       workload_repo_path     = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
-      workload_repo_secret_key = var.secret_name_git_data_workload
+      workload_repo_secret_key = local.gitops_workload_repo_secret_key
     },
     {
       karpenter_namespace = local.karpenter.namespace
@@ -315,7 +316,7 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_groups = {
-    initial = {
+    "${local.name}" = {
       instance_types = ["m5.large"]
 
       # Attach additional IAM policies to the Karpenter node IAM role

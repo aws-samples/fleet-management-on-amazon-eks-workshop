@@ -1,9 +1,7 @@
-variable "ssh_key_basepath" {
-  description = "path to .ssh directory"
+variable "project_context_prefix" {
+  description = "Prefix for project"
   type        = string
-  # For AWS EC2 override with
-  # export TF_VAR_ssh_key_basepath="/home/ec2-user/.ssh"
-  default = "~/.ssh"
+  default     = "eks-fleet-workshop-gitops"
 }
 
 variable "secret_name_ssh_secrets" {
@@ -12,31 +10,11 @@ variable "secret_name_ssh_secrets" {
   default     = "git-ssh-secrets-fleet-workshop"
 }
 
-variable "secret_name_git_data_fleet" {
-  description = "Secret name for Git data fleet"
-  type        = string
-  default     = "eks-fleet-workshop/git-data-fleet"
+
+variable "gitops_fleet_repo_name" {
+  description = "Git repository name for addons"
+  default     = "eks-fleet-workshop-gitops-fleet"
 }
-
-variable "secret_name_git_data_addons" {
-  description = "Secret name for Git data addons"
-  type        = string
-  default     = "eks-fleet-workshop/git-data-addons"
-}
-
-variable "secret_name_git_data_platform" {
-  description = "Secret name for Git data platform"
-  type        = string
-  default     = "eks-fleet-workshop/git-data-platform"
-}
-
-variable "secret_name_git_data_workload" {
-  description = "Secret name for Git data workload"
-  type        = string
-  default     = "eks-fleet-workshop/git-data-workload"
-}
-
-
 variable "gitops_fleet_basepath" {
   description = "Git repository base path for addons"
   default     = ""
@@ -49,11 +27,11 @@ variable "gitops_fleet_revision" {
   description = "Git repository revision/branch/ref for addons"
   default     = "HEAD"
 }
-variable "gitops_fleet_repo_name" {
-  description = "Git repository name for addons"
-  default     = "gitops-fleet"
-}
 
+variable "gitops_addons_repo_name" {
+  description = "Git repository name for addons"
+  default     = "eks-fleet-workshop-gitops-addons"
+}
 variable "gitops_addons_basepath" {
   description = "Git repository base path for addons"
   default     = ""
@@ -66,11 +44,11 @@ variable "gitops_addons_revision" {
   description = "Git repository revision/branch/ref for addons"
   default     = "HEAD"
 }
-variable "gitops_addons_repo_name" {
-  description = "Git repository name for addons"
-  default     = "fleet-gitops-addons"
-}
 
+variable "gitops_platform_repo_name" {
+  description = "Git repository name for platform"
+  default     = "eks-fleet-workshop-gitops-platform"
+}
 variable "gitops_platform_basepath" {
   description = "Git repository base path for platform"
   default     = ""
@@ -83,11 +61,12 @@ variable "gitops_platform_revision" {
   description = "Git repository revision/branch/ref for workload"
   default     = "HEAD"
 }
-variable "gitops_platform_repo_name" {
-  description = "Git repository name for platform"
-  default     = "fleet-gitops-platform"
-}
 
+
+variable "gitops_workload_repo_name" {
+  description = "Git repository name for workload"
+  default     = "eks-fleet-workshop-gitops-apps"
+}
 variable "gitops_workload_basepath" {
   description = "Git repository base path for workload"
   default     = ""
@@ -100,7 +79,9 @@ variable "gitops_workload_revision" {
   description = "Git repository revision/branch/ref for workload"
   default     = "HEAD"
 }
-variable "gitops_workload_repo_name" {
-  description = "Git repository name for workload"
-  default     = "fleet-gitops-apps"
+
+variable "ssm_parameter_name_argocd_role_suffix" {
+  description = "SSM parameter name for ArgoCD role"
+  type        = string
+  default     = "argocd-central-role"
 }
