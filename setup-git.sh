@@ -62,7 +62,7 @@ touch ${GITOPS_DIR}/apps/frontend/.keep
 
 # Deploy the app for this workshop
 # TODO: review with the team
-cp -r ${GITOPS_DIR}/apps/* ${ROOTDIR}/gitops/apps/
+cp -r ${ROOTDIR}/apps/* ${GITOPS_DIR}/gitops/apps/
 
 git -C ${GITOPS_DIR}/apps add . || true
 git -C ${GITOPS_DIR}/apps commit -m "initial commit" || true
