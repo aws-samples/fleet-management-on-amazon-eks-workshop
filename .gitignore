@@ -1,1 +1,4 @@
 environment/
+node_modules
+cdk
+.envrc

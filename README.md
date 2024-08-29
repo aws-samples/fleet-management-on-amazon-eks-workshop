@@ -30,9 +30,9 @@ cd $WORKSHOP_DIR
 
 Access ArgoCD UI on the Hub Cluster
 ```shell
-echo "ArgoCD URL: https://$(kubectl --context hub-cluster get svc -n argocd argo-cd-argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+echo "ArgoCD URL: https://$(kubectl --context fleet-hub-cluster get svc -n argocd argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 echo "ArgoCD Username: admin"
-echo "ArgoCD Password: $(kubectl --context hub-cluster get secrets argocd-initial-admin-secret -n argocd --template="{{index .data.password | base64decode}}")"
+echo "ArgoCD Password: $(kubectl --context fleet-hub-cluster get secrets argocd-initial-admin-secret -n argocd --template="{{index .data.password | base64decode}}")"
 ```
 
 # Module 2: Platform
