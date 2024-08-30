@@ -1,2 +1,4 @@
+tenant: "tenant1"
+environment: "prod"
 clusterName: "fleet-spoke-prod"
 secretManagerSecretName: "fleet-hub-cluster/fleet-spoke-prod"

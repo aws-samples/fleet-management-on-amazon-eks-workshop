@@ -9,7 +9,6 @@ externalSecret:
   secretStoreRefName: "fleet-eks-secret-store"
   secretStoreRefKind: "SecretStore"
   server: "self"
-  fleet_member: "spoke"
   secretManagerSecretName: ""
   clusterName: ""
 
