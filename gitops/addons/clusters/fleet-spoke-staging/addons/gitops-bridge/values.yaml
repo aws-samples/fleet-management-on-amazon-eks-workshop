@@ -10,3 +10,8 @@ addons:
     enabled: true
   kyverno:
     enabled: true
+  kyverno_policies:
+    enabled: true
+  kyverno_policy_reporter:
+    enabled: true
+      

@@ -15,11 +15,12 @@ metadata:
       Images from unknown, public registries can be of dubious quality and may not be
       scanned and secured, representing a high degree of risk. Requiring use of known, approved
       registries helps reduce threat exposure by ensuring image pulls only come from them. This
-      policy validates that container images only originate from the registry `eu.foo.io` or
-      `bar.io`. Use of this policy requires customization to define your allowable registries.
+      policy validates that container images originate from valide registries and NOT originate from the registry `k8s.gcr.io`. 
+      Use of this policy requires customization to define your non allowable or allowable registries.
 spec:
   validationFailureAction: audit
   background: true
+  failurePolicy: Fail
   rules:
   - name: validate-registries
     match:
@@ -27,7 +28,7 @@ spec:
       - resources:
           kinds:
           - Pod
-    skipBackgroundRequests: true
+    skipBackgroundRequests: false
     validate:
       message: "Unknown image registry."
       pattern:

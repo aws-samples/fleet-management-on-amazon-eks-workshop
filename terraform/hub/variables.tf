@@ -26,6 +26,8 @@ variable "addons" {
     enable_external_secrets             = true
     enable_argocd                       = true
     enable_kyverno                      = true
+    enable_kyverno_policy_reporter      = true
+    enable_kyverno_policies             = true
     enable_karpenter                    = true
     enable_cw_prometheus                = true
   }
