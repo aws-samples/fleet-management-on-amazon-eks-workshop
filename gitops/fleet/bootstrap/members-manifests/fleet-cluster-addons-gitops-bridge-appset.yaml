@@ -29,13 +29,6 @@ spec:
         path: '{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}'
         targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
         helm:
-          valuesObject:
-            repoURLValuesBasePath: '{{.metadata.annotations.addons_repo_basepath}}'
-            repoURLValuesRevision: '{{.metadata.annotations.addons_repo_revision}}'
-            repoURLGitBasePath: '{{.metadata.annotations.addons_repo_basepath}}stacks/'
-            repoURLGitRevision: '{{.metadata.annotations.addons_repo_revision}}'
-            useSelector: false
-            useStack: false
           ignoreMissingValueFiles: true
           valueFiles:
             - '$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml'

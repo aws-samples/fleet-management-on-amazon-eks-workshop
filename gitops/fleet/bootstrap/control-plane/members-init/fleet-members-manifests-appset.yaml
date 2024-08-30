@@ -15,7 +15,7 @@ spec:
           matchLabels:
             fleet_member: spoke
         values:
-          bootstrap: bootstrap/members
+          bootstrap: bootstrap/members-manifests
   template:
     metadata:
       name: 'fleet-members-{{.name}}'
