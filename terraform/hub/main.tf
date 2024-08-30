@@ -45,7 +45,7 @@ locals {
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
-  azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
 
   external_secrets = {
