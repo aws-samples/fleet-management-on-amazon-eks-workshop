@@ -18,12 +18,10 @@ data "aws_ssm_parameter" "argocd_hub_role" {
 locals {
   context_prefix = var.project_context_prefix
   name            = "fleet-spoke-${terraform.workspace}"
-  environment     = terraform.workspace
-  tenant          = "tenant1"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
-  azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
 
   external_secrets = {
@@ -90,7 +88,6 @@ locals {
   addons = merge(
     local.aws_addons,
     local.oss_addons,
-    { tenant = local.tenant },
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name }
   )
@@ -135,8 +132,6 @@ resource "aws_secretsmanager_secret" "spoke_cluster_secret" {
 resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
   secret_id = aws_secretsmanager_secret.spoke_cluster_secret.id
   secret_string = jsonencode({
-    cluster_name = module.eks.cluster_name
-    environment  = local.environment
     metadata     = local.addons_metadata
     addons       = local.addons
     server       = module.eks.cluster_endpoint
@@ -157,7 +152,7 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
 # ArgoCD EKS Access
 ################################################################################
 resource "aws_iam_role" "spoke" {
-  name               = "${local.name}-argocd-spoke"
+  name_prefix =  "${local.name}-argocd-spoke"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 

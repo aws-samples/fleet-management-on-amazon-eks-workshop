@@ -1,2 +1,4 @@
+tenant: "tenant1"
+environment: "staging"
 clusterName: "fleet-spoke-staging"
 secretManagerSecretName: "fleet-hub-cluster/fleet-spoke-staging"

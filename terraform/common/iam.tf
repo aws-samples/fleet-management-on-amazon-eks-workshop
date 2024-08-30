@@ -2,7 +2,7 @@
 # ArgoCD EKS Access
 ################################################################################
 resource "aws_iam_role" "argocd_central" {
-  name = "${local.context_prefix}-argocd-central"
+  name_prefix = "${local.context_prefix}-argocd-hub"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

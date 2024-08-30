@@ -43,10 +43,15 @@ resource "tls_private_key" "gitops" {
   rsa_bits  = 4096
 }
 
-resource "aws_iam_user" "gitops" {
-  name = "${local.context_prefix}-user"
-  path = "/"
+# Generate a random name
+resource "random_pet" "user_name" {
 }
+
+# Create an IAM user with the generated name
+resource "aws_iam_user" "gitops" {
+  name = "${local.context_prefix}-${random_pet.user_name.id}"
+}
+
 
 data "aws_iam_policy_document" "gitops_access" {
   statement {
@@ -59,7 +64,7 @@ data "aws_iam_policy_document" "gitops_access" {
 }
 
 resource "aws_iam_policy" "gitops_access" {
-  name   = "${local.context_prefix}-access"
+  name_prefix = "${local.context_prefix}-access"
   path   = "/"
   policy = data.aws_iam_policy_document.gitops_access.json
 }
