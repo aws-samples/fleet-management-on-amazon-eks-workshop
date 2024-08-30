@@ -157,7 +157,7 @@ resource "aws_secretsmanager_secret_version" "argocd_cluster_secret_version" {
 # ArgoCD EKS Access
 ################################################################################
 resource "aws_iam_role" "spoke" {
-  name               = "${local.name}-argocd-spoke"
+  name_prefix =  "${local.name}-argocd-spoke"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
