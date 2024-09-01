@@ -14,3 +14,6 @@ addons:
     enabled: true
   kyverno_policy_reporter:
     enabled: true
+  cni_metrics_helper:
+    enabled: true    
+

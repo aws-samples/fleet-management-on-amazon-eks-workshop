@@ -844,6 +844,18 @@ addons:
         - key: enable_prometheus_adapter
           operator: In
           values: ['true']
+  cni_metrics_helper:
+    enabled: false
+    releaseName: cni-metrics-helper
+    namespace: '{{default "kube-system" (index .metadata.annotations "cni_metrics_helper_namespace")}}'
+    chart: cni-metrics-helper
+    repoUrl: https://aws.github.io/eks-charts
+    targetRevision: "1.18.3"
+    selector:
+      matchExpressions:
+        - key: enable_cni_metrics_helper
+          operator: In
+          values: ['true']          
   secrets_store_csi_driver:
     enabled: false
     releaseName: secrets-store-csi-driver
