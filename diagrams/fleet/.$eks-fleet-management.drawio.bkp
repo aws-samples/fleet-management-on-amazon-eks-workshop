@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-08-31T11:06:56.374Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="6GsylqW7-ObtjNgNQPVe" version="21.6.5" type="device" pages="2">
+<mxfile host="Electron" modified="2024-08-31T11:07:12.142Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="8SBVGVzzA_ALBzAzuTsM" version="21.6.5" type="device" pages="2">
   <diagram id="3FToq-QCRbWzc2E6MP9X" name="Main Diagram">
     <mxGraphModel dx="2937" dy="2134" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -268,6 +268,9 @@
         </mxCell>
         <mxCell id="1G-n5d3yBlW8iNRkShIX-12" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Spoke Secret2&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1G-n5d3yBlW8iNRkShIX-10">
           <mxGeometry y="40" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1G-n5d3yBlW8iNRkShIX-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="tkxHN70T__dW7CbQtTiW-30" source="mfKo--lvspIeH97b_MuE-33" target="1G-n5d3yBlW8iNRkShIX-11">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
