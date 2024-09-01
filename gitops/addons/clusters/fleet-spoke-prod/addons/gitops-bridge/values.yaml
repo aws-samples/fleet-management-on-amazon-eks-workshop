@@ -10,7 +10,10 @@ addons:
     enabled: true
   kyverno:
     enabled: true
-  kyverno_policies:
+  argocd:
     enabled: true
-  kyverno_policy_reporter:
+  external_secrets:
     enabled: true
+  cni_metrics_helper:
+    enabled: true    
+

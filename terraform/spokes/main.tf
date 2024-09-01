@@ -67,6 +67,8 @@ locals {
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
     enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
     enable_cw_prometheus                         = try(var.addons.enable_cw_prometheus, false)
+    enable_cni_metrics_helper                    = try(var.addons.enable_cni_metrics_helper, false)
+    
   }
   oss_addons = {
     enable_argocd                          = try(var.addons.enable_argocd, false)
@@ -88,8 +90,12 @@ locals {
     enable_vpa                             = try(var.addons.enable_vpa, false)
   }
   addons = merge(
-    local.aws_addons,
-    local.oss_addons,
+    #
+    # GitOps bridge does not use enable_XXXXX labels on the cluster secret in argocd. 
+    # Labels are removed to avoid confusion
+    #
+    #local.aws_addons,
+    #local.oss_addons,
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name }
   )
@@ -303,6 +309,17 @@ module "eks" {
       })
     }
   }
+  node_security_group_additional_rules = {
+      # Allows Control Plane Nodes to talk to Worker nodes vpc cni metrics port
+      vpc_cni_metrics_traffic = {
+        description                   = "Cluster API to node 61678/tcp vpc cni metrics"
+        protocol                      = "tcp"
+        from_port                     = 61678
+        to_port                       = 61678
+        type                          = "ingress"
+        source_cluster_security_group = true
+      }
+    }    
   node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag

@@ -14,3 +14,6 @@ addons:
     enabled: true
   external_secrets:
     enabled: true
+  cni_metrics_helper:
+    enabled: true    
+
