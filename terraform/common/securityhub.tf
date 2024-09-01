@@ -82,4 +82,5 @@ resource "aws_securityhub_insight" "kyverno_require-run-as-nonroot" {
       value      = "NOTIFIED"
     }
   }
+
 }
