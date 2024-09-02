@@ -36,8 +36,9 @@ spec:
         targetRevision: '{{metadata.annotations.platform_repo_revision}}'
         helm:
           releaseName: '{{path.basename}}'
+          ignoreMissingValueFiles: true
           valueFiles:
-          - '../../teams/{{path.basename}}/{{metadata.labels.environment}}-values.yaml'
+          - '../../teams/{{path.basename}}/namespaces-{{metadata.labels.environment}}-values.yaml'
       destination:
         name: '{{name}}'
       syncPolicy:

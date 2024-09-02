@@ -9,10 +9,6 @@ projects:
   description: Team Project
   destinations:
   - namespace: ui
-    name: fleet-spoke-prod
-  - namespace: assets
-    name: fleet-spoke-prod
-  - namespace: ui
     name: fleet-spoke-staging
   - namespace: assets
     name: fleet-spoke-staging

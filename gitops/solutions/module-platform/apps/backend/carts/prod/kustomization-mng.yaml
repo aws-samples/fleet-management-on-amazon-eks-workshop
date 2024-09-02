@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../base
+
+configMapGenerator:
+- name: carts
+  behavior: merge
+  literals:
+  - CARTS_DYNAMODB_TABLENAME=Items-Prod
+patches:
+  - patch: |-
+      apiVersion: dynamodb.services.k8s.aws/v1alpha1
+      kind: Table
+      metadata:
+        name: items
+      spec:
+        tableName: Items-Prod
+  - patch: |-
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: carts
+        annotations:
+          eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/carts-prod-role
