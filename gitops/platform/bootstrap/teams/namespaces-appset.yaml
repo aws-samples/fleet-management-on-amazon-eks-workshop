@@ -28,6 +28,7 @@ spec:
         environment: '{{metadata.labels.environment}}'
         team: '{{path.basename}}'
         workloads: 'true'
+        namespaces: 'true'
     spec:
       project: default
       source:
