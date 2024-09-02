@@ -1,0 +1,7 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ui
+spec:
+  maxReplicas: 5
+  minReplicas: 3

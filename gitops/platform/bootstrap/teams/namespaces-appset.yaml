@@ -28,6 +28,7 @@ spec:
         environment: '{{metadata.labels.environment}}'
         team: '{{path.basename}}'
         workloads: 'true'
+        namespaces: 'true'
     spec:
       project: default
       source:
@@ -36,8 +37,9 @@ spec:
         targetRevision: '{{metadata.annotations.platform_repo_revision}}'
         helm:
           releaseName: '{{path.basename}}'
+          ignoreMissingValueFiles: true
           valueFiles:
-          - '../../teams/{{path.basename}}/{{metadata.labels.environment}}-values.yaml'
+          - '../../teams/{{path.basename}}/namespaces-{{metadata.labels.environment}}-values.yaml'
       destination:
         name: '{{name}}'
       syncPolicy:

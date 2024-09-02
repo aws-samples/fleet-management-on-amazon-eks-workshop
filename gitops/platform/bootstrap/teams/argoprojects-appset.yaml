@@ -9,19 +9,19 @@ spec:
   generators:
   - matrix:
       generators:
-        - clusters:
-            selector:
-              matchLabels:
-                argocd.argoproj.io/secret-type: cluster
-            values:
-              addonChart: argocd-apps
-              addonChartVersion: '1.4.1'
-              addonChartRepository: https://argoproj.github.io/argo-helm
-        - git:
-            repoURL: '{{metadata.annotations.platform_repo_url}}'
-            revision: '{{metadata.annotations.platform_repo_revision}}'
-            directories:
-              - path: '{{metadata.annotations.platform_repo_basepath}}teams/*'
+      - clusters:
+          selector:
+            matchLabels:
+              workloads: 'true'
+          values:
+            addonChart: argocd-apps
+            addonChartVersion: '1.4.1'
+            addonChartRepository: https://argoproj.github.io/argo-helm
+      - git:
+          repoURL: '{{metadata.annotations.platform_repo_url}}'
+          revision: '{{metadata.annotations.platform_repo_revision}}'
+          directories:
+            - path: '{{metadata.annotations.platform_repo_basepath}}teams/*'
   template:
     metadata:
       name: 'argoprojects-{{path.basename}}'
@@ -39,8 +39,9 @@ spec:
           targetRevision: '{{values.addonChartVersion}}'
           helm:
             releaseName: 'argoprojects-{{path.basename}}'
+            ignoreMissingValueFiles: true
             valueFiles:
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/argoproject-values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/argoproject-{{metadata.labels.environment}}-values.yaml'
             parameters:
               - name: "projects[0].sourceRepos[0]"
                 value: '{{metadata.annotations.workload_repo_url}}'
