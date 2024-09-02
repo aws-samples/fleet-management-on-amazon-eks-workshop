@@ -39,6 +39,7 @@ spec:
           targetRevision: '{{values.addonChartVersion}}'
           helm:
             releaseName: 'argoprojects-{{path.basename}}'
+            ignoreMissingValueFiles: true
             valueFiles:
             - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/argoproject-{{metadata.labels.environment}}-values.yaml'
             parameters:
