@@ -129,7 +129,6 @@ spec:
         {{- include "gitops-bridge.labels" $ | nindent 8 }}
         {{- if $addon.labelsApp }}{{- toYaml $addon.labelsApp | nindent 8 }}{{- end }}
         component: '{{ $nameNormalize }}'
-        addon: 'true'
         environment: '{{`{{.metadata.labels.environment}}`}}'
         cluster: '{{`{{.name}}`}}'
     spec:
