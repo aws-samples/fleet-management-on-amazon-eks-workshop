@@ -13,10 +13,10 @@ spec:
           selector:
             matchLabels:
               workloads: 'true'
-            values:
-              addonChart: argocd-apps
-              addonChartVersion: '1.4.1'
-              addonChartRepository: https://argoproj.github.io/argo-helm
+          values:
+            addonChart: argocd-apps
+            addonChartVersion: '1.4.1'
+            addonChartRepository: https://argoproj.github.io/argo-helm
       - git:
           repoURL: '{{metadata.annotations.platform_repo_url}}'
           revision: '{{metadata.annotations.platform_repo_revision}}'
