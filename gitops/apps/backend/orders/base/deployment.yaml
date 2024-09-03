@@ -66,12 +66,15 @@ spec:
             - configMapRef:
                 name: orders
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop:
               - ALL
             readOnlyRootFilesystem: true
             runAsNonRoot: true
-            runAsUser: 1000
+            runAsUser: 1000 # appuser
+            allowPrivilegeEscalation: false
           image: "public.ecr.aws/aws-containers/retail-store-sample-orders:0.4.0"
           imagePullPolicy: IfNotPresent
           ports:
