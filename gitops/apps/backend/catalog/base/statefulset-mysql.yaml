@@ -43,6 +43,16 @@ spec:
                   key: password
             - name: MYSQL_DATABASE
               value: catalog
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
           ports:
             - name: mysql
               containerPort: 3306

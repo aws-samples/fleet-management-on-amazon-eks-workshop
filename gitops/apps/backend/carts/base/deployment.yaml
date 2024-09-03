@@ -38,13 +38,16 @@ spec:
             - configMapRef:
                 name: carts
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop:
               - ALL
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
-          image: "public.ecr.aws/aws-containers/retail-store-sample-cart:0.4.0"
+            allowPrivilegeEscalation: false
+          image: "public.ecr.aws/aws-containers/retail-store-sample-cart:0.7.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -58,10 +61,10 @@ spec:
             periodSeconds: 3
           resources:
             limits:
-              memory: 256Mi
+              memory: 1Gi
             requests:
               cpu: 250m
-              memory: 256Mi
+              memory: 1Gi
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume

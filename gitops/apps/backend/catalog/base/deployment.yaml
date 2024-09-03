@@ -44,12 +44,15 @@ spec:
             - configMapRef:
                 name: catalog
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop:
               - ALL
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
+            #allowPrivilegeEscalation: false
           image: "public.ecr.aws/aws-containers/retail-store-sample-catalog:0.4.0"
           imagePullPolicy: IfNotPresent
           ports:

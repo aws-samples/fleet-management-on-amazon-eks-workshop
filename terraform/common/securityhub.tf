@@ -1,4 +1,4 @@
-#resource "aws_securityhub_account" "example" {}
+
 
 resource "aws_securityhub_insight" "kyverno_disallow_privileged" {
   group_by_attribute = "ProductName"
@@ -82,5 +82,4 @@ resource "aws_securityhub_insight" "kyverno_require-run-as-nonroot" {
       value      = "NOTIFIED"
     }
   }
-
 }

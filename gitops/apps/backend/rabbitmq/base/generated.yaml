@@ -148,7 +148,7 @@ spec:
       port: 15672
       targetPort: stats
       nodePort: null
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: rabbitmq
 ---
@@ -211,8 +211,15 @@ spec:
           image: public.ecr.aws/bitnami/rabbitmq:3.11.1-debian-11-r0
           imagePullPolicy: "IfNotPresent"
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
             runAsNonRoot: true
-            runAsUser: 1001
+            runAsUser: 1001 # appuser
+            allowPrivilegeEscalation: false
           lifecycle:
             preStop:
               exec:

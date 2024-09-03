@@ -33,10 +33,15 @@ spec:
             - configMapRef:
                 name: assets
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop:
               - ALL
             readOnlyRootFilesystem: false
+            #runAsNonRoot: true
+            runAsUser: 999 # nginx
+            allowPrivilegeEscalation: false
           image: "public.ecr.aws/aws-containers/retail-store-sample-assets:0.4.0"
           imagePullPolicy: IfNotPresent
           ports:

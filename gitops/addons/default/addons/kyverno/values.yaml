@@ -117,6 +117,7 @@ config:
     # additional EKS
     - '[*,amazon-cloudwatch,*]'
     - '[*,amazon-guardduty,*]'
+    - '[*,argocd,*]'
 
 
 features:
