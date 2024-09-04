@@ -103,7 +103,7 @@ locals {
     enable_keda                            = try(var.addons.enable_keda, false)
     enable_kyverno                         = try(var.addons.enable_kyverno, false)
     enable_kyverno_policy_reporter         = try(var.addons.enable_kyverno_policy_reporter, false)
-    enable_kyverno_policies                = try(var.addons.enable_kyverno_policies, false)  
+    enable_kyverno_policies                = try(var.addons.enable_kyverno_policies, false)
     enable_kube_prometheus_stack           = try(var.addons.enable_kube_prometheus_stack, false)
     enable_metrics_server                  = try(var.addons.enable_metrics_server, false)
     enable_prometheus_adapter              = try(var.addons.enable_prometheus_adapter, false)
@@ -112,7 +112,7 @@ locals {
   }
   addons = merge(
     #
-    # GitOps bridge does not use enable_XXXXX labels on the cluster secret in argocd. 
+    # GitOps bridge does not use enable_XXXXX labels on the cluster secret in argocd.
     # Labels are removed to avoid confusion
     #
     #local.aws_addons,
@@ -183,7 +183,7 @@ locals {
   argocd_apps = {
     addons    = file("${path.module}/bootstrap/addons.yaml")
     fleet    = file("${path.module}/bootstrap/fleet.yaml")
-    #workload    = file("${path.module}/bootstrap/workload.yaml")    
+    #workload    = file("${path.module}/bootstrap/workload.yaml")
   }
 
   tags = {
@@ -337,13 +337,13 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      # taints = local.aws_addons.enable_karpenter ? {
-      #   dedicated = {
-      #     key    = "CriticalAddonsOnly"
-      #     operator   = "Exists"
-      #     effect    = "NO_SCHEDULE"
-      #   }
-      # } : {}
+      taints = local.aws_addons.enable_karpenter ? {
+        dedicated = {
+          key    = "CriticalAddonsOnly"
+          operator   = "Exists"
+          effect    = "NO_SCHEDULE"
+        }
+      } : {}
     }
   }
 
@@ -391,7 +391,7 @@ module "eks" {
         type                          = "ingress"
         source_cluster_security_group = true
       }
-    }  
+    }
   node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag

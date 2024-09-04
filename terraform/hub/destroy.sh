@@ -16,6 +16,11 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+  kubectl delete applicationsets.argoproj.io -n argocd cluster-addons
+  kubectl delete applicationsets.argoproj.io -n argocd fleet-control-plane
+  kubectl delete applicationsets.argoproj.io -n argocd fleet-members-init
+  kubectl delete applicationsets.argoproj.io -n argocd fleet-members
+  kubectl delete applicationsets.argoproj.io -n argocd fleet-spoke-argocd
   scale_down_karpenter_nodes
   # delete all load balancers
   kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
@@ -24,8 +29,6 @@ if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
     echo "Deleting service $name in namespace $namespace of type $type"
     kubectl delete service "$name" -n "$namespace"
   done
-  # metric server leaves this behind
-  kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap" -auto-approve

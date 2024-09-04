@@ -19,6 +19,9 @@ spec:
   template:
     metadata:
       name: 'fleet-members-{{.name}}'
+      finalizers:
+      # This is here only for workshop purposes. In a real-world scenario, you should not use this
+      - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
       sources:

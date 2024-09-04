@@ -25,6 +25,8 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+  kubectl delete applicationsets.argoproj.io -n argocd web-store-backend
+  kubectl delete applicationsets.argoproj.io -n argocd web-store-frontend
   scale_down_karpenter_nodes
   # delete all load balancers
   kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
