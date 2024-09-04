@@ -25,6 +25,8 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+fi
+if kubectl get nodes; then
   # wait until all the argocd applications are gone from the namespace argocd
   # To know if all argocd apps are gone we need to parse the output of kubectl get applications.argocd -n argocd and check if it contains "No resources found"
   while [[ $(kubectl get applications.argoproj.io -n argocd 2>&1) != *"No resources found"* ]]; do

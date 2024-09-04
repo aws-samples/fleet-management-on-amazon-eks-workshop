@@ -16,6 +16,8 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+fi
+if kubectl get nodes; then
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd cluster-addons
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-control-plane
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members-init
