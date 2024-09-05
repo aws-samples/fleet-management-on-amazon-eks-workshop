@@ -29,10 +29,14 @@ fi
 if kubectl get nodes; then
   # wait until all the argocd applications are gone from the namespace argocd
   # To know if all argocd apps are gone we need to parse the output of kubectl get applications.argocd -n argocd and check if it contains "No resources found"
-  while [[ $(kubectl get applications.argoproj.io -n argocd 2>&1) != *"No resources found"* ]]; do
-    echo "Waiting for all argocd applications to be deleted by hub cluster destroy.sh: https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/terraform/hub/destroy.sh"
-    sleep 60
-  done
+  if kubectl get crd applications.argoproj.io; then
+
+    while [[ $(kubectl get applications.argoproj.io -n argocd 2>&1) != *"No resources found"* ]]; do
+      echo "Waiting for all argocd applications to be deleted by hub cluster destroy.sh: https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/terraform/hub/destroy.sh"
+      sleep 60
+    done
+
+  fi
 
   scale_down_karpenter_nodes
   # delete all load balancers
