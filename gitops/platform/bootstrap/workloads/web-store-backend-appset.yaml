@@ -14,7 +14,7 @@ spec:
                 matchExpressions:
                   - key: environment
                     operator: In
-                    values: [staging]
+                    values: [staging, prod]
               values:
                 team: backend
           - git:
