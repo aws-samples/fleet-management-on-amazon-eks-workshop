@@ -858,6 +858,9 @@ addons:
         - key: enable_cni_metrics_helper
           operator: In
           values: ['true']
+    values:
+      env:
+        AWS_CLUSTER_ID: '{{.metadata.annotations.aws_cluster_name}}'
   secrets_store_csi_driver:
     enabled: false
     releaseName: secrets-store-csi-driver

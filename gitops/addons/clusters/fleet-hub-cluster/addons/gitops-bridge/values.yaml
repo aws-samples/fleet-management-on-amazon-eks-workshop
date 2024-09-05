@@ -15,5 +15,6 @@ addons:
   external_secrets:
     enabled: true
   cni_metrics_helper:
-    enabled: true    
-
+    enabled: true
+  cw_prometheus:
+    enabled: true
