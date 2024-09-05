@@ -156,7 +156,7 @@ module "karpenter" {
 # VPC CNI Helper
 ################################################################################
 resource "aws_iam_policy" "cni_metrics_helper_pod_identity_policy" {
-  name        = "cni_metrics_helper_pod_identity_policy-${terraform.workspace}"
+  name_prefix = "cni_metrics_helper_pod_identity"
   path        = "/"
   description = "Policy to allow cni metrics helper put metcics to cloudwatch"
 
@@ -180,11 +180,11 @@ module "cni_metrics_helper_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
   name = "cni-metrics-helper-${terraform.workspace}"
-  
+
   additional_policy_arns = {
     "cni-metrics-help" : aws_iam_policy.cni_metrics_helper_pod_identity_policy.arn
-  } 
-  
+  }
+
   # Pod Identity Associations
   associations = {
     addon = {
