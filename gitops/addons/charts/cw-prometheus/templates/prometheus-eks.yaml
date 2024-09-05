@@ -219,7 +219,7 @@ data:
                     "^karpenter_nodes_terminated$"
                   ]
                 },
-                {								
+                {
                   "source_labels": ["job"],
                   "label_matcher": "^karpenter$",
                   "dimensions": [
@@ -538,7 +538,6 @@ spec:
               mountPath: /etc/cwagentconfig
             - name: prometheus-config
               mountPath: /etc/prometheusconfig
-
       volumes:
         - name: prometheus-cwagentconfig
           configMap:
@@ -548,3 +547,7 @@ spec:
             name: prometheus-config
       terminationGracePeriodSeconds: 60
       serviceAccountName: cwagent-prometheus
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}

@@ -25,16 +25,27 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+fi
+if kubectl get nodes; then
+  # wait until all the argocd applications are gone from the namespace argocd
+  # To know if all argocd apps are gone we need to parse the output of kubectl get applications.argocd -n argocd and check if it contains "No resources found"
+  if kubectl get crd applications.argoproj.io; then
+
+    while [[ $(kubectl get applications.argoproj.io -n argocd 2>&1) != *"No resources found"* ]]; do
+      echo "Waiting for all argocd applications to be deleted by hub cluster destroy.sh: https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/terraform/hub/destroy.sh"
+      sleep 60
+    done
+
+  fi
+
   scale_down_karpenter_nodes
   # delete all load balancers
   kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
   grep LoadBalancer | \
   while read -r name namespace type; do
     echo "Deleting service $name in namespace $namespace of type $type"
-    kubectl delete service "$name" -n "$namespace"
+    kubectl delete --cascade='foreground' service "$name" -n "$namespace"
   done
-  # metric server leaves this behind
-  kubectl delete apiservices.apiregistration.k8s.io v1beta1.metrics.k8s.io
 fi
 
 terraform -chdir=$SCRIPTDIR destroy -target="module.gitops_bridge_bootstrap_hub" -auto-approve -var-file="workspaces/${env}.tfvars"

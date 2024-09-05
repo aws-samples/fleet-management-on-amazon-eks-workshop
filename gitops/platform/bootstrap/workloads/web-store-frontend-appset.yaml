@@ -14,7 +14,7 @@ spec:
                 matchExpressions:
                   - key: environment
                     operator: In
-                    values: [staging]
+                    values: [staging, prod]
               values:
                 team: frontend
           - git:
@@ -31,6 +31,9 @@ spec:
         team: '{{values.team}}'
         component: '{{path.basename}}'
         workloads: 'true'
+      finalizers:
+      # This is here only for workshop purposes. In a real-world scenario, you should not use this
+      - resources-finalizer.argocd.argoproj.io
     spec:
       project: '{{values.team}}'
       source:
