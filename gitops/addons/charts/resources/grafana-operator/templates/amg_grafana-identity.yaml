@@ -1,0 +1,45 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: grafana-operator
+  labels:
+    dashboards: "grafana"
+spec:
+  serviceAccount:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: {{ .Values.grafana_service_account }}
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            
+          - env:
+            - name: AWS_SDK_LOAD_CONFIG
+              value: "true"
+            - name: GF_AUTH_SIGV4_AUTH_ENABLED
+              value: "true"
+            name: grafana
+  service:
+    metadata:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    spec:
+      type: LoadBalancer
+      loadBalancerClass: service.k8s.aws/nlb
+      ports:
+      - port: 80
+        targetPort: 3000
+        name: http
+        protocol: TCP
+    
+  config:
+    log:
+      mode: "console"
+    security:
+      admin_user: root
+      admin_password: reinvent2024
+

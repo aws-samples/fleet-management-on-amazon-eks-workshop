@@ -70,6 +70,11 @@ configs:
       type: helm
       url: public.ecr.aws
       enableOCI: 'true'
+    ghcr.io:
+      name: ghcr.io
+      type: helm
+      url: ghcr.io
+      enableOCI: 'true'
   cm:
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane
     resource.exclusions: |

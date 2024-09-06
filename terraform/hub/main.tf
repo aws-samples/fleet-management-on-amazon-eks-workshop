@@ -177,6 +177,12 @@ locals {
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
+    },
+    {
+      amp_endpoint_url = "${aws_prometheus_workspace.amp.prometheus_endpoint}"
+    },
+    {
+      grafana_service_account = aws_iam_role.grafana_irsa_role.arn
     }
   )
 

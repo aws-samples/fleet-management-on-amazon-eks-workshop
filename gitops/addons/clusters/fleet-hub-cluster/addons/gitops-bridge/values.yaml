@@ -18,3 +18,7 @@ addons:
     enabled: true
   cw_prometheus:
     enabled: true
+  kube_prometheus_stack:
+    enabled: true
+  grafana_operator:
+    enabled: true
