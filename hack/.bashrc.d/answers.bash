@@ -38,3 +38,33 @@ function app_url_staging (){
 function app_prod_staging (){
   wait-for-lb $(kubectl --context fleet-prod-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
+
+function apps_fix_kyverno_insights (){
+  # Fix Kyverno Insights
+
+  cp $WORKSHOP_DIR/gitops/solutions/module-kyverno/apps/backend/catalog/base/deployment.yaml $GITOPS_DIR/apps/backend/catalog/base/deployment.yaml
+  cp $WORKSHOP_DIR/gitops/solutions/module-kyverno/apps/frontend/assets/base/deployment.yaml $GITOPS_DIR/apps/frontend/assets/base/deployment.yaml
+  cp $WORKSHOP_DIR/gitops/solutions/module-kyverno/apps/frontend/ui/base/deployment.yaml $GITOPS_DIR/apps/frontend/ui/base/deployment.yaml
+  git -C $GITOPS_DIR/apps status
+  git -C $GITOPS_DIR/apps diff | cat
+  git -C $GITOPS_DIR/apps add .
+  git -C $GITOPS_DIR/apps commit -m "Fix Kyverno in catalog"
+  git -C $GITOPS_DIR/apps push
+
+}
+
+function apps_default_kyverno_insights (){
+  # restore default deployment
+
+  # Create the production cluster
+  mkdir $GITOPS_DIR/fleet/members/fleet-spoke-prod
+  cp $WORKSHOP_DIR/gitops/apps/backend/catalog/base/deployment.yaml $GITOPS_DIR/apps/backend/catalog/base/deployment.yaml
+  cp $WORKSHOP_DIR/gitops/apps/frontend/ui/base/deployment.yaml $GITOPS_DIR/apps/frontend/ui/base/deployment.yaml
+  cp $WORKSHOP_DIR/gitops/apps/frontend/assets/base/deployment.yaml $GITOPS_DIR/apps/frontend/assets/base/deployment.yaml
+  git -C $GITOPS_DIR/apps status
+  git -C $GITOPS_DIR/apps diff | cat
+  git -C $GITOPS_DIR/apps add .
+  git -C $GITOPS_DIR/apps commit -m "Fix Kyverno in catalog"
+  git -C $GITOPS_DIR/apps push
+
+}
