@@ -750,12 +750,44 @@ addons:
     namespace: '{{default "kube-prometheus-stack" (index .metadata.annotations "kube_prometheus_stack_namespace")}}'
     chart: kube-prometheus-stack
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "61.7.1"
+    targetRevision: "62.4.0"
     selector:
       matchExpressions:
         - key: enable_kube_prometheus_stack
           operator: In
           values: ['true']
+  grafana_operator:
+    enabled: false
+    releaseName: grafana-operator
+    namespace: '{{default "grafana-operator" (index .metadata.annotations "grafana_operator_namespace")}}'
+    chart: grafana/helm-charts/grafana-operator
+    repoUrl: ghcr.io
+    targetRevision: "v5.12.0"
+    selector:
+      matchExpressions:
+        - key: enable_grafana_operator
+          operator: In
+          values: ['true']
+
+    resources:
+      path: charts/resources/grafana-operator
+      helm:
+        valuesObject:
+          AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
+          AMP_AWS_REGION: '{{.metadata.annotations.aws_region}}'
+          grafana_service_account: '{{.metadata.annotations.grafana_service_account}}'
+          GRAFANA_APISERVER_BASIC_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/apiserver/apiserver-basic.json'
+          GRAFANA_APISERVER_ADVANCED_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/apiserver/apiserver-advanced.json'
+          GRAFANA_APISERVER_TROUBLESHOOTING_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/apiserver/apiserver-troubleshooting.json'
+          GRAFANA_CLUSTER_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/cluster.json'
+          GRAFANA_KUBELET_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/kubelet.json'
+          GRAFANA_NSWRKLDS_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/namespace-workloads.json'
+          GRAFANA_NODEEXP_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/nodeexporter-nodes.json'
+          GRAFANA_NODES_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/nodes.json'
+          GRAFANA_WORKLOADS_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/workloads.json'
+          GRAFANA_FLEET_DASH_URL: 'https://aws-observability-solutions.s3.amazonaws.com/EKS/OSS/CDK/v3.0.0/grafana-dashboards/infrastructure/fleet-monitoring.json'
+
+
   kyverno:
     enabled: false
     releaseName: kyverno
@@ -853,9 +885,36 @@ addons:
     chart: cni-metrics-helper
     repoUrl: https://aws.github.io/eks-charts
     targetRevision: "1.18.3"
+    values:
+      env:
+        AWS_CLUSTER_ID: '{{.metadata.annotations.aws_cluster_name}}'
     selector:
       matchExpressions:
         - key: enable_cni_metrics_helper
+          operator: In
+          values: ['true']
+  kube_state_metrics:
+    enabled: false
+    releaseName: kube-state-metrics
+    namespace: '{{default "kube-system" (index .metadata.annotations "kube_state_metrics_namespace")}}'
+    chart: kube-state-metrics
+    repoUrl: https://prometheus-community.github.io/helm-charts
+    targetRevision: "5.15.2"
+    selector:
+      matchExpressions:
+        - key: enable_kube_state_metrics
+          operator: In
+          values: ['true']
+  prometheus_node_exporter:
+    enabled: false
+    releaseName: prometheus-node-exporter
+    namespace: '{{default "prometheus-node-exporter" (index .metadata.annotations "prometheus_node_exporter_namespace")}}'
+    chart: prometheus-node-exporter
+    repoUrl: https://prometheus-community.github.io/helm-charts
+    targetRevision: "4.24.0"
+    selector:
+      matchExpressions:
+        - key: enable_prometheus_node_exporter
           operator: In
           values: ['true']
     values:
