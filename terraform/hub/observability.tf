@@ -9,11 +9,8 @@ locals{
     scrape_timeout  = "10s"
 }
 
-
-#Managed Prometheus workspace
-resource "aws_prometheus_workspace" "amp" {
-  alias = "fleet-hub"
-  tags  = local.tags
+data "aws_ssm_parameter" "amp_arn" {
+  name = "${local.context_prefix}-${var.amazon_managed_prometheus_suffix}-arn"
 }
 
 resource "aws_prometheus_scraper" "fleet-scraper" {
@@ -26,14 +23,10 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
   }
   destination {
     amp {
-      workspace_arn = aws_prometheus_workspace.amp.arn
+       workspace_arn = data.aws_ssm_parameter.amp_arn.value
     }
   }
-  
   alias = "fleet-hub"
-  #scrape_configuration = file("${path.module}/../common/scraper-config.yaml")
-  #scrape_configuration = replace(replace(file("${path.module}/../common/scraper-config.yaml"), "{scrape_interval}", local.scrape_interval), "{scrape_timeout}",local.scrape_timeout, "{cluster}", local.name), "{region}",local.region,"{account_id}", data.aws_caller_identity.current.account_id)
-  #scrape_configuration = replace(replace(file("${path.module}/../common/scraper-config.yaml"), "**scrape_interval**", local.scrape_interval), "**scrape_timeout**",local.scrape_timeout, "**cluster**", local.name), "**region**",local.region,"**account_id**", data.aws_caller_identity.current.account_id)
   scrape_configuration = replace(
     replace(
       replace(

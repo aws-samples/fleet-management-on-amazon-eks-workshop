@@ -70,3 +70,9 @@ variable "ssm_parameter_name_argocd_role_suffix" {
   type        = string
   default     = "argocd-central-role"
 }
+
+variable "amazon_managed_prometheus_suffix" {
+  description = "SSM parameter name for Amazon Manged Prometheus"
+  type        = string
+  default     = "amp-hub"
+}

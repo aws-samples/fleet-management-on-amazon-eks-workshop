@@ -179,7 +179,7 @@ locals {
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     },
     {
-      amp_endpoint_url = "${aws_prometheus_workspace.amp.prometheus_endpoint}"
+      amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
     },
     {
       grafana_service_account = aws_iam_role.grafana_irsa_role.arn
@@ -196,6 +196,10 @@ locals {
     Blueprint  = local.name
     GithubRepo = "github.com/gitops-bridge-dev/gitops-bridge"
   }
+}
+
+data "aws_ssm_parameter" "amp_endpoint" {
+  name = "${local.context_prefix}-${var.amazon_managed_prometheus_suffix}-endpoint"
 }
 
 
