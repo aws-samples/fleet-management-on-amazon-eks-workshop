@@ -376,7 +376,7 @@ def get_argo_app_details(cluster, account_id, region):
     data = []
     logger.info(f"Checking for argo projects on cluster {cluster}, account {account_id} and region {region}")
     try:
-        command_parts = "kubectl get applications --namespace argocd -o json | jq -r '.items[] | [.metadata.name, .spec.source.repoURL, .status.health.status, .status.sync.status, .status.operationState.phase, .status.sourceType, .status.operationState.finishedAt] + (.status.resources[] | [.kind, .name, .namespace, .health.status, .status, .version]) | join(\", \")'"     
+        command_parts = "kubectl get applications --namespace argocd -o json | jq -r '.items[] | [.metadata.name, (.spec.source.repoURL // .spec.sources[].repoURL), .status.health.status, .status.sync.status, .status.operationState.phase, (.status.sourceType // .status.sourceTypes[]), .status.operationState.finishedAt] + (.status.resources[] | [.kind, .name, .namespace, .health.status, .status, .version]) | join(\", \")'"     
         argo_resources = subprocess.check_output(command_parts, shell=True).decode().strip().split('\n')
         for item in argo_resources:
             app_details = item.rstrip(',').split(',')
