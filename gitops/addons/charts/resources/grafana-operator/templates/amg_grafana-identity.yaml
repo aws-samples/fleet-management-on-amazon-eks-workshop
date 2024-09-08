@@ -15,7 +15,7 @@ spec:
       template:
         spec:
           containers:
-            
+
           - env:
             - name: AWS_SDK_LOAD_CONFIG
               value: "true"
@@ -27,15 +27,16 @@ spec:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    spec:
-      type: LoadBalancer
-      loadBalancerClass: service.k8s.aws/nlb
-      ports:
-      - port: 80
-        targetPort: 3000
-        name: http
-        protocol: TCP
-    
+    # Commenting out the LoadBalancer to avoid exposing as http in public internet, will look into making this secure
+    # spec:
+    #   type: LoadBalancer
+    #   loadBalancerClass: service.k8s.aws/nlb
+    #   ports:
+    #   - port: 80
+    #     targetPort: 3000
+    #     name: http
+    #     protocol: TCP
+
   config:
     log:
       mode: "console"
