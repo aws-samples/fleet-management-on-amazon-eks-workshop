@@ -14,7 +14,7 @@ spec:
             fleet_member: spoke
         values:
           addonChart: argo-cd
-          addonChartVersion: "7.3.11"
+          addonChartVersion: "7.5.2"
           addonChartReleaseName: argocd
           addonChartRepository: https://argoproj.github.io/argo-helm
   template:

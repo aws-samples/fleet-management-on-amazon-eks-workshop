@@ -60,7 +60,7 @@ addons:
     namespace: argocd
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "7.4.1"
+    targetRevision: "7.5.2"
     selector:
       matchExpressions:
         - key: enable_argocd
