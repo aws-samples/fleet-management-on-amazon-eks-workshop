@@ -18,3 +18,5 @@ addons:
     enabled: true
   cw_prometheus:
     enabled: true
+  argocd:
+    enabled: false # ArgoCD is disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet
