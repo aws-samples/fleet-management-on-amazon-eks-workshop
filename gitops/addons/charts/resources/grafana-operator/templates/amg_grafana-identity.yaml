@@ -15,32 +15,31 @@ spec:
       template:
         spec:
           containers:
+          - name: grafana
+            env:
+              - name: AWS_SDK_LOAD_CONFIG
+                value: "true"
+              - name: GF_AUTH_SIGV4_AUTH_ENABLED
+                value: "true"
 
-          - env:
-            - name: AWS_SDK_LOAD_CONFIG
-              value: "true"
-            - name: GF_AUTH_SIGV4_AUTH_ENABLED
-              value: "true"
-            name: grafana
   service:
     metadata:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
         service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    # Commenting out the LoadBalancer to avoid exposing as http in public internet, will look into making this secure
-    # spec:
-    #   type: LoadBalancer
-    #   loadBalancerClass: service.k8s.aws/nlb
-    #   ports:
-    #   - port: 80
-    #     targetPort: 3000
-    #     name: http
-    #     protocol: TCP
 
   config:
-    log:
-      mode: "console"
-    security:
-      admin_user: root
-      admin_password: reinvent2024
-
+    users:
+      home_page: "/dashboards"
+    auth:
+      disable_login: "true"
+      disable_login_form: "true"
+    auth.anonymous:
+      enabled: "true"
+      # specify role for unauthenticated users, This is Admin only for EKS Fleet Workshop do not setup like this in production
+      org_role: "Admin"
+    server:
+      # The full public facing url, This is the redirect for the EKS Fleet Workshop IDE port forward use will run the following command kubectl --context fleet-hub-cluster -n grafana-operator port-forward svc/grafana-service 3000:3000
+      root_url: "/proxy/3000/"
+      # Serve Grafana from subpath specified in `root_url` setting. By default it is set to `false` for compatibility reasons.
+      serve_from_sub_path: "true"
