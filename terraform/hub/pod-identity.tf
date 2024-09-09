@@ -210,3 +210,30 @@ module "cni_metrics_helper_pod_identity" {
   }
   tags = local.tags
 }
+
+################################################################################
+# Grafana operator
+################################################################################
+
+module "grafana_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "grafana-sa"
+
+  additional_policy_arns = {
+     "PrometheusQueryAccess" = "arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess"
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "grafana-operator"
+      service_account = "grafana-sa"
+    }
+  }
+
+  tags = local.tags
+}
+

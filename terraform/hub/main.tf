@@ -180,9 +180,6 @@ locals {
     },
     {
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
-    },
-    {
-      grafana_service_account = aws_iam_role.grafana_irsa_role.arn
     }
   )
 
