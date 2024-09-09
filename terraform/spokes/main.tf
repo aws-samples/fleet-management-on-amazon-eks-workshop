@@ -123,13 +123,20 @@ locals {
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
-    }
+    },
+    {
+      amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
+    }    
   )
 
   tags = {
     Blueprint  = local.name
     GithubRepo = "github.com/gitops-bridge-dev/gitops-bridge"
   }
+}
+
+data "aws_ssm_parameter" "amp_endpoint" {
+  name = "${local.context_prefix}-${var.amazon_managed_prometheus_suffix}-endpoint"
 }
 
 resource "aws_secretsmanager_secret" "spoke_cluster_secret" {

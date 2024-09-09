@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 16032,
   "graphTooltip": 0,
-  "id": 28,
+  "id": 19,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -56,6 +56,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "agents and nodes should match\n\nnormal pods + preemptible pods should match\nthe assigned ip addresses count,\nmodulo pods using the host network",
@@ -104,7 +105,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "count(awscni_eni_max)",
+          "editorMode": "code",
+          "expr": "count(awscni_eni_max{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Agents",
@@ -114,7 +116,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(kube_node_labels)",
+          "editorMode": "code",
+          "expr": "sum(kube_node_labels{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Nodes",
@@ -194,7 +197,8 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_eni_max)",
+          "editorMode": "code",
+          "expr": "sum(awscni_eni_max{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Max",
@@ -205,7 +209,8 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_eni_allocated)",
+          "editorMode": "code",
+          "expr": "sum(awscni_eni_allocated{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Allocated",
@@ -217,6 +222,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Max: max IP addresses reachable with these nodes\n\nAssigned: IP addresses assigned to pods",
@@ -265,7 +271,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_ip_max-1)",
+          "editorMode": "code",
+          "expr": "sum(awscni_ip_max{cluster=\"$cluster\"}-1)",
           "instant": false,
           "interval": "",
           "legendFormat": "Max",
@@ -275,7 +282,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_assigned_ip_addresses)",
+          "editorMode": "code",
+          "expr": "sum(awscni_assigned_ip_addresses{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Assigned",
@@ -287,6 +295,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Warm: total - assigned, already allocated and available\n\nCold: max - total, could be allocated",
@@ -335,7 +344,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_total_ip_addresses-1-awscni_assigned_ip_addresses)",
+          "editorMode": "code",
+          "expr": "sum(awscni_total_ip_addresses-1-awscni_assigned_ip_addresses{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Warm",
@@ -345,7 +355,8 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_ip_max-awscni_total_ip_addresses)",
+          "editorMode": "code",
+          "expr": "sum(awscni_ip_max-awscni_total_ip_addresses{cluster=\"$cluster\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "Cold",
@@ -357,6 +368,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -441,27 +453,33 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_assigned_ip_addresses)",
+          "editorMode": "code",
+          "expr": "sum(awscni_assigned_ip_addresses{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "assigned to pods",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_total_ip_addresses-1)",
+          "editorMode": "code",
+          "expr": "sum(awscni_total_ip_addresses{cluster=\"$cluster\"}-1)",
           "interval": "",
           "legendFormat": "total number",
+          "range": true,
           "refId": "C"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum(awscni_ip_max-1)",
+          "editorMode": "code",
+          "expr": "sum(awscni_ip_max{cluster=\"$cluster\"}-1)",
           "interval": "",
           "legendFormat": "max that can be allocated",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -528,12 +546,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "count_values(\"value\", 100*awscni_eni_allocated/awscni_eni_max)",
+          "expr": "count_values(\"value\", 100*awscni_eni_allocated{cluster=\"$cluster\"}/awscni_eni_max{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "{{value}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -594,12 +614,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(awscni_eni_allocated/awscni_eni_max)/count(awscni_eni_allocated)",
+          "expr": "sum(awscni_eni_allocated{cluster=\"$cluster\"}/awscni_eni_max{cluster=\"$cluster\"})/count(awscni_eni_allocated{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -660,12 +682,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(awscni_assigned_ip_addresses/(awscni_total_ip_addresses-1))/count(awscni_assigned_ip_addresses)",
+          "expr": "sum(awscni_assigned_ip_addresses{cluster=\"$cluster\"}/(awscni_total_ip_addresses{cluster=\"$cluster\"}-1))/count(awscni_assigned_ip_addresses{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -761,24 +785,28 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum (rate(awscni_add_ip_req_count[$__rate_interval]))",
+          "expr": "sum (rate(awscni_add_ip_req_count{cluster=\"$cluster\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "add",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum (rate(awscni_del_ip_req_count[$__rate_interval]))",
+          "expr": "sum (rate(awscni_del_ip_req_count{cluster=\"$cluster\"}[$__rate_interval]))",
           "hide": false,
           "interval": "",
           "legendFormat": "del",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -839,23 +867,27 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
-          "expr": "sum(awscni_force_removed_enis)",
+          "editorMode": "code",
+          "expr": "sum(awscni_force_removed_enis{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "ENI",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(awscni_force_removed_ips)",
+          "expr": "sum(awscni_force_removed_ips{cluster=\"$cluster\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "IP",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -917,12 +949,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum (awscni_del_ip_req_count{reason!=\"PodDeleted\"})",
+          "expr": "sum (awscni_del_ip_req_count{cluster=\"$cluster\",reason!=\"PodDeleted\"})",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1015,12 +1049,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (reason) (awscni_del_ip_req_count{reason!=\"PodDeleted\"})",
+          "expr": "sum by (reason) (awscni_del_ip_req_count{cluster=\"$cluster\",reason!=\"PodDeleted\"})",
           "interval": "",
           "legendFormat": "{{reason}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1029,6 +1065,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Zero is good",
@@ -1090,9 +1127,11 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count[$__interval]))",
+          "editorMode": "code",
+          "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count{cluster=\"$cluster\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{api}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1101,6 +1140,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Non zero means errors or IP addresses leaks",
@@ -1185,9 +1225,11 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count[$__interval]))",
+          "editorMode": "code",
+          "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count{cluster=\"$cluster\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{api}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1229,6 +1271,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1240,6 +1285,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
@@ -1298,7 +1344,8 @@
           "sortDesc": false
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.3.2",
@@ -1306,12 +1353,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "avg by (api)(rate(awscni_aws_api_latency_ms_sum[5m])/rate(awscni_aws_api_latency_ms_count[5m]))",
+          "expr": "avg by (api)(rate(awscni_aws_api_latency_ms_sum{cluster=\"$cluster\"}[5m])/rate(awscni_aws_api_latency_ms_count{cluster=\"$cluster\"}[5m]))",
           "interval": "",
           "legendFormat": "{{api}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1320,6 +1369,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -1329,6 +1379,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1340,6 +1393,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1390,7 +1444,8 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.3.2",
@@ -1399,9 +1454,11 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (fn) (awscni_ipamd_action_inprogress)",
+          "editorMode": "code",
+          "expr": "sum by (fn) (awscni_ipamd_action_inprogress{cluster=\"$cluster\"})",
           "interval": "",
           "legendFormat": "{{fn}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1420,6 +1477,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1431,6 +1491,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1481,7 +1542,8 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.3.2",
@@ -1489,10 +1551,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(awscni_reconcile_count[5m])) by (fn)",
+          "expr": "sum(rate(awscni_reconcile_count{cluster=\"$cluster\"}[5m])) by (fn)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{fn}}",
@@ -1528,6 +1591,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -1537,7 +1601,8 @@
             "align": "auto",
             "cellOptions": {
               "type": "auto"
-            }
+            },
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -1560,7 +1625,9 @@
       },
       "id": 40,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -1569,13 +1636,14 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "10.4.3",
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "awscni_assigned_ip_addresses",
+          "editorMode": "code",
+          "expr": "awscni_assigned_ip_addresses{cluster=\"$cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1612,6 +1680,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "reason=PodDeleted is normal",
@@ -1621,7 +1690,8 @@
             "align": "auto",
             "cellOptions": {
               "type": "auto"
-            }
+            },
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -1657,7 +1727,9 @@
       },
       "id": 41,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -1667,13 +1739,14 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "10.4.3",
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "awscni_del_ip_req_count",
+          "editorMode": "code",
+          "expr": "awscni_del_ip_req_count{cluster=\"$cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1711,6 +1784,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -1720,7 +1794,8 @@
             "align": "auto",
             "cellOptions": {
               "type": "auto"
-            }
+            },
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -1747,7 +1822,9 @@
       },
       "id": 42,
       "options": {
+        "cellHeight": "sm",
         "footer": {
+          "countRows": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -1756,13 +1833,14 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "10.4.3",
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "awscni_aws_api_error_count",
+          "editorMode": "code",
+          "expr": "awscni_aws_api_error_count{cluster=\"$cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1821,7 +1899,7 @@
         "current": {
           "selected": false,
           "text": "grafana-operator-amp-datasource",
-          "value": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+          "value": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
         },
         "hide": 0,
         "includeAll": false,
@@ -1837,10 +1915,9 @@
       },
       {
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "10.0.21.66:61678",
+          "value": "10.0.21.66:61678"
         },
         "datasource": {
           "uid": "$datasource"
@@ -1868,10 +1945,9 @@
       },
       {
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "PodDeleted",
+          "value": "PodDeleted"
         },
         "datasource": {
           "uid": "$datasource"
@@ -1895,6 +1971,34 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "fleet-hub-cluster",
+          "value": "fleet-hub-cluster"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+        },
+        "definition": "label_values(up{job=\"aws-cni-metrics\"},cluster)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "cluster",
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(up{job=\"aws-cni-metrics\"},cluster)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -1920,6 +2024,6 @@
   "timezone": "",
   "title": "AWS CNI Metrics",
   "uid": "aws-cni-metrics",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

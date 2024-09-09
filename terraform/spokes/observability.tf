@@ -1,8 +1,3 @@
- resource "aws_cloudwatch_dashboard" "cni-helper-cw-dashboard" {
-  dashboard_name = "VPC-CNI"
-  dashboard_body = replace( file("vpc-cni-dw-dashboard.json"),"**aws_region**", local.region )
-
-}
 
 locals{
     scrape_interval = "30s"
@@ -50,34 +45,5 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
   )
  
 }
-
-
-
-# module "grafana_pod_identity" {
-#   source = "terraform-aws-modules/eks-pod-identity/aws"
-#   version = "~> 1.4.0"
-
-#   name = "grafana-sa"
-
-#   #amazon_managed_service_prometheus_workspace_arns = [aws_prometheus_workspace.amp.arn]
-#   additional_policy_arns = {
-#     "PrometheusQueryAccess ": "arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess"
-#   }
-
-
-#   # Pod Identity Associations
-#   association_defaults = {
-#     namespace       = "grafana-operator"
-#   }
-#   associations = {
-#     server = {
-#       cluster_name = module.eks.cluster_name
-#       service_account = "grafana-sa"
-#     }
-#   }
-
-#   tags = local.tags
-# }
-
 
 
