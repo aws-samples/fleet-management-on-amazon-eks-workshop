@@ -1,7 +1,6 @@
 name: backend
 labels:
   environment: prod
-  app.kubernetes.io/created-by: eks-fleet-workshop
 networkPolicies:
   enabled: true
   egress:
