@@ -1,11 +1,37 @@
 name: frontend
 labels:
   environment: staging
+  app.kubernetes.io/created-by: eks-fleet-workshop
+networkPolicies:
+  enabled: true
+  egress:
+    deny:
+      all:
+        # -- create a NetworkPolicy that denies all outgoing traffic
+        enabled: true
+    allow:
+      dns:
+        # -- create a NetworkPolicy that allows outgoing traffic to the Kubernetes DNS
+        enabled: true
+        # -- The namespace where the Kubneretes DNS is running
+        namespace: "kube-system"
+  ingress:
+    deny:
+      all:
+        # -- create a NetworkPolicy that denies all incoming traffic
+        enabled: true
 namespaces:
   assets:
     labels:
       additionalLabels:
         app.kubernetes.io/created-by: eks-workshop
+      podSecurityAdmission:
+        audit:
+          standard: baseline
+        enforce:
+          standard: baseline
+        warn:
+          standard: baseline
     limitRanges:
     - name: default
       labels:
@@ -34,10 +60,39 @@ namespaces:
           - operator : In
             scopeName: PriorityClass
             values: ["high"]
+    networkPolicies:
+    - name: allow-ingress-from-ui
+      spec:
+        podSelector: {}
+        policyTypes:
+        - Ingress
+        ingress:
+        - from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: ui
+    roleBindings:
+    - name: view
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: view
+      subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: Group
+        name: frontend-team-view
+
   ui:
     labels:
       additionalLabels:
         app.kubernetes.io/created-by: eks-workshop
+      podSecurityAdmission:
+        audit:
+          standard: baseline
+        enforce:
+          standard: baseline
+        warn:
+          standard: baseline
     limitRanges:
     - name: default
       labels:
@@ -66,3 +121,45 @@ namespaces:
           - operator : In
             scopeName: PriorityClass
             values: ["high"]
+    networkPolicies:
+    - name: allow-ingress-from-vpc
+      spec:
+        podSelector: {}
+        policyTypes:
+        - Ingress
+        ingress:
+        - from:
+          - ipBlock:
+              cidr: 10.0.0.0/8
+    - name: allow-egress-to-services
+      spec:
+        podSelector: {}
+        policyTypes:
+        - Egress
+        egress:
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: assets
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: orders
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: checkout
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: carts
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: catalog
+    roleBindings:
+    - name: view
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: view
+      subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: Group
+        name: frontend-team-view
