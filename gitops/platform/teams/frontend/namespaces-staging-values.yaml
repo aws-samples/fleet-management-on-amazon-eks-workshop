@@ -1,7 +1,6 @@
 name: frontend
 labels:
   environment: staging
-  app.kubernetes.io/created-by: eks-fleet-workshop
 networkPolicies:
   enabled: true
   egress:
