@@ -14,6 +14,14 @@ data "aws_ssm_parameter" "argocd_hub_role" {
   name = "${local.context_prefix}-${var.ssm_parameter_name_argocd_role_suffix}"
 }
 
+# Reading parameter created by common terraform module for team backend and frontend IAM roles
+data "aws_ssm_parameter" "backend_team_view_role" {
+  name  = "${local.context_prefix}-${var.backend_team_view_role_suffix}"
+}
+data "aws_ssm_parameter" "frontend_team_view_role" {
+  name  = "${local.context_prefix}-${var.frontend_team_view_role_suffix}"
+}
+
 
 locals {
   context_prefix = var.project_context_prefix
@@ -126,7 +134,7 @@ locals {
     },
     {
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
-    }    
+    }
   )
 
   tags = {
@@ -253,6 +261,16 @@ module "eks" {
           }
         }
       }
+    }
+    backend_team = {
+      user_name = "backend-team"
+      kubernetes_groups = ["backend-team-view"]
+      principal_arn     = data.aws_ssm_parameter.backend_team_view_role.value
+    }
+    frontend_team = {
+      user_name = "frontend-team"
+      kubernetes_groups = ["frontend-team-view"]
+      principal_arn     = data.aws_ssm_parameter.backend_team_view_role.value
     }
   }
 

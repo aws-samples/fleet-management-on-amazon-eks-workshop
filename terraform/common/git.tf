@@ -1,4 +1,4 @@
-data "aws_region" "current" {}
+
 
 locals {
   gitops_repos = {
