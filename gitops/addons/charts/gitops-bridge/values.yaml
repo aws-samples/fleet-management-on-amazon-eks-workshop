@@ -811,21 +811,27 @@ addons:
     enabled: false
     releaseName: kyverno-policy-reporter
     namespace: '{{default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
-    chart: policy-reporter
+    #chart: policy-reporter
+    chart: policy-reporter-preview
     repoUrl: https://kyverno.github.io/policy-reporter
-    targetRevision: "2.24.1"
+    targetRevision: '3.0.0-beta.13'
     selector:
       matchExpressions:
         - key: enable_kyverno_policy_reporter
           operator: In
           values: ['true']
     values:
+      banner: '{{.metadata.annotations.aws_cluster_name}}' 
+      image:
+        tag: 2e8fd3d         
       serviceAccount:
         name: policy-reporter
 
-      kyverno-plugin:
-        enabled: true
+      plugin:
+        kyverno:
+          enabled: true
       ui:
+        banner: '{{.metadata.annotations.aws_cluster_name}}'
         enabled: true
         service:
           annotations:
@@ -839,7 +845,7 @@ addons:
           accountID: '{{.metadata.annotations.aws_account_id}}'
           region: '{{.metadata.annotations.aws_region}}'
           productName: '{{.metadata.annotations.aws_cluster_name}}'
-          skipExistingOnStartup: true
+          skipExistingOnStartup: false
           delayInSeconds: 10
           customFields:
             cluster: '{{.metadata.annotations.aws_cluster_name}}'

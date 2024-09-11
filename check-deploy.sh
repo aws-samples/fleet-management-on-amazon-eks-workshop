@@ -73,7 +73,7 @@ echo ""
 
 # Check if CodeCommit repositories exist
 echo "Checking if CodeCommit repositories exist..."
-repo_names=("fleet-gitops-apps" "fleet-gitops-platform" "fleet-gitops-addons")
+repo_names=("fleet-gitops-apps" "fleet-gitops-platform" "fleet-gitops-addons" "eks-fleet-workshop-gitops-platform" "eks-fleet-workshop-gitops-fleet" "eks-fleet-workshop-gitops-apps" "eks-fleet-workshop-gitops-addons")
 repos_to_delete=()
 
 for repo_name in "${repo_names[@]}"; do
@@ -560,7 +560,7 @@ if [ "$ASK_DELETE" = true ]; then
                                 role_name=$(echo "$arn" | cut -d'/' -f5)
                                 access_entry_id=$(echo "$arn" | cut -d'/' -f6)
                                 set -x
-                                aws_debug eks delete-access-entry --cluster-name "$cluster_name" --principal-arn "$role_name"
+                                aws_debug eks delete-access-entry --cluster-name "$cluster_name" --principal-arn "$access_entry_id"
                                 set +x
                                 ;;
                             "ec2")
