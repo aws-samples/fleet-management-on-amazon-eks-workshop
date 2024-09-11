@@ -3,7 +3,7 @@
 apiVersion: karpenter.sh/{{ $.Values.ApiVersion }}
 kind: NodePool
 metadata:
-  name: "{{ $k }}-{{ $v.instances.architecture | default $.Values.instances.architecture }}"
+  name: "{{ $k }}-{{ $v.instances.architecture | default $.Values.instances.architecture }}-{{ $.Values.clusterName }}"
 spec:
   template:
     metadata:

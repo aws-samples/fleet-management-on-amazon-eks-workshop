@@ -51,33 +51,22 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
  
 }
 
+################################################################################
+# Monitoring notifications
+################################################################################
+resource "aws_sns_topic" "fleet-alerts" {
+  name = "fleet-alerts"
+}
 
+resource "aws_sqs_queue" "fleet_alerts_queue" {
+  name = "fleet_alerts"
+}
 
-# module "grafana_pod_identity" {
-#   source = "terraform-aws-modules/eks-pod-identity/aws"
-#   version = "~> 1.4.0"
-
-#   name = "grafana-sa"
-
-#   #amazon_managed_service_prometheus_workspace_arns = [aws_prometheus_workspace.amp.arn]
-#   additional_policy_arns = {
-#     "PrometheusQueryAccess ": "arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess"
-#   }
-
-
-#   # Pod Identity Associations
-#   association_defaults = {
-#     namespace       = "grafana-operator"
-#   }
-#   associations = {
-#     server = {
-#       cluster_name = module.eks.cluster_name
-#       service_account = "grafana-sa"
-#     }
-#   }
-
-#   tags = local.tags
-# }
+resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
+  topic_arn = aws_sns_topic.fleet-alerts.arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.fleet_alerts_queue.arn
+}
 
 
 
