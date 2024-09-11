@@ -821,9 +821,6 @@ addons:
           operator: In
           values: ['true']
     values:
-      banner: '{{.metadata.annotations.aws_cluster_name}}' 
-      image:
-        tag: 2e8fd3d         
       serviceAccount:
         name: policy-reporter
 
