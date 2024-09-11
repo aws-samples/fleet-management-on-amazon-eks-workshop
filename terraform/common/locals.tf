@@ -1,4 +1,4 @@
-data "aws_partition" "current" {}
+data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_iam_session_context" "current" {
   # This data source provides information on the IAM source role of an STS assumed role
