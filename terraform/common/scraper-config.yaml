@@ -438,17 +438,13 @@ scrape_configs:
       - source_labels: [__meta_kubernetes_pod_container_port_name]
         regex: metrics
         action: keep
-      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-        regex: "true"
-        action: keep
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
         regex: (.+)
         target_label: __metrics_path__
         action: replace
-      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-        regex: ([^:]+)(?::\d+)?;(\d+)
+      - source_labels: [__address__]
         target_label: __address__
-        replacement: ${1}:${2}
+        action: keep
       - source_labels: [__meta_kubernetes_namespace]
         regex: 'kube-system'
         action: keep

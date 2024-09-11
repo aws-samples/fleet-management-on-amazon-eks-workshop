@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 16032,
   "graphTooltip": 0,
-  "id": 19,
+  "id": 4,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1899,7 +1899,7 @@
         "current": {
           "selected": false,
           "text": "grafana-operator-amp-datasource",
-          "value": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+          "value": "86751d64-aa38-47bf-86fc-6be5bc19af19"
         },
         "hide": 0,
         "includeAll": false,
@@ -1916,8 +1916,8 @@
       {
         "current": {
           "selected": false,
-          "text": "10.0.21.66:61678",
-          "value": "10.0.21.66:61678"
+          "text": "10.0.1.198:61678",
+          "value": "10.0.1.198:61678"
         },
         "datasource": {
           "uid": "$datasource"
@@ -1974,13 +1974,13 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "fleet-hub-cluster",
           "value": "fleet-hub-cluster"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+          "uid": "86751d64-aa38-47bf-86fc-6be5bc19af19"
         },
         "definition": "label_values(up{job=\"aws-cni-metrics\"},cluster)",
         "hide": 0,
@@ -1994,10 +1994,10 @@
           "query": "label_values(up{job=\"aws-cni-metrics\"},cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       }
     ]
@@ -2024,6 +2024,6 @@
   "timezone": "",
   "title": "AWS CNI Metrics",
   "uid": "aws-cni-metrics",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }
