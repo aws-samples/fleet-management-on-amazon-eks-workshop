@@ -782,8 +782,7 @@ addons:
     #chart: policy-reporter
     chart: policy-reporter-preview
     repoUrl: https://kyverno.github.io/policy-reporter
-    #targetRevision: "2.24.1"
-    targetRevision: '3.0.0-beta.12'
+    targetRevision: '3.0.0-beta.13'
     selector:
       matchExpressions:
         - key: enable_kyverno_policy_reporter
@@ -795,9 +794,12 @@ addons:
         tag: 2e8fd3d         
       serviceAccount:
         name: policy-reporter
-      kyverno-plugin:
-        enabled: true
+
+      plugin:
+        kyverno:
+          enabled: true
       ui:
+        banner: '{{.metadata.annotations.aws_cluster_name}}'
         enabled: true
         service:
           annotations:
