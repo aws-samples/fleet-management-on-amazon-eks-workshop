@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 15762,
   "graphTooltip": 1,
-  "id": 12,
+  "id": 7,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -89,7 +89,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.1",
+      "pluginVersion": "10.4.3",
       "targets": [
         {
           "datasource": {
@@ -1326,8 +1326,8 @@
       {
         "current": {
           "selected": false,
-          "text": "No data sources found",
-          "value": ""
+          "text": "grafana-operator-amp-datasource",
+          "value": "86751d64-aa38-47bf-86fc-6be5bc19af19"
         },
         "hide": 0,
         "includeAll": false,
@@ -1343,16 +1343,15 @@
       },
       {
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "fleet-hub-cluster",
+          "value": "fleet-hub-cluster"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "${datasource}"
         },
-        "definition": "label_values(kube_node_info,cluster)",
+        "definition": "label_values(up{job=\"coredns\"},cluster)",
         "hide": 0,
         "includeAll": false,
         "multi": false,
@@ -1360,7 +1359,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(kube_node_info,cluster)",
+          "query": "label_values(up{job=\"coredns\"},cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1519,6 +1518,6 @@
   "timezone": "",
   "title": "Kubernetes / System / CoreDNS",
   "uid": "k8s_system_coredns",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

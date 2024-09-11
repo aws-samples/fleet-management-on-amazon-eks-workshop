@@ -6,10 +6,6 @@ metadata:
   labels:
     dashboards: "grafana"
 spec:
-  serviceAccount:
-    metadata:
-      annotations:
-        eks.amazonaws.com/role-arn: {{ .Values.grafana_service_account }}
   deployment:
     spec:
       template:
@@ -21,12 +17,6 @@ spec:
                 value: "true"
               - name: GF_AUTH_SIGV4_AUTH_ENABLED
                 value: "true"
-
-  service:
-    metadata:
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
-        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 
   config:
     users:
