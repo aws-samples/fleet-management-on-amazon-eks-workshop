@@ -270,7 +270,7 @@ module "eks" {
     frontend_team = {
       user_name = "frontend-team"
       kubernetes_groups = ["frontend-team-view"]
-      principal_arn     = data.aws_ssm_parameter.backend_team_view_role.value
+      principal_arn     = data.aws_ssm_parameter.frontend_team_view_role.value
     }
   }
 
