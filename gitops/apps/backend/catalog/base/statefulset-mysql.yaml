@@ -60,6 +60,12 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi              
       volumes:
         - name: data
           emptyDir: {}

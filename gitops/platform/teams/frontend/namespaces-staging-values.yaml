@@ -35,8 +35,8 @@ namespaces:
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # MAx cpu is not recommended
           min:
             cpu: 100m
           type: Container
@@ -44,9 +44,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-ingress-from-ui
       spec:
@@ -83,8 +83,8 @@ namespaces:
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # MAx cpu is not recommended
           min:
             cpu: 100m
           type: Container
@@ -92,8 +92,8 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
+          cpu: "4"
+          memory: 4Gi
           pods: "5"
     networkPolicies:
     - name: allow-ingress-from-vpc

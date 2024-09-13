@@ -320,8 +320,11 @@ spec:
                 - -ec
                 - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
           resources:
-            limits: {}
-            requests: {}
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
           volumeMounts:
             - name: configuration
               mountPath: /bitnami/rabbitmq/conf
