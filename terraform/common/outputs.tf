@@ -9,13 +9,8 @@ output "git_secrets_names" {
   description = "The names of the AWS Secrets for the Git repositories"
 }
 
-output "ssh_secret_name" {
-  value       = aws_secretsmanager_secret.ssh_secrets.name
-  description = "Secret name for the SSH private key"
-}
-
 output "gitops_user_name" {
-  value       = aws_iam_user.gitops.name
+  value       = var.gitea_user
   description = "Name of the IAM user created for GitOps access"
 }
 
