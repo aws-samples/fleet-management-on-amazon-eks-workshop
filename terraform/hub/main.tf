@@ -215,8 +215,8 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = local.gitops_addons_private_key
-      insecureIgnoreHostKey = "true"
+      username              = local.gitops_username
+      password              = local.gitops_password
     }
     git-fleet = {
       type                  = "git"

@@ -17,6 +17,10 @@ SSH_CONFIG_START_BLOCK="### START BLOCK AWS Workshop ###"
 SSH_CONFIG_END_BLOCK="### END BLOCK AWS Workshop ###"
 SSH_CONFIG_HOST="git-codecommit.*.amazonaws.com"
 
+GIT_CREDS="$HOME/.git-credentials"
+GIT_USER="workshop-user"
+GIT_PASS=${GIT_PASS:-$(uuidgen)}
+
 aws secretsmanager get-secret-value --secret-id $SSH_SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 
 if [ ! -f "$SSH_CONFIG_FILE" ]; then
@@ -43,6 +47,13 @@ chmod 600 $SSH_PRIVATE_KEY_FILE
 ssh-keyscan git-codecommit.$AWS_REGION.amazonaws.com >> ~/.ssh/known_hosts
 
 
+# Setup for HTTPs Gitea
+GITEA_URL=${IDE_URL}/gitea
+cat >> $GIT_CREDS << EOT
+${GITEA_URL/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+EOT
+
+git config credential.helper 'store'
 
 # Clone and initialize the gitops repositories
 gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTECXT_PREFIX}-workloads --query SecretString --output text | jq -r .url)"

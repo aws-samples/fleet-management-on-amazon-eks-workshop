@@ -26,77 +26,15 @@ locals {
       path     = var.gitops_workload_path
       revision = var.gitops_workload_revision
     }
-  }
 
-  git_secrets_version_locals = {
-    private_key = tls_private_key.gitops.private_key_pem
-    org         = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
-    repo_prefix = "v1/repos/"
   }
+  gitea_user = var.gitea_user
+  gitea_password = var.gitea_password
 
   git_secrets_urls  = { for repo_key, repo in local.gitops_repos : repo_key => "${local.git_secrets_version_locals.org}/${local.git_secrets_version_locals.repo_prefix}${repo.name}" }
   git_secrets_names = { for repo_key, repo in local.gitops_repos : repo_key => "${local.context_prefix}-${repo_key}" }
 }
 
-resource "tls_private_key" "gitops" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-# Generate a random name
-resource "random_pet" "user_name" {
-}
-
-# Create an IAM user with the generated name
-resource "aws_iam_user" "gitops" {
-  name = "${local.context_prefix}-${random_pet.user_name.id}"
-}
-
-
-data "aws_iam_policy_document" "gitops_access" {
-  statement {
-    actions = [
-      "codecommit:GitPull",
-      "codecommit:GitPush",
-    ]
-    resources = [for repo in aws_codecommit_repository.gitops_repos : repo.arn]
-  }
-}
-
-resource "aws_iam_policy" "gitops_access" {
-  name_prefix = "${local.context_prefix}-access"
-  path   = "/"
-  policy = data.aws_iam_policy_document.gitops_access.json
-}
-
-resource "aws_iam_user_policy_attachment" "gitops_access" {
-  user       = aws_iam_user.gitops.name
-  policy_arn = aws_iam_policy.gitops_access.arn
-}
-
-resource "aws_iam_user_ssh_key" "gitops" {
-  username   = aws_iam_user.gitops.name
-  encoding   = "SSH"
-  public_key = tls_private_key.gitops.public_key_openssh
-}
-
-resource "aws_secretsmanager_secret" "ssh_secrets" {
-  name                    = "${local.context_prefix}-ssh-key"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "ssh_secrets_version" {
-  secret_id = aws_secretsmanager_secret.ssh_secrets.id
-  secret_string = jsonencode({
-    private_key = tls_private_key.gitops.private_key_pem
-  })
-}
-
-resource "aws_codecommit_repository" "gitops_repos" {
-  for_each        = local.gitops_repos
-  repository_name = each.value.name
-  description     = "CodeCommit repository for ArgoCD ${each.key}"
-}
 
 resource "aws_secretsmanager_secret" "git_secrets" {
   for_each                = local.gitops_repos
@@ -109,6 +47,8 @@ resource "aws_secretsmanager_secret_version" "git_secrets_version" {
   secret_id = each.value.id
   secret_string = jsonencode({
     private_key = local.git_secrets_version_locals.private_key
+    username  = local.gitea_user
+    password    = local.gitea_password
     url         = local.git_secrets_urls[each.key]
     org         = local.git_secrets_version_locals.org
     repo        = "${local.git_secrets_version_locals.repo_prefix}${local.gitops_repos[each.key].name}"
