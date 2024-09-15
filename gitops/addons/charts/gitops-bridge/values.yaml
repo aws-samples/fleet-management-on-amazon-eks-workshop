@@ -775,7 +775,7 @@ addons:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
           AMP_AWS_REGION: '{{.metadata.annotations.aws_region}}'
-          
+
   kyverno:
     enabled: false
     releaseName: kyverno
@@ -899,10 +899,10 @@ addons:
   prometheus_node_exporter:
     enabled: false
     releaseName: prometheus-node-exporter
-    namespace: '{{default "prometheus-node-exporter" (index .metadata.annotations "prometheus_node_exporter_namespace")}}'
+    namespace: '{{default "kube-prometheus-stack" (index .metadata.annotations "prometheus_node_exporter_namespace")}}'
     chart: prometheus-node-exporter
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "4.24.0"
+    targetRevision: "4.39.0"
     selector:
       matchExpressions:
         - key: enable_prometheus_node_exporter
