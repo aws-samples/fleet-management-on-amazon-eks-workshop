@@ -82,6 +82,22 @@ data:
                 },
                 {
                   "source_labels": ["job"],
+                  "label_matcher": "^karpenter$",
+                  "dimensions": [
+                    ["ClusterName","nodepool"]
+                  ],
+                  "metric_selectors": [
+                    "^karpenter_nodeclaims_created$",
+                    "^karpenter_nodeclaims_disrupted$",
+                    "^karpenter_nodeclaims_drifted$",
+                    "^karpenter_nodeclaims_initialized$",
+                    "^karpenter_nodeclaims_launched$",
+                    "^karpenter_nodeclaims_registered$",
+                    "^karpenter_nodeclaims_terminated$"
+                  ]
+                },
+                {
+                  "source_labels": ["job"],
                   "label_matcher": "^coredns$",
                   "dimensions": [
                     ["ClusterName"]
