@@ -887,10 +887,10 @@ addons:
   kube_state_metrics:
     enabled: false
     releaseName: kube-state-metrics
-    namespace: '{{default "kube-system" (index .metadata.annotations "kube_state_metrics_namespace")}}'
+    namespace: '{{default "kube-prometheus-stack" (index .metadata.annotations "kube_state_metrics_namespace")}}'
     chart: kube-state-metrics
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "5.15.2"
+    targetRevision: "5.25.1"
     selector:
       matchExpressions:
         - key: enable_kube_state_metrics
@@ -908,9 +908,7 @@ addons:
         - key: enable_prometheus_node_exporter
           operator: In
           values: ['true']
-    values:
-      env:
-        AWS_CLUSTER_ID: '{{.metadata.annotations.aws_cluster_name}}'
+
   secrets_store_csi_driver:
     enabled: false
     releaseName: secrets-store-csi-driver
