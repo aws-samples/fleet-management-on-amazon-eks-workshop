@@ -6,6 +6,7 @@
             "inputType": "select",
             "id": "CLUSTER_ID",
             "label": "EKS Cluster",
+            "defaultValue": "fleet-hub-cluster",
             "visible": true,
             "search": "{Kubernetes,CLUSTER_ID} MetricName=assignIPAddresses",
             "populateFrom": "CLUSTER_ID"

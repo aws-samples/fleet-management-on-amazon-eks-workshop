@@ -6,9 +6,21 @@
             "inputType": "select",
             "id": "ClusterName",
             "label": "Cluster name",
+            "defaultValue": "fleet-hub-cluster",
             "visible": true,
             "search": "{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=karpenter_nodepool_limit",
             "populateFrom": "ClusterName"
+        },
+        {
+            "type": "property",
+            "property": "nodepool",
+            "inputType": "select",
+            "id": "nodepool",
+            "label": "Node pool",
+            "defaultValue": "nodes-default-amd64-fleet-hub-cluster",
+            "visible": true,
+            "search": "ContainerInsights/Prometheus MetricName=karpenter_nodepool_limit",
+            "populateFrom": "nodepool"
         }
     ],
     "widgets": [
