@@ -31,6 +31,13 @@ locals {
   gitea_user = var.gitea_user
   gitea_password = var.gitea_password
 
+    git_secrets_version_locals = {
+    # private_key = tls_private_key.gitops.private_key_pem
+    #org         = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
+    org         = "https://${var.gitea_external_url}"
+    repo_prefix = "v1/repos/"
+  }
+
   git_secrets_urls  = { for repo_key, repo in local.gitops_repos : repo_key => "${local.git_secrets_version_locals.org}/${local.git_secrets_version_locals.repo_prefix}${repo.name}" }
   git_secrets_names = { for repo_key, repo in local.gitops_repos : repo_key => "${local.context_prefix}-${repo_key}" }
 }
@@ -46,8 +53,8 @@ resource "aws_secretsmanager_secret_version" "git_secrets_version" {
   for_each  = aws_secretsmanager_secret.git_secrets
   secret_id = each.value.id
   secret_string = jsonencode({
-    private_key = local.git_secrets_version_locals.private_key
-    username  = local.gitea_user
+    #private_key = local.git_secrets_version_locals.private_key
+    username    = local.gitea_user
     password    = local.gitea_password
     url         = local.git_secrets_urls[each.key]
     org         = local.git_secrets_version_locals.org
