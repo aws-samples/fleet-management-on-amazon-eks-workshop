@@ -81,4 +81,3 @@ resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
 }
 
 
-

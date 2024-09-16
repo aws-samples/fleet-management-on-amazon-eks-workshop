@@ -16,9 +16,12 @@ addons:
     enabled: true
   cw_prometheus:
     enabled: true
-  kube_prometheus_stack:
-    enabled: true
   grafana_operator:
     enabled: true
   argocd:
     enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
+  prometheus_node_exporter:
+    enabled: true
+  kube_state_metrics:
+    enabled: true
+
