@@ -1898,8 +1898,8 @@
       {
         "current": {
           "selected": false,
-          "text": "grafana-operator-amp-datasource",
-          "value": "686a718d-cd6c-48cf-8d1f-08c83827d78f"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -1914,15 +1914,12 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "10.0.8.238:61678",
-          "value": "10.0.8.238:61678"
+        "current": {     
         },
         "datasource": {
           "uid": "$datasource"
         },
-        "definition": "label_values(awscni_assigned_ip_addresses{job=\"aws-cni-metrics\"}, instance)",
+        "definition": "label_values(awscni_assigned_ip_addresses{job=\"$job\"},instance)",
         "hide": 2,
         "includeAll": false,
         "label": "",
@@ -1930,8 +1927,9 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(awscni_assigned_ip_addresses{job=\"aws-cni-metrics\"}, instance)",
-          "refId": "Prometheus-instance-Variable-Query"
+          "qryType": 1,
+          "query": "label_values(awscni_assigned_ip_addresses{job=\"$job\"},instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -1944,23 +1942,20 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "PodDeleted",
-          "value": "PodDeleted"
-        },
+        "current": {},
         "datasource": {
           "uid": "$datasource"
         },
-        "definition": "label_values(awscni_del_ip_req_count{job=\"aws-cni-metrics\"}, reason)",
+        "definition": "label_values(awscni_del_ip_req_count{job=\"$job\"},reason)",
         "hide": 2,
         "includeAll": false,
         "multi": false,
         "name": "ip_deletion_reason",
         "options": [],
         "query": {
-          "query": "label_values(awscni_del_ip_req_count{job=\"aws-cni-metrics\"}, reason)",
-          "refId": "Prometheus-ip_deletion_reason-Variable-Query"
+          "qryType": 1,
+          "query": "label_values(awscni_del_ip_req_count{job=\"$job\"},reason)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -1973,10 +1968,10 @@
         "useTags": false
       },
       {
-        "current": {
-          "selected": false,
-          "text": "fleet-spoke-staging",
-          "value": "fleet-spoke-staging"
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "686a718d-cd6c-48cf-8d1f-08c83827d78f"
         },
         "definition": "label_values(up,cluster)",
         "hide": 0,
@@ -1988,6 +1983,25 @@
         "query": {
           "qryType": 1,
           "query": "label_values(up,cluster)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "label_values(awscni_ip_max{cluster=\"$cluster\"},job)",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "job",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(awscni_ip_max{cluster=\"$cluster\"},job)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -2020,6 +2034,6 @@
   "timezone": "",
   "title": "AWS CNI Metrics test",
   "uid": "aws-cni-metrics-test",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
