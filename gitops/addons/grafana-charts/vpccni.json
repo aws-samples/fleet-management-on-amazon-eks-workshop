@@ -2032,8 +2032,8 @@
     ]
   },
   "timezone": "",
-  "title": "AWS CNI Metrics test",
-  "uid": "aws-cni-metrics-test",
+  "title": "AWS CNI Metrics",
+  "uid": "aws-cni-metrics",
   "version": 3,
   "weekStart": ""
 }
