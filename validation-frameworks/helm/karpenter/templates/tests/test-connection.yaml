@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "karpenter.fullname" . }}-test-resources"
+  labels:
+    {{- include "karpenter.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: {{ include "karpenter.serviceAccountName" . }}
+  containers:
+    - name: test-resources
+      image: {{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Test Deployment
+          kubectl get deployment {{ include "karpenter.fullname" . }} || exit 1
+          
+          # Test Service
+          kubectl get service {{ include "karpenter.fullname" . }} || exit 1
+          
+          # Test ServiceAccount
+          kubectl get serviceaccount {{ include "karpenter.serviceAccountName" . }} || exit 1
+          
+          {{- if .Values.webhook.enabled }}
+          # Test Webhook
+          kubectl get validatingwebhookconfiguration {{ include "karpenter.fullname" . }} || exit 1
+          {{- end }}
+          
+          # Test ClusterRole and ClusterRoleBinding
+          kubectl get clusterrole {{ include "karpenter.fullname" . }} || exit 1
+          kubectl get clusterrolebinding {{ include "karpenter.fullname" . }} || exit 1
+          
+          echo "All resources tested successfully"
+  restartPolicy: Never
