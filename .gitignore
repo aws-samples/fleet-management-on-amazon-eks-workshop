@@ -2,4 +2,4 @@ environment/
 node_modules
 cdk
 .envrc
-.DS_Store
+validation-frameworks/.DS_Store
