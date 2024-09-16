@@ -1325,9 +1325,6 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "grafana-operator-amp-datasource",
-          "value": "86751d64-aa38-47bf-86fc-6be5bc19af19"
         },
         "hide": 0,
         "includeAll": false,
@@ -1343,9 +1340,6 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "fleet-hub-cluster",
-          "value": "fleet-hub-cluster"
         },
         "datasource": {
           "type": "prometheus",
