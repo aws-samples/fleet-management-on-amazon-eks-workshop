@@ -10,4 +10,4 @@ ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 terraform -chdir=$SCRIPTDIR init --upgrade
 
 echo "Deploy Hub cluster"
-terraform -chdir=$SCRIPTDIR apply -auto-approve
+#terraform -chdir=$SCRIPTDIR apply -auto-approve

@@ -12,7 +12,7 @@ terraform -chdir=$SCRIPTDIR init --upgrade
 
 echo "Applying git resources"
 
-terraform -chdir=$SCRIPTDIR apply -auto-approve
+#terraform -chdir=$SCRIPTDIR apply -auto-approve
 
 
 if [[ ${PIPESTATUS[0]} -eq 0 ]]; then
