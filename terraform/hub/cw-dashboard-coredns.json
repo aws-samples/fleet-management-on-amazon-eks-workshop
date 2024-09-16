@@ -6,6 +6,7 @@
             "inputType": "select",
             "id": "ClusterName",
             "label": "Cluster name",
+            "defaultValue": "fleet-hub-cluster",
             "visible": true,
             "search": "{ContainerInsights/Prometheus,ClusterName} MetricName=coredns_dns_requests_total",
             "populateFrom": "ClusterName"
