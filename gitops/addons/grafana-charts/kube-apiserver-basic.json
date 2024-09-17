@@ -613,8 +613,8 @@
       {
         "current": {
           "selected": false,
-          "text": "grafana-operator-amp-datasource",
-          "value": "5ec75249-c1c7-4f19-afc9-f07bb9429126"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -631,9 +631,6 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "fleet-hub-cluster",
-          "value": "fleet-hub-cluster"
         },
         "datasource": {
           "type": "prometheus",
@@ -659,9 +656,6 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "apiserver",
-          "value": "apiserver"
         },
         "datasource": {
           "type": "prometheus",

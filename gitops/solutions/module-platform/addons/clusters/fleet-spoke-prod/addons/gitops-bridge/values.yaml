@@ -21,7 +21,8 @@ addons:
   prometheus_node_exporter:
     enabled: true
   kube_state_metrics:
-    enabled: true        
+    enabled: true    
+        
   argocd:
     enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet from the Hub Cluster
   external_secrets:
