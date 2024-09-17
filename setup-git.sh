@@ -40,7 +40,9 @@ EOT
 fi
 
 chmod 600 $SSH_CONFIG_FILE
-chmod 600 $SSH_PRIVATE_KEY_FILE
+if [ -f $SSH_PRIVATE_KEY_FILE ]; then
+  chmod 600 $SSH_PRIVATE_KEY_FILE
+fi
 
 # cat ~/.ssh/config || true
 # cat ~/.ssh/gitops_ssh.pem || true
