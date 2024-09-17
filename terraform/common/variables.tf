@@ -110,8 +110,10 @@ variable "gitea_password" {
   description = "Password to login on the Gitea instance"
   type = string
   sensitive = true
+  default = ""
 }
 variable "gitea_external_url" {
   description = "External url to access gitea (no https://)"
   type = string
+  default = ""
 }
