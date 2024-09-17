@@ -179,6 +179,7 @@ config:
     - '[*,amazon-cloudwatch,*]'
     - '[*,amazon-guardduty,*]'
     - '[*,argocd,*]'
+    - '[*,kube-prometheus-stack,*]'    
 
 
 features:
