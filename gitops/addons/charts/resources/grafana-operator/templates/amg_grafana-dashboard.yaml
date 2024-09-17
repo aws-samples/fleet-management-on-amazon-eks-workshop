@@ -1,0 +1,195 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-apiserver-basic-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_APISERVER_BASIC_DASH_URL }}
+  
+---
+
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-apiserver-advanced-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_APISERVER_ADVANCED_DASH_URL }}
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-apiserver-troubleshooting-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_APISERVER_TROUBLESHOOTING_DASH_URL }}
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-cluster-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_CLUSTER_DASH_URL }}
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-kubelet-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_KUBELET_DASH_URL }}  
+
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-namespace-workloads-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_NSWRKLDS_DASH_URL }}  
+
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-node-exporter-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_NODEEXP_DASH_URL }}  
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-nodes-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_NODES_DASH_URL }}  
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-workloads-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_WORKLOADS_DASH_URL }}  
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-fleet-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_FLEET_DASH_URL }}  
+  
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-karpenter-capacity-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_KARPENTER_CAPACITY_DASH_URL }}  
+
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-karpenter-performance-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_KARPENTER_PERFORMANCE_DASH_URL }}  
+
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-coredns-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_COREDNS_DASH_URL }}  
+
+---  
+  
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kube-vpccni-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_VPCCNI_DASH_URL }}
+
+

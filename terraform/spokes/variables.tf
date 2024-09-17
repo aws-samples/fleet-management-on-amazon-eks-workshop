@@ -18,7 +18,7 @@ variable "addons" {
     enable_cw_prometheus                = true
     enable_kyverno                      = true
     enable_kyverno_policy_reporter      = true
-    enable_kyverno_policies             = true    
+    enable_kyverno_policies             = true
   }
 }
 
@@ -39,4 +39,21 @@ variable "ssm_parameter_name_argocd_role_suffix" {
   description = "SSM parameter name for ArgoCD role"
   type        = string
   default     = "argocd-central-role"
+}
+
+variable "amazon_managed_prometheus_suffix" {
+  description = "SSM parameter name for Amazon Manged Prometheus"
+  type        = string
+  default     = "amp-hub"
+}
+
+variable "backend_team_view_role_suffix" {
+  description = "SSM parameter name for Fleet Workshop Team Backend IAM Role"
+  type        = string
+  default     = "backend-team-view-role"
+}
+variable "frontend_team_view_role_suffix" {
+  description = "SSM parameter name for Fleet Workshop Team Backend IAM Role"
+  type        = string
+  default     = "frontend-team-view-role"
 }

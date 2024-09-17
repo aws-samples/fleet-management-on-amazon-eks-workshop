@@ -7,7 +7,7 @@ variable "vpc_cidr" {
 variable "kubernetes_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.29"
+  default     = "1.30"
 }
 
 variable "kms_key_admin_roles" {
@@ -69,4 +69,10 @@ variable "ssm_parameter_name_argocd_role_suffix" {
   description = "SSM parameter name for ArgoCD role"
   type        = string
   default     = "argocd-central-role"
+}
+
+variable "amazon_managed_prometheus_suffix" {
+  description = "SSM parameter name for Amazon Manged Prometheus"
+  type        = string
+  default     = "amp-hub"
 }

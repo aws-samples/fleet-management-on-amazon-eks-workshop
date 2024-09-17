@@ -166,3 +166,74 @@ resource "aws_eks_pod_identity_association" "argocd_server" {
   role_arn        = data.aws_ssm_parameter.argocd_hub_role.value
   tags = local.tags
 }
+
+################################################################################
+# VPC CNI Helper
+################################################################################
+resource "aws_iam_policy" "cni_metrics_helper_pod_identity_policy" {
+  name_prefix = "cni_metrics_helper_pod_identity"
+  path        = "/"
+  description = "Policy to allow cni metrics helper put metcics to cloudwatch"
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "cloudwatch:PutMetricData",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+module "cni_metrics_helper_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+  name = "cni-metrics-helper"
+
+  additional_policy_arns = {
+    "cni-metrics-help" : aws_iam_policy.cni_metrics_helper_pod_identity_policy.arn
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "kube-system"
+      service_account = "cni-metrics-helper"
+    }
+  }
+  tags = local.tags
+}
+
+################################################################################
+# Grafana operator
+################################################################################
+
+module "grafana_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "grafana-sa"
+
+  additional_policy_arns = {
+     "PrometheusQueryAccess" = "arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess"
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = "grafana-operator"
+      service_account = "grafana-sa"
+    }
+  }
+
+  tags = local.tags
+}
+

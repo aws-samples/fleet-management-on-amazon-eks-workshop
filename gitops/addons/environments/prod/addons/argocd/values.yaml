@@ -1,1 +1,5 @@
 # resources for the addon
+configs:
+  cm:
+    ui.bannercontent: "Production Environment"
+    ui.bannerpermanent: "true"

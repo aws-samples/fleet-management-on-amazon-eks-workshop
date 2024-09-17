@@ -1,0 +1,35 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: grafana-operator
+  labels:
+    dashboards: "grafana"
+spec:
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: grafana
+            env:
+              - name: AWS_SDK_LOAD_CONFIG
+                value: "true"
+              - name: GF_AUTH_SIGV4_AUTH_ENABLED
+                value: "true"
+
+  config:
+    users:
+      home_page: "/dashboards"
+    auth:
+      disable_login: "true"
+      disable_login_form: "true"
+    auth.anonymous:
+      enabled: "true"
+      # specify role for unauthenticated users, This is Admin only for EKS Fleet Workshop do not setup like this in production
+      org_role: "Admin"
+    server:
+      # The full public facing url, This is the redirect for the EKS Fleet Workshop IDE port forward use will run the following command kubectl --context fleet-hub-cluster -n grafana-operator port-forward svc/grafana-service 3000:3000
+      root_url: "/proxy/3000/"
+      # Serve Grafana from subpath specified in `root_url` setting. By default it is set to `false` for compatibility reasons.
+      serve_from_sub_path: "true"

@@ -1,0 +1,99 @@
+{
+    "variables": [
+        {
+            "type": "property",
+            "property": "ClusterName",
+            "inputType": "select",
+            "id": "ClusterName",
+            "label": "Cluster name",
+            "defaultValue": "fleet-hub-cluster",
+            "visible": true,
+            "search": "{ContainerInsights/Prometheus,ClusterName} MetricName=coredns_dns_requests_total",
+            "populateFrom": "ClusterName"
+        }
+    ],
+    "widgets": [
+        {
+            "height": 6,
+            "width": 7,
+            "y": 0,
+            "x": 7,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "100*m2/m1", "label": "cache_hit_percentage", "id": "e1" } ],
+                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
+                    [ ".", "coredns_cache_hits_total", ".", ".", { "id": "m2", "visible": false } ]
+                ],
+                "view": "gauge",
+                "stacked": false,
+                "region": "**aws_region**",
+                "stat": "Sum",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 100
+                    }
+                },
+                "title": "Cache hit percentage"
+            }
+        },
+        {
+            "height": 3,
+            "width": 6,
+            "y": 3,
+            "x": 14,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "coredns_cache_entries", "ClusterName", "${ClusterName}" ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "**aws_region**",
+                "stat": "Sum",
+                "period": 300,
+                "stacked": false,
+                "setPeriodToTimeRange": true,
+                "title": "Cache entries"
+            }
+        },
+        {
+            "height": 3,
+            "width": 6,
+            "y": 0,
+            "x": 14,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "**aws_region**",
+                "stat": "Sum",
+                "period": 300,
+                "title": "Requests (total for last 5 mins)"
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "title": "CoreDNS requests total",
+                "period": 300,
+                "stat": "Sum"
+            }
+        }
+    ]
+}

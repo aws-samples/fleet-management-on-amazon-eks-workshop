@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/created-by: eks-workshop
     app.kubernetes.io/type: app
 spec:
+  #replicas: 1 # using HPA
   selector:
     matchLabels:
       app.kubernetes.io/name: ui
@@ -34,15 +35,18 @@ spec:
           envFrom:
             - configMapRef:
                 name: ui
-          securityContext:
-            capabilities:
-              add:
-              - NET_BIND_SERVICE
-              drop:
-              - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
+          # securityContext:
+          #   seccompProfile:
+          #     type: RuntimeDefault
+          #   capabilities:
+          #     add:
+          #       - NET_BIND_SERVICE
+          #     drop:
+          #       - ALL
+          #   readOnlyRootFilesystem: true
+          #   runAsNonRoot: true
+          #   runAsUser: 1000
+          #   allowPrivilegeEscalation: false
           image: "public.ecr.aws/aws-containers/retail-store-sample-ui:0.4.0"
           imagePullPolicy: IfNotPresent
           ports:
@@ -57,10 +61,10 @@ spec:
             periodSeconds: 20
           resources:
             limits:
-              memory: 500Mi
+              memory: 1.5Gi
             requests:
               cpu: 500m
-              memory: 500Mi
+              memory: 1.5Gi
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume

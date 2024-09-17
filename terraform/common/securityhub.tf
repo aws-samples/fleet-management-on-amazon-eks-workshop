@@ -1,4 +1,25 @@
-#resource "aws_securityhub_account" "example" {}
+resource "aws_securityhub_insight" "kyverno" {
+  group_by_attribute = "ProductName"
+  name               = "Kyverno Findings"
+  filters {
+    company_name {
+      comparison = "EQUALS"
+      value      = "Kyverno"
+    }
+    record_state {
+      comparison = "EQUALS"
+      value      = "ACTIVE"
+    }
+    workflow_status {
+      comparison = "EQUALS"
+      value      = "NEW"
+    }
+    workflow_status {
+      comparison = "EQUALS"
+      value      = "NOTIFIED"
+    }
+  }
+}
 
 resource "aws_securityhub_insight" "kyverno_disallow_privileged" {
   group_by_attribute = "ProductName"
@@ -26,7 +47,6 @@ resource "aws_securityhub_insight" "kyverno_disallow_privileged" {
       value      = "NOTIFIED"
     }
   }
-
 }
 
 resource "aws_securityhub_insight" "kyverno_restrict-image-registries" {
@@ -55,7 +75,6 @@ resource "aws_securityhub_insight" "kyverno_restrict-image-registries" {
       value      = "NOTIFIED"
     }
   }
-
 }
 
 resource "aws_securityhub_insight" "kyverno_require-run-as-nonroot" {
@@ -84,5 +103,4 @@ resource "aws_securityhub_insight" "kyverno_require-run-as-nonroot" {
       value      = "NOTIFIED"
     }
   }
-
 }

@@ -89,6 +89,7 @@ locals {
     enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
     enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
     enable_cw_prometheus                         = try(var.addons.enable_cw_prometheus, false)
+    enable_cni_metrics_helper                    = try(var.addons.enable_cni_metrics_helper, false)
   }
   oss_addons = {
     enable_argocd                          = try(var.addons.enable_argocd, false)
@@ -102,7 +103,7 @@ locals {
     enable_keda                            = try(var.addons.enable_keda, false)
     enable_kyverno                         = try(var.addons.enable_kyverno, false)
     enable_kyverno_policy_reporter         = try(var.addons.enable_kyverno_policy_reporter, false)
-    enable_kyverno_policies                = try(var.addons.enable_kyverno_policies, false)  
+    enable_kyverno_policies                = try(var.addons.enable_kyverno_policies, false)
     enable_kube_prometheus_stack           = try(var.addons.enable_kube_prometheus_stack, false)
     enable_metrics_server                  = try(var.addons.enable_metrics_server, false)
     enable_prometheus_adapter              = try(var.addons.enable_prometheus_adapter, false)
@@ -110,8 +111,12 @@ locals {
     enable_vpa                             = try(var.addons.enable_vpa, false)
   }
   addons = merge(
-    local.aws_addons,
-    local.oss_addons,
+    #
+    # GitOps bridge does not use enable_XXXXX labels on the cluster secret in argocd.
+    # Labels are removed to avoid confusion
+    #
+    #local.aws_addons,
+    #local.oss_addons,
     { tenant = local.tenant },
     { fleet_member = local.fleet_member },
     { kubernetes_version = local.cluster_version },
@@ -172,19 +177,26 @@ locals {
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
+    },
+    {
+      amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
     }
   )
 
   argocd_apps = {
     addons    = file("${path.module}/bootstrap/addons.yaml")
     fleet    = file("${path.module}/bootstrap/fleet.yaml")
-    #workload    = file("${path.module}/bootstrap/workload.yaml")    
+    #workload    = file("${path.module}/bootstrap/workload.yaml")
   }
 
   tags = {
     Blueprint  = local.name
     GithubRepo = "github.com/gitops-bridge-dev/gitops-bridge"
   }
+}
+
+data "aws_ssm_parameter" "amp_endpoint" {
+  name = "${local.context_prefix}-${var.amazon_managed_prometheus_suffix}-endpoint"
 }
 
 
@@ -251,7 +263,7 @@ module "gitops_bridge_bootstrap" {
   argocd = {
     name = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "7.4.1"
+    chart_version    = "7.5.2"
     values = [file("${path.module}/argocd-initial-values.yaml")]
     timeout          = 600
     create_namespace = false
@@ -332,13 +344,13 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      # taints = local.aws_addons.enable_karpenter ? {
-      #   dedicated = {
-      #     key    = "CriticalAddonsOnly"
-      #     operator   = "Exists"
-      #     effect    = "NO_SCHEDULE"
-      #   }
-      # } : {}
+      taints = local.aws_addons.enable_karpenter ? {
+        dedicated = {
+          key    = "CriticalAddonsOnly"
+          operator   = "Exists"
+          effect    = "NO_SCHEDULE"
+        }
+      } : {}
     }
   }
 
@@ -376,6 +388,17 @@ module "eks" {
       })
     }
   }
+  node_security_group_additional_rules = {
+      # Allows Control Plane Nodes to talk to Worker nodes vpc cni metrics port
+      vpc_cni_metrics_traffic = {
+        description                   = "Cluster API to node 61678/tcp vpc cni metrics"
+        protocol                      = "tcp"
+        from_port                     = 61678
+        to_port                       = 61678
+        type                          = "ingress"
+        source_cluster_security_group = true
+      }
+    }
   node_security_group_tags = merge(local.tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag

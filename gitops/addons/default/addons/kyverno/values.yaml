@@ -1,6 +1,67 @@
 # Kyverno Helm chart values
 # this snipped includes only the changeset
 
+
+crds:
+  migration:
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+
+admissionController:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
+backgroundController:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
+cleanupController:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
+reportsController:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
+webhooksCleanup:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
+cleanupJobs:
+  admissionReports:
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+
+cleanupJobs:
+  clusterAdmissionReports:
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+
+cleanupJobs:
+  updateRequests:
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+
+cleanupJobs:
+  ephemeralReports:
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+
+policyReportsCleanup:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+
 # This configuration installs with the "default" value 10 PSP based policies in audit mode.
 # This improves your cluster security without additional effort.
 #
@@ -117,6 +178,7 @@ config:
     # additional EKS
     - '[*,amazon-cloudwatch,*]'
     - '[*,amazon-guardduty,*]'
+    - '[*,argocd,*]'
 
 
 features:

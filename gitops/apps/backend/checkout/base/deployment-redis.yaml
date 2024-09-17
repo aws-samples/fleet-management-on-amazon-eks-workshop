@@ -29,3 +29,19 @@ spec:
             - name: redis
               containerPort: 6379
               protocol: TCP
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+             drop:
+             - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 999 # redis
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi

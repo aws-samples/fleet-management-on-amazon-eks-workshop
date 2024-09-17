@@ -9,8 +9,10 @@ nodeGroups:
         - m
         - r
     limits:
-      cpu: 1000
-      memory: 1000Gi
+      # cpu: 1000
+      # memory: 1000Gi
+      cpu: 50
+      memory: 50Gi      
       nvidia.com/gpu: 0
 
 instances:

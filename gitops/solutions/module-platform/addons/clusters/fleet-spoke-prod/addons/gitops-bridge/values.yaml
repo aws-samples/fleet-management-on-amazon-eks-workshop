@@ -1,0 +1,28 @@
+# values for the addon
+addons:
+  aws_load_balancer_controller:
+    enabled: true
+  aws_ebs_csi_resources:
+    enabled: true
+  metrics_server:
+    enabled: true
+  karpenter:
+    enabled: true
+  kyverno:
+    enabled: true
+  kyverno_policies:
+    enabled: true
+  kyverno_policy_reporter:
+    enabled: true    
+  cni_metrics_helper:
+    enabled: true
+  cw_prometheus:
+    enabled: true
+  prometheus_node_exporter:
+    enabled: true
+  kube_state_metrics:
+    enabled: true        
+  argocd:
+    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet from the Hub Cluster
+  external_secrets:
+    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-external-secrets ApplicationSet the Hub Cluster
