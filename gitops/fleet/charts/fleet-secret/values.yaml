@@ -15,6 +15,7 @@ externalSecret:
 
 gitSecrets:
   enabled: false
+  useHttp: true
   secretStoreRefName: "fleet-eks-secret-store"
   secretStoreRefKind: "SecretStore"
   externalSecrets:
