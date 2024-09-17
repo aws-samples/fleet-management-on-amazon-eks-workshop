@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: locust
+rules:
+- apiGroups: [""]
+  resources: ["namespaces", "services", "nodes"]
+  verbs: ["create", "get", "delete", "list", "watch", "update"]
+- apiGroups: ["karpenter.sh"]
+  resources: ["nodeclaims"]
+  verbs: ["create", "get", "delete", "list", "watch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: locust
+subjects:
+- kind: ServiceAccount
+  name: eks-loadtest-locust-worker # Change this to your ServiceAccount name
+  namespace: default # Change this to the namespace where your ServiceAccount is located
+roleRef:
+  kind: ClusterRole
+  name: locust
+  apiGroup: rbac.authorization.k8s.io

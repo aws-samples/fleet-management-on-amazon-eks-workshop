@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "karpenter.fullname" . }}-test-readiness"
+  labels:
+    {{- include "karpenter.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: {{ include "karpenter.serviceAccountName" . }}
+  containers:
+    - name: test-readiness
+      image: {{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}
+      command:
+        - /bin/sh
+        - -c
+        - |
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name={{ include "karpenter.name" . }} --timeout=120s || exit 1
+          echo "Karpenter controller is ready"
+  restartPolicy: Never

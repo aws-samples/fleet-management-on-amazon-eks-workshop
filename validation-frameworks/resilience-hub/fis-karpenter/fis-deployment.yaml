@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fis-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fis-app
+  labels:
+    name: fis-app
+  namespace: fis-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: fis-app
+  template:
+    metadata:
+      labels:
+        name: fis-app
+    spec:
+      containers:
+      - name: fis-app
+        image: weaveworksdemos/carts:0.4.8
+        env:
+         - name: JAVA_OPTS
+           value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+        resources:
+          limits:
+            cpu: 300m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+              - all
+            add:
+              - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fis-app
+  annotations:
+        prometheus.io/scrape: 'true'
+  labels:
+    name: fis-app
+  namespace: fis-demo
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 80
+  selector:
+    name: fis-app
