@@ -545,8 +545,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -613,8 +612,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -681,8 +679,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -784,8 +781,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -797,8 +793,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -815,7 +810,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -866,8 +860,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "expr": "sum(awscni_force_removed_enis{cluster=\"$cluster\"})",
@@ -878,8 +871,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -896,7 +888,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Zero is good",
@@ -948,8 +939,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -965,7 +955,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "Zero is good",
@@ -1048,8 +1037,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1352,8 +1340,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"            
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1369,7 +1356,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -1467,7 +1453,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
@@ -1550,8 +1535,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "9682bcfb-f950-445e-bfdb-00cd05a196f8"
+            "uid": "$datasource"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1970,8 +1954,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
-          "uid": "686a718d-cd6c-48cf-8d1f-08c83827d78f"
+          "uid": "$datasource"
         },
         "definition": "label_values(up,cluster)",
         "hide": 0,
@@ -2032,8 +2015,8 @@
     ]
   },
   "timezone": "",
-  "title": "AWS CNI Metrics test",
-  "uid": "aws-cni-metrics-test",
+  "title": "AWS CNI Metrics",
+  "uid": "aws-cni-metrics",
   "version": 3,
   "weekStart": ""
 }

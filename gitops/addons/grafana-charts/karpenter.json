@@ -2018,7 +2018,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "ddwpbip9sqy9se"
+          "uid": "grafana"
         },
         "definition": "label_values(label_karpenter_sh_provisioner_name)",
         "hide": 0,
