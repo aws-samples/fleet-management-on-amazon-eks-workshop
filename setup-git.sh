@@ -21,7 +21,7 @@ GIT_CREDS="$HOME/.git-credentials"
 GIT_USER="workshop-user"
 GIT_PASS=${GIT_PASS:-$(uuidgen)}
 
-aws secretsmanager get-secret-value --secret-id $SSH_SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
+#aws secretsmanager get-secret-value --secret-id $SSH_SECRET_ID --query SecretString --output text | jq -r .private_key > $SSH_PRIVATE_KEY_FILE
 
 if [ ! -f "$SSH_CONFIG_FILE" ]; then
     echo "Creating $SSH_CONFIG_FILE"
@@ -53,7 +53,9 @@ cat >> $GIT_CREDS << EOT
 ${GITEA_URL/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
 EOT
 
-git config credential.helper 'store'
+git config --global credential.helper 'store'
+git config --global init.defaultBranch main
+
 
 # Clone and initialize the gitops repositories
 gitops_workload_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTECXT_PREFIX}-workloads --query SecretString --output text | jq -r .url)"
@@ -65,7 +67,9 @@ gitops_fleet_url="$(aws secretsmanager   get-secret-value  --secret-id ${PROJECT
 rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
-git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+#git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+git init ${GITOPS_DIR}/apps
+git -C ${GITOPS_DIR}/apps remote add origin ${gitops_workload_url}
 cp -r ${ROOTDIR}/gitops/apps/*  ${GITOPS_DIR}/apps
 mkdir -p ${GITOPS_DIR}/apps/backend
 touch ${GITOPS_DIR}/apps/backend/.keep
@@ -78,10 +82,12 @@ cp -r ${ROOTDIR}/gitops/apps/* ${GITOPS_DIR}/apps/
 
 git -C ${GITOPS_DIR}/apps add . || true
 git -C ${GITOPS_DIR}/apps commit -m "initial commit" || true
-git -C ${GITOPS_DIR}/apps push  || true
+git -C ${GITOPS_DIR}/apps push -u origin main  || true
 
 # populate platform repository
-git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
+#git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
+git init ${GITOPS_DIR}/platform
+git -C ${GITOPS_DIR}/platform remote add origin ${gitops_platform_url}
 mkdir -p ${GITOPS_DIR}/platform/charts
 cp -r ${ROOTDIR}/gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
 mkdir -p ${GITOPS_DIR}/platform/bootstrap
@@ -94,16 +100,20 @@ cp -r ${ROOTDIR}/gitops/platform/teams/*  ${GITOPS_DIR}/platform/teams/
 
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
-git -C ${GITOPS_DIR}/platform push || true
+git -C ${GITOPS_DIR}/platform push -u origin main || true
 
-git clone ${gitops_addons_url} ${GITOPS_DIR}/addons
+#git clone ${gitops_addons_url} ${GITOPS_DIR}/addons
+git init ${GITOPS_DIR}/addons
+git -C ${GITOPS_DIR}/addons remote add origin ${gitops_addons_url}
 cp -r ${ROOTDIR}/gitops/addons/* ${GITOPS_DIR}/addons/
 git -C ${GITOPS_DIR}/addons add . || true
 git -C ${GITOPS_DIR}/addons commit -m "initial commit" || true
-git -C ${GITOPS_DIR}/addons push  || true
+git -C ${GITOPS_DIR}/addons push -u origin main  || true
 
-git clone ${gitops_fleet_url} ${GITOPS_DIR}/fleet
+#git clone ${gitops_fleet_url} ${GITOPS_DIR}/fleet
+git init ${GITOPS_DIR}/fleet
+git -C ${GITOPS_DIR}/fleet remote add origin ${gitops_fleet_url}
 cp -r ${ROOTDIR}/gitops/fleet/* ${GITOPS_DIR}/fleet/
 git -C ${GITOPS_DIR}/fleet add . || true
 git -C ${GITOPS_DIR}/fleet commit -m "initial commit" || true
-git -C ${GITOPS_DIR}/fleet push || true
+git -C ${GITOPS_DIR}/fleet push -u origin main || true
