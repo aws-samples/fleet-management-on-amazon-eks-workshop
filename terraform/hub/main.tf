@@ -215,26 +215,26 @@ resource "kubernetes_secret" "git_secrets" {
     git-addons = {
       type                  = "git"
       url                   = local.gitops_addons_url
-      sshPrivateKey         = local.gitops_addons_private_key
-      insecureIgnoreHostKey = "true"
+      username              = local.gitops_addons_repo_username
+      password              = local.gitops_addons_repo_password
     }
     git-fleet = {
       type                  = "git"
       url                   = local.gitops_fleet_url
-      sshPrivateKey         = local.gitops_fleet_private_key
-      insecureIgnoreHostKey = "true"
+      username              = local.gitops_fleet_repo_username
+      password              = local.gitops_fleet_repo_password
     }
     git-platform = {
       type                  = "git"
       url                   = local.gitops_platform_url
-      sshPrivateKey         = local.gitops_platform_private_key
-      insecureIgnoreHostKey = "true"
+      username              = local.gitops_platform_repo_username
+      password              = local.gitops_platform_repo_password
     }
     git-workloads = {
       type                  = "git"
       url                   = local.gitops_workload_url
-      sshPrivateKey         = local.gitops_workload_private_key
-      insecureIgnoreHostKey = "true"
+      username              = local.gitops_workload_repo_username
+      password              = local.gitops_workload_repo_password
     }
   }
   metadata {

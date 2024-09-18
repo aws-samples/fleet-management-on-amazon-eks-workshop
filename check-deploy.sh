@@ -391,7 +391,7 @@ fi
 echo ""
 
 # List of parameter names to check
-parameter_names=("/fleet-hub/argocd-hub-role" "/fleet-hub/ssh-secrets-fleet-workshop")
+parameter_names=("/fleet-hub/argocd-hub-role" "/fleet-hub/ssh-secrets-fleet-workshop" "GiteaExternalUrl")
 
 # Check if SSM parameters exist
 echo "Checking if SSM parameters exist..."
