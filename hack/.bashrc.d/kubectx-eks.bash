@@ -1,14 +1,50 @@
+
+#!/usr/bin/env bash
+
+# Function to check if a cluster context exists
+cluster_context_exists() {
+    local cluster_name=$1
+    kubectl config get-contexts -o name | grep -q "^${cluster_name}$"
+}
+
+# Function to update kubeconfig if context doesn't exist
+update_kubeconfig_if_needed() {
+    local cluster_name=$1
+    local alias_name=$2
+
+    if ! cluster_context_exists "$alias_name"; then
+        echo "Updating kubeconfig for $cluster_name"
+        aws eks --region $AWS_REGION update-kubeconfig --name "$cluster_name" --alias "$alias_name"
+    fi
+}
+
+update_kubeconfig_if_needed_with_role() {
+    local cluster_name=$1
+    local alias_name=$2
+    local user_alias=$3
+    local role_arn=$4
+
+    if ! cluster_context_exists "$alias_name"; then
+        echo "Updating kubeconfig for $alias_name"
+        aws eks --region $AWS_REGION update-kubeconfig --name "$cluster_name" --alias "$alias_name" --user-alias "$user_alias" --role-arn "$role_arn"
+    fi
+}
+
+# Update kubeconfig for each cluster
+
+
+
 # Setup kubectx for EKS clusters as Admin
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-hub-cluster --alias fleet-hub-cluster
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-staging --alias fleet-staging-cluster
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-prod --alias fleet-prod-cluster
+update_kubeconfig_if_needed "fleet-hub-cluster" "fleet-hub-cluster"
+update_kubeconfig_if_needed "fleet-spoke-staging" "fleet-staging-cluster"
+update_kubeconfig_if_needed "fleet-spoke-prod" "fleet-prod-cluster"
 
 # Setup kubectx for EKS clusters as Team
 export BACKEND_TEAM_ROLE_ARN=$(aws ssm --region $AWS_REGION get-parameter --name eks-fleet-workshop-gitops-backend-team-view-role --with-decryption --query "Parameter.Value" --output text)
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-staging --alias fleet-staging-cluster-backend --user-alias fleet-staging-cluster-backend --role-arn $BACKEND_TEAM_ROLE_ARN
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-prod --alias fleet-prod-cluster-backend --user-alias fleet-prod-cluster-backend --role-arn $BACKEND_TEAM_ROLE_ARN
+# Update kubeconfig for backend team
+update_kubeconfig_if_needed_with_role "fleet-spoke-staging" "fleet-staging-cluster-backend" "fleet-staging-cluster-backend" "$BACKEND_TEAM_ROLE_ARN"
+update_kubeconfig_if_needed_with_role "fleet-spoke-prod" "fleet-prod-cluster-backend" "fleet-prod-cluster-backend" "$BACKEND_TEAM_ROLE_ARN"
 
 export FRONTEND_TEAM_ROLE_ARN=$(aws ssm --region $AWS_REGION get-parameter --name eks-fleet-workshop-gitops-frontend-team-view-role --with-decryption --query "Parameter.Value" --output text)
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-staging --alias fleet-staging-cluster-frontend --user-alias fleet-staging-cluster-frontend --role-arn $FRONTEND_TEAM_ROLE_ARN
-aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-prod --alias fleet-prod-cluster-frontend --user-alias fleet-prod-cluster-frontend --role-arn $FRONTEND_TEAM_ROLE_ARN
-
+update_kubeconfig_if_needed_with_role "fleet-spoke-staging" "fleet-staging-cluster-frontend" "fleet-staging-cluster-frontend" "$FRONTEND_TEAM_ROLE_ARN"
+update_kubeconfig_if_needed_with_role "fleet-spoke-prod" "fleet-prod-cluster-frontend" "fleet-prod-cluster-frontend" "$FRONTEND_TEAM_ROLE_ARN"
