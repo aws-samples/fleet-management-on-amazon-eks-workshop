@@ -32,13 +32,6 @@ update_kubeconfig_if_needed_with_role() {
 
 # Update kubeconfig for each cluster
 
-
-
-# Setup kubectx for EKS clusters as Admin
-update_kubeconfig_if_needed "fleet-hub-cluster" "fleet-hub-cluster"
-update_kubeconfig_if_needed "fleet-spoke-staging" "fleet-staging-cluster"
-update_kubeconfig_if_needed "fleet-spoke-prod" "fleet-prod-cluster"
-
 # Setup kubectx for EKS clusters as Team
 export BACKEND_TEAM_ROLE_ARN=$(aws ssm --region $AWS_REGION get-parameter --name eks-fleet-workshop-gitops-backend-team-view-role --with-decryption --query "Parameter.Value" --output text)
 # Update kubeconfig for backend team
@@ -48,3 +41,8 @@ update_kubeconfig_if_needed_with_role "fleet-spoke-prod" "fleet-prod-cluster-bac
 export FRONTEND_TEAM_ROLE_ARN=$(aws ssm --region $AWS_REGION get-parameter --name eks-fleet-workshop-gitops-frontend-team-view-role --with-decryption --query "Parameter.Value" --output text)
 update_kubeconfig_if_needed_with_role "fleet-spoke-staging" "fleet-staging-cluster-frontend" "fleet-staging-cluster-frontend" "$FRONTEND_TEAM_ROLE_ARN"
 update_kubeconfig_if_needed_with_role "fleet-spoke-prod" "fleet-prod-cluster-frontend" "fleet-prod-cluster-frontend" "$FRONTEND_TEAM_ROLE_ARN"
+
+# Setup kubectx for EKS clusters as Admin
+update_kubeconfig_if_needed "fleet-hub-cluster" "fleet-hub-cluster"
+update_kubeconfig_if_needed "fleet-spoke-prod" "fleet-prod-cluster"
+update_kubeconfig_if_needed "fleet-spoke-staging" "fleet-staging-cluster"
