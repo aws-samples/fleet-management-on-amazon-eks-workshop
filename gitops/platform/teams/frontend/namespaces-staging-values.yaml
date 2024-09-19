@@ -23,13 +23,6 @@ networkPolicies:
 namespaces:
   assets:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
@@ -71,13 +64,6 @@ namespaces:
 
   ui:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:

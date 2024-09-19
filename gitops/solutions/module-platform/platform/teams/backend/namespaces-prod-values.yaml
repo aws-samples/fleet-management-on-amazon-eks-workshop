@@ -22,21 +22,13 @@ networkPolicies:
         enabled: true
 namespaces:
   carts:
-    labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # max cpu is not best practice
           min:
             cpu: 100m
           type: Container
@@ -44,9 +36,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-egress-same-namespace
       spec:
@@ -80,20 +72,13 @@ namespaces:
 
   catalog:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # max cpu is not best practice
           min:
             cpu: 100m
           type: Container
@@ -101,9 +86,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-egress-same-namespace
       spec:
@@ -137,20 +122,13 @@ namespaces:
 
   checkout:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # max cpu is not best practice
           min:
             cpu: 100m
           type: Container
@@ -158,9 +136,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-egress-same-namespace-and-orders
       spec:
@@ -197,20 +175,13 @@ namespaces:
 
   orders:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # max cpu is not best practice
           min:
             cpu: 100m
           type: Container
@@ -218,9 +189,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-egress-same-namespace-and-rabbitmq
       spec:
@@ -259,20 +230,13 @@ namespaces:
         name: backend-team-view
   rabbitmq:
     labels:
-      podSecurityAdmission:
-        audit:
-          standard: baseline
-        enforce:
-          standard: baseline
-        warn:
-          standard: baseline
     limitRanges:
     - name: default
       limits:
         - defaultRequest: # this section defines default requests
             cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
+          #max: # max and min define the limit range
+          #  cpu: "2" # max cpu is not best practice
           min:
             cpu: 100m
           type: Container
@@ -280,9 +244,9 @@ namespaces:
     - name: default
       spec:
         hard:
-          cpu: "2"
-          memory: 2Gi
-          pods: "2"
+          cpu: "4"
+          memory: 4Gi
+          pods: "4"
     networkPolicies:
     - name: allow-egress-same-namespace
       spec:
