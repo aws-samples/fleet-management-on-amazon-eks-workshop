@@ -1,0 +1,4 @@
+pytest
+pytest_bdd
+boto3
+kubernetes

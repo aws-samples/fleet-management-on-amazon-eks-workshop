@@ -128,7 +128,8 @@ kubectl --namespace default port-forward service/eks-loadtest-locust 8089:8089
 8. In the Locust web interface, set the number of users to simulate and the spawn rate, then start the test.
 9. Start with 10 concurrent requests.
 10. Then ramp up to 20 concurrent requests.
-11. Use Amazon CloudWatch Container Insights to monitor the performance of CoreDNS during the test.
+11. Stop the test after 5 mins.
+12. Use Amazon CloudWatch Container Insights to monitor the performance of CoreDNS during the test.
 
 #### Analyzing the Results
 

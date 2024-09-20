@@ -4,15 +4,16 @@ The Terraform test framework allows us to write and run tests for our infrastruc
 
 #### Step to run the unit test
 Follow these steps to run the Terraform tests:
-1. Navigate to unit testing framework directory
+1. This sample test uses the fleet-hub-cluster as source. Therefore, make sure the Hub cluster is deployed.
+2. Now, navigate to unit testing framework directory
 ```
-cd $VALIDATION_MODULE_HOME/unit/
+cd $VALIDATION_MODULE_HOME/unit/tests
 ```
-2. Initialise Terraform:
+3. Initialise Terraform:
 ```
 terraform init
 ```
-3. Run Terraform tests:
+4. Run Terraform tests:
 ```
 terraform test
 ```

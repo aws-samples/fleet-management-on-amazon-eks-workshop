@@ -63,14 +63,23 @@ def test_check_logs():
 ### Running Functional Tests
 
 Follow these steps to run the functional tests:
-
-1. Navigate to the functional testing directory:
+1. Fetch kubeconfig for fleet-hub-cluster. Update the region in the below command accordingly
+```
+aws eks --region us-east-1 update-kubeconfig --name fleet-hub-cluster
+```
+2. Navigate to the functional testing directory:
 ```
 cd $VALIDATION_MODULE_HOME/functional/
 ```
-2. Run the pytest command:
+3. Install required packages:
 ```
-pytest
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+4. Run the pytest command:
+```
+pytest -s
 ```
 
 ### Analyzing the Results

@@ -2,4 +2,7 @@ environment/
 node_modules
 cdk
 .envrc
-validation-frameworks/.DS_Store
+.DS_Store
+.terraform
+.venv
+.pytest_cache
