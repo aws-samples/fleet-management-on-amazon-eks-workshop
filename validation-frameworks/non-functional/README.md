@@ -96,21 +96,25 @@ Follow these steps to run the Core-DNS load test:
 ```
 cd $VALIDATION_MODULE_HOME/non-functional
 ```
-2. Add the Delivery Hero Helm repository:
+2. Fetch kubeconfig for fleet-hub-cluster. Update the region in the below command accordingly
+```
+aws eks --region us-east-1 update-kubeconfig --name fleet-hub-cluster
+```
+3. Add the Delivery Hero Helm repository:
 ```
 helm repo add deliveryhero "https://charts.deliveryhero.io/"
 helm repo update deliveryhero
 helm repo list | egrep "NAME|deliveryhero"
 ```
-3. Create a ConfigMap with the test script:
+4. Create a ConfigMap with the test script:
 ```
 kubectl create configmap eks-loadtest-locustfile --from-file $VALIDATION_MODULE_HOME/non-functional/core-dns/core-dns-test.py
 ```
-4. Apply the necessary RBAC roles:
+5. Apply the necessary RBAC roles:
 ```
 kubectl apply -f $VALIDATION_MODULE_HOME/non-functional/core-dns/locust-cluster-role.yaml
 ```
-5. Deploy Locust in the EKS Cluster:
+6. Deploy Locust in the EKS Cluster:
 ```
 helm upgrade --install eks-loadtest-locust deliveryhero/locust \
     --set loadtest.name=eks-loadtest \
@@ -120,16 +124,16 @@ helm upgrade --install eks-loadtest-locust deliveryhero/locust \
     --set worker.hpa.minReplicas=2 \
     --set "loadtest.pip_packages[0]=kubernetes"
 ```
-6. Port-forward the Locust service:
+7. Port-forward the Locust service:
 ```
 kubectl --namespace default port-forward service/eks-loadtest-locust 8089:8089
 ```
-7. Access the Locust web interface. Open a web browser and go to `http://localhost:8089`.
-8. In the Locust web interface, set the number of users to simulate and the spawn rate, then start the test.
-9. Start with 10 concurrent requests.
-10. Then ramp up to 20 concurrent requests.
-11. Stop the test after 5 mins.
-12. Use Amazon CloudWatch Container Insights to monitor the performance of CoreDNS during the test.
+8. Access the Locust web interface. Open a web browser and go to `http://localhost:8089`.
+9. In the Locust web interface, set the number of users to simulate and the spawn rate, then start the test.
+10. Start with 10 concurrent requests.
+11. Then ramp up to 20 concurrent requests.
+12. Stop the test after 5 mins.
+13. Use Amazon CloudWatch Container Insights to monitor the performance of CoreDNS during the test.
 
 #### Analyzing the Results
 
