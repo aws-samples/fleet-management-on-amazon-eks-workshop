@@ -267,6 +267,48 @@ namespaces:
           - namespaceSelector:
               matchLabels:
                 kubernetes.io/metadata.name: orders
+    - name: allow-rabbit
+      spec:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: rabbitmq
+            app.kubernetes.io/instance: rabbitmq
+        policyTypes:
+        - Ingress
+        - Egress
+        ingress:
+        - from:
+          - podSelector: {}
+          ports:
+          - protocol: TCP
+            port: 5672  # AMQP
+          - protocol: TCP
+            port: 4369  # EPMD
+          - protocol: TCP
+            port: 25672 # Inter-node and CLI communication
+          - protocol: TCP
+            port: 15672 # HTTP API and management UI
+        egress:
+        - to:
+          - podSelector:
+              matchLabels:
+                app.kubernetes.io/name: rabbitmq
+                app.kubernetes.io/instance: rabbitmq
+          ports:
+          - protocol: TCP
+            port: 5672  # AMQP
+          - protocol: TCP
+            port: 4369  # EPMD
+          - protocol: TCP
+            port: 25672 # Inter-node and CLI communication
+        - to:
+          - namespaceSelector: {}
+          ports:
+          - protocol: UDP
+            port: 53 # DNS
+          - protocol: TCP
+            port: 53 # DNS
+
     roleBindings:
     - name: view
       roleRef:
