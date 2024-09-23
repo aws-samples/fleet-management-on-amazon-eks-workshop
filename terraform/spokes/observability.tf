@@ -9,6 +9,8 @@ data "aws_ssm_parameter" "amp_arn" {
 }
 
 resource "aws_prometheus_scraper" "fleet-scraper" {
+  # only enabled this if var enable_prometheus_scraper is true
+  count = var.enable_prometheus_scraper ? 1 : 0
   source {
     eks {
       cluster_arn = module.eks.cluster_arn
@@ -43,7 +45,7 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
     "{account_id}",
     data.aws_caller_identity.current.account_id
   )
- 
+
 }
 
 

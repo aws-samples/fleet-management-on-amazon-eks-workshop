@@ -76,3 +76,9 @@ variable "amazon_managed_prometheus_suffix" {
   type        = string
   default     = "amp-hub"
 }
+
+variable "enable_prometheus_scraper" {
+  description = "Enable Prometheus scraper"
+  type        = bool
+  default     = false
+}
