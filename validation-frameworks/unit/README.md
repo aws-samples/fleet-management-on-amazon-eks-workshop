@@ -4,18 +4,21 @@ The Terraform test framework allows us to write and run tests for our infrastruc
 
 #### Step to run the unit test
 Follow these steps to run the Terraform tests:
-1. This sample test uses the fleet-hub-cluster as source. Therefore, make sure the Hub cluster is deployed.
+1. This sample test uses the fleet-spoke-staging as source. Therefore, make sure the staging spoke cluster is deployed.
 2. Now, navigate to unit testing framework directory
 ```
+export VALIDATION_MODULE_HOME=~/environment/fleet-management-on-amazon-eks-workshop/validation-frameworks
+export EKS_CLUSTER_NAME="fleet-spoke-staging"
 cd $VALIDATION_MODULE_HOME/unit/tests
 ```
 3. Initialise Terraform:
 ```
+terraform workspace select -or-create staging
 terraform init
 ```
 4. Run Terraform tests:
 ```
-terraform test
+terraform test -var="name=$EKS_CLUSTER_NAME" 
 ```
 
 #### Analyzing the Results

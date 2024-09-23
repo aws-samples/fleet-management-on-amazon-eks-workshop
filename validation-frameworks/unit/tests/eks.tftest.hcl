@@ -1,14 +1,12 @@
 variables {
-  eks_cluster_version = "1.30"
-  region = "us-east-1"
-  name                = "fleet-hub-cluster"
-  vpc_cidr            = "10.0.0.0/16"
+  kubernetes_version = "1.30"
+  vpc_cidr            = "10.2.0.0/16"    
 }
 
 run "create_eks_cluster" {
   command = plan
   module {
-    source = "../../../terraform/hub"
+    source = "../../../terraform/spokes"
   }
   assert {
     condition     = module.eks.cluster_name != ""
@@ -16,7 +14,7 @@ run "create_eks_cluster" {
   }
  
   assert {
-    condition     = module.eks.cluster_version == var.eks_cluster_version
+    condition     = module.eks.cluster_version == var.kubernetes_version
     error_message = "EKS cluster version should match the specified version"
   }
 
@@ -26,8 +24,8 @@ run "create_eks_cluster" {
   }
 
   assert {
-    condition     = contains(keys(module.eks.eks_managed_node_groups), "fleet-hub-cluster")
-    error_message = "The managed node group should be named 'fleet-hub-cluster'"
+    condition     = contains(keys(module.eks.eks_managed_node_groups), local.name)
+    error_message = "The managed node group should contain the cluster name"
   }
   
   assert {

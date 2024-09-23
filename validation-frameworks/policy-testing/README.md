@@ -45,7 +45,7 @@ To run the test, use the following command:
 
 ```bash
 cd $VALIDATION_MODULE_HOME/policy-testing/rbac-policy-mutation
-chainsaw test -f chainsaw-test.yaml
+chainsaw test --test-file chainsaw-test.yaml
 ```
 
 This command will execute the steps defined in `chainsaw-test.yaml`, applying the ClusterRole and Policy, and then asserting that the Policy is correctly created.

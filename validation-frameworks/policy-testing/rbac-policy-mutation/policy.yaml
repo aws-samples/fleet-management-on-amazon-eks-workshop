@@ -4,6 +4,7 @@ kind: ClusterPolicy
 metadata:
   name: policy-reload-on-secret-update
 spec:
+  mutateExistingOnPolicyUpdate: false
   rules:
   - name: update-secret
     match:
@@ -19,7 +20,6 @@ spec:
         operator: Equals
         value: UPDATE
     mutate:
-      mutateExistingOnPolicyUpdate: false
       targets:
         - apiVersion: apps/v1
           kind: Deployment

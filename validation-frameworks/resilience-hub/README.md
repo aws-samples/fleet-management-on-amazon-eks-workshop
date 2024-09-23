@@ -10,7 +10,7 @@ Command line tools: Install the latest version of [AWS CLI](https://docs.aws.ama
 After you create fleet-hub-cluster Amazon EKS cluster, you must configure your kubeconfig file using the AWS CLI. This configuration allows you to connect to your cluster using the `kubectl` command line. The following `update-kubeconfig` command will create a kubeconfig file for your cluster. Test and verify your cluster is up, you can reach/access it by running any `kubectl` get command.
 
 ```bash
-aws eks update-kubeconfig —region $REGION —name $EKS_CLUSTER_NAME
+aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 kubectl get nodes
 ```
 

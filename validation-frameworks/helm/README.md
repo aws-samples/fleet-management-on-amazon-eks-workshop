@@ -38,7 +38,11 @@ This test creates a pod that uses the kubectl wait command to check if the Locus
 ### Running Helm Tests
 
 To run the Helm test for locust, follow these steps:
-1. Ensure that you have Helm installed and configured to work with your EKS cluster.
+1. Ensure that you have Helm installed and configured to work with spoke EKS cluster.
+```
+echo $EKS_CLUSTER_NAME
+aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+```
 2. Navigate to the functional testing directory:
 ```
 cd $VALIDATION_MODULE_HOME/helm/locust

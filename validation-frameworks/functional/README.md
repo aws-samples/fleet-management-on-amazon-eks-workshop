@@ -69,15 +69,17 @@ def test_check_logs():
 ### Running Functional Tests
 
 Follow these steps to run the functional tests:
-1. Fetch kubeconfig for fleet-hub-cluster. Update the region in the below command accordingly
+1. Fetch kubeconfig for the spoke cluster. Make sure the region and EKS cluster name environment variables are set correctly
 ```
-aws eks --region us-east-1 update-kubeconfig --name fleet-hub-cluster
+echo $AWS_REGION
+echo $EKS_CLUSTER_NAME
+aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 ```
 2. Navigate to the functional testing directory:
 ```
 cd $VALIDATION_MODULE_HOME/functional/
 ```
-3. Install required packages:
+3. Create a Python virtual env and install required packages:
 ```
 python3 -m venv .venv
 source .venv/bin/activate
@@ -86,6 +88,11 @@ pip install -r requirements.txt
 4. Run the pytest command:
 ```
 pytest -s
+```
+Note: If you receive "ModuleNotFoundError: No module named 'boto3'" error, make sure virtual environment is activated and packages are installed.
+5. Deactivate the python virtual env:
+```
+deactivate
 ```
 
 ### Analyzing the Results

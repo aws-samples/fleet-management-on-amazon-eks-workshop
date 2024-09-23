@@ -1,4 +1,5 @@
 import boto3
+import os
 from pytest_bdd import given, when, then, parsers, scenario, scenarios
 
 @scenario('endpoint.feature', 'Check endpoints')
@@ -12,8 +13,10 @@ def running_eks_cluster():
 
 @when("I check endpoints")
 def check_eks_endpoint():
-    eksclient = boto3.client('eks', region_name = 'us-east-1')
-    resp = eksclient.describe_cluster(name='fleet-hub-cluster')
+    region = os.environ.get('AWS_REGION')
+    eks_cluster_name = os.environ.get('EKS_CLUSTER_NAME')
+    eksclient = boto3.client('eks', region_name = region)
+    resp = eksclient.describe_cluster(name=eks_cluster_name)
     endpoint = resp['cluster']['logging']['clusterLogging']
     # for x in endpoint:
     #     print(x)

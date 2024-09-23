@@ -96,9 +96,10 @@ Follow these steps to run the Core-DNS load test:
 ```
 cd $VALIDATION_MODULE_HOME/non-functional
 ```
-2. Fetch kubeconfig for fleet-hub-cluster. Update the region in the below command accordingly
+2. Fetch kubeconfig for the spoke cluster. Update the region in the below command accordingly
 ```
-aws eks --region us-east-1 update-kubeconfig --name fleet-hub-cluster
+echo $EKS_CLUSTER_NAME
+aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 ```
 3. Add the Delivery Hero Helm repository:
 ```
@@ -128,16 +129,16 @@ helm upgrade --install eks-loadtest-locust deliveryhero/locust \
 ```
 kubectl --namespace default port-forward service/eks-loadtest-locust 8089:8089
 ```
-8. Access the Locust web interface. Open a web browser and go to `http://localhost:8089`.
-9. In the Locust web interface, set the number of users to simulate and the spawn rate, then start the test.
-10. Start with 10 concurrent requests.
-11. Then ramp up to 20 concurrent requests.
+8. Access the Locust web interface. Open a web browser and go to `http://<CloudfrontDNS>/proxy/8089/`.
+9. In the Locust web interface, set the number of users to simulate and the spawn rate, then start the test. 
+10. Start with 10 concurrent requests. Hostname doesnt matter in this scenario.
+11. Run the test for 2 mins with 10 users and then ramp up to 20 concurrent users by clicking 'Edit' link in the top near 'Status'.
 12. Stop the test after 5 mins.
 13. Use Amazon CloudWatch Container Insights to monitor the performance of CoreDNS during the test.
 
 #### Analyzing the Results
 
-After running the load test, analyze the results in both the Locust web interface and CloudWatch Container Insights. Look for metrics such as:
+After running the load test, analyze the results in CloudWatch Container Insights. Look for metrics such as:
 
 - Response times
 - Number of successful/failed requests
