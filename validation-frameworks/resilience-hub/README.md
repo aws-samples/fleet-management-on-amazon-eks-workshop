@@ -179,7 +179,7 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
         - Select the option: Use an IAM role and select `AwsResilienceHubAssessmentEKSAccessRole`
     * Setup scheduled assessment and drift notification
         - You can either setup automatic daily assessments or turn off the option
-    * Click on Add Application once this is all done
+    * Click on Add Application once this is all done, you should see a Blue banner at the top confirming the application has been added successfully.
 
 3. Running the Assessment
 
