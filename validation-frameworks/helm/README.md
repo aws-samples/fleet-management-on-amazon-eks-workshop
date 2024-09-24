@@ -40,6 +40,7 @@ This test creates a pod that uses the kubectl wait command to check if the Locus
 To run the Helm test for locust, follow these steps:
 1. Ensure that you have Helm installed and configured to work with spoke EKS cluster.
 ```
+echo $AWS_REGION
 echo $EKS_CLUSTER_NAME
 aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 ```

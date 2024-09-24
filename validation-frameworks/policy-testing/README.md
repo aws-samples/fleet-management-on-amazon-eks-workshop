@@ -25,12 +25,12 @@ kubectl apply -f https://github.com/kyverno/chainsaw/releases/download/v0.2.9/in
 
 ## The Test Case: Mutating Deployments on Secret Update
 
-Our test case involves a Kyverno policy that mutates a Deployment when a specific Secret is updated. This is a common pattern used to trigger a rolling update of a Deployment when its configuration (stored in a Secret) changes.
+Our test case involves a Kyverno policy that mutates a Deployment when a specific ConfigMap is updated. This is a common pattern used to trigger a rolling update of a Deployment when its configuration (stored in a ConfigMap) changes.
 
 ### Test Components
 
 **ClusterRole** (`clusterrole.yaml`): Defines the permissions needed for Kyverno to mutate the specific Deployment.
-**ClusterPolicy** (`policy.yaml`): The Kyverno policy that watches for updates to a specific Secret and triggers a mutation on the Deployment.
+**ClusterPolicy** (`policy.yaml`): The Kyverno policy that watches for updates to a specific ConfigMap and triggers a mutation on the Deployment.
 **Policy Assert** (`policy-assert.yaml`): Used to verify that the policy is correctly created and ready.
 **Test Definition** (`chainsaw-test.yaml`): The Chainsaw test definition that orchestrates the application of resources and assertions.
 

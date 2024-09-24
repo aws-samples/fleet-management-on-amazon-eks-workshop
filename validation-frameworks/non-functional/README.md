@@ -98,6 +98,7 @@ cd $VALIDATION_MODULE_HOME/non-functional
 ```
 2. Fetch kubeconfig for the spoke cluster. Update the region in the below command accordingly
 ```
+echo $AWS_REGION
 echo $EKS_CLUSTER_NAME
 aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 ```
