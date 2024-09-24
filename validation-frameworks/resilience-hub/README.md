@@ -137,14 +137,16 @@ EOF
 
 Then create a mapping between the IAM role `AwsResilienceHubAssessmentEKSAccessRole`, with the Kubernetes group `resilience-hub-eks-access-group`, granting the IAM roles permissions to access resources inside the Amazon EKS cluster.
 
-```bash
-eksctl create iamidentitymapping \
- --cluster $EKS_CLUSTER_NAME \
- --region=$REGION \
- --arn arn:aws:iam::"$ACCOUNT_ID":role/AwsResilienceHubAssessmentEKSAccessRole \
- --group resilience-hub-eks-access-group \
- --username AwsResilienceHubAssessmentEKSAccessRole
- ```
+* [Navigate to EKS Console](https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2)
+* Select EKS Clusters: select the corresponding cluster (fleet-spoke-staging)
+* Select 'Access' Tab
+* Click 'Create access entry'
+* Under IAM Principal, select 'AwsResilienceHubAssessmentEKSAccessRole'
+* Under Group, enter 'resilience-hub-eks-access-group' and click 'Next'
+* Under Policy 'Policy Name', select 'AmazonEKSViewPolicy'
+* Under 'Access Scope', select 'Kubernetes namespace' and 'Add New Namespace'
+* Enter 'demo-app' and click 'Add Policy'
+* Finally, click 'Next' and 'Create'
 
 ## Running the Resiliency assessment
 
@@ -152,7 +154,7 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
 
 1. Create a new Resiliency policy based on Foundational Core Service
 
-    * [Launch AWS Resilience Hub](https://us-east-1.console.aws.amazon.com/resiliencehub/home?region=us-east-1) → Policies (under Resilience management)
+    * [Launch AWS Resilience Hub](https://us-west-2.console.aws.amazon.com/resiliencehub/home?region=us-west-2) → Policies (under Resilience management)
 
     * Click on `Create resiliency policy`
         - Choose Select a policy based on a suggested policy
@@ -161,14 +163,14 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
 
 2. Add Amazon EKS Cluster and Demo Application to AWS Resilience Hub
 
-    * [Launch AWS Resilience Hub](https://us-east-1.console.aws.amazon.com/resiliencehub/home?region=us-east-1) → Click Add Application
+    * [Launch AWS Resilience Hub](https://us-west-2.console.aws.amazon.com/resiliencehub/home?region=us-west-2) → Click Add Application
 
     * Enter the following 
         - Application Name: `demo-app`
         - Description: `Demo Application Hosted on EKS`
         - How is this application managed? `Select EKS Only`
         - Add EKS clusters
-            Select EKS Clusters: select the corresponding cluster
+            Select EKS Clusters: select the corresponding cluster (fleet-spoke-staging)
         - Under Add namespace, enter `demo-app`, check the box to use the namespaces and click Save
     
     * Set RPO and RTO
