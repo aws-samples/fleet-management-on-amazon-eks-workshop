@@ -6,3 +6,4 @@ cdk
 .terraform
 .venv
 .pytest_cache
+.terraform.lock.hcl
