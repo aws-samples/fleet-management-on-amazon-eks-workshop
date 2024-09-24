@@ -57,3 +57,9 @@ variable "frontend_team_view_role_suffix" {
   type        = string
   default     = "frontend-team-view-role"
 }
+
+variable "enable_prometheus_scraper" {
+  description = "Enable Prometheus Scraper"
+  type        = bool
+  default     = false
+}

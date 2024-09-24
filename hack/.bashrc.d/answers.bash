@@ -35,7 +35,7 @@ function deploy_prod (){
 function app_url_staging (){
   wait-for-lb $(kubectl --context fleet-staging-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
-function app_prod_staging (){
+function app_url_prod (){
   wait-for-lb $(kubectl --context fleet-prod-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 
