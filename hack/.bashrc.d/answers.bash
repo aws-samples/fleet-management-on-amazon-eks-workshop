@@ -44,6 +44,15 @@ function apps_fix_kyverno_insights(){
   apps_fix_kyverno_insights_prod
 }
 
+function kyverno_policy_reporter_ui_on(){
+  nohup kubectl --context fleet-staging-cluster port-forward -n kyverno svc/policy-reporter-ui 8085:8080 > /dev/null 2>&1 &
+  echo $IDE_URL/proxy/8085/#/
+}
+
+function kyverno_policy_reporter_ui_off(){
+  pkill -f "kubectl.*port-forward.*policy-reporter-ui"
+}
+
 function apps_fix_kyverno_insights_staging (){
   # Fix Kyverno Insights
 
