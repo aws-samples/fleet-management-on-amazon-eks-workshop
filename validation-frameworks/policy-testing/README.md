@@ -71,7 +71,7 @@ A successful test run indicates that:
 
 After confirming that the policy is correctly in place, you could extend the test to:
 
-1. Create or update the "busybox" Secret.
+1. Create or update the "busybox-config" configmap.
 2. Verify that the "busybox" Deployment is indeed mutated as expected.
 3. Test edge cases, such as updates to other Secrets or Deployments, to ensure the policy only affects the intended resources.
 
