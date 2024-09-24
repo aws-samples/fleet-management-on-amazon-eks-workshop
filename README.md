@@ -9,7 +9,6 @@ For any feedback, please open a [Bug](https://github.com/aws-samples/fleet-manag
 
 1. Deploy EKS clusters (hub, staging, prod)
 1. Deploy Namespaces
-1. Create DynamoDB
 1. Deploy Applications
 1. Day 2 Operations
 
@@ -40,11 +39,6 @@ echo "ArgoCD Password: $(kubectl --context fleet-hub-cluster get secrets argocd-
 ## Deploy EKS Addons
 
 To deploy EKS Addons we need to use Infrastructure as Code (IaC) and GitOps to work together.
-Enable the variables for the corresponding Addons in the IaC tool.
-```shell
-sed -i '' s/"balancer_controller = false"/"balancer_controller = true"/           $WORKSHOP_DIR/terraform/spokes/variables.tf
-sed -i '' s/"dynamodb                 = false"/"dynamodb                 = true"/ $WORKSHOP_DIR/terraform/spokes/variables.tf
-```
 
 Apply the IaC to create the IAM Roles for each Addon, and enable the Helm Chart to be deploy by GitOps
 ```shell
