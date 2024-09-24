@@ -12,6 +12,7 @@ spec:
         spec:
           containers:
           - name: grafana
+            resources: {}
             env:
               - name: AWS_SDK_LOAD_CONFIG
                 value: "true"

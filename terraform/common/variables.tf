@@ -117,3 +117,15 @@ variable "gitea_external_url" {
   type = string
   default = ""
 }
+
+variable "gitea_repo_prefix" {
+  description = "Repo prefix"
+  type = string
+  default = "workshop-user/"
+}
+
+variable "create_github_repos" {
+  description = "Create Github repos"
+  type = bool
+  default = false
+}
