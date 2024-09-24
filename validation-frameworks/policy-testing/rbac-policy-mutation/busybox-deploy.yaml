@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  namespace: kyverno
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command:
+            - sleep
+            - "600"
+          volumeMounts:
+          - name: config-volume
+            readOnly: true
+            mountPath: "/etc/config-volume"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: busybox-config
+          items:
+          - key: "test.properties"
+            path: "test.properties"

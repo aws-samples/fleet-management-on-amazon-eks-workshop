@@ -10,8 +10,11 @@ Chainsaw is a testing framework that allows you to define and run tests for Kube
 
 ## Setting Up the Test Environment
 
-Before we begin, ensure you have Chainsaw and Kyverno installed in your EKS cluster. If not, you can install them using the following commands:
-
+Before we begin, ensure you have Chainsaw and Kyverno installed in your EKS cluster.
+```bash
+kubectl get deployments -n kyverno
+```
+If not, you can install them using the following commands:
 ```bash
 # Install Kyverno
 kubectl create -f https://github.com/kyverno/kyverno/releases/download/v1.12.5/install.yaml
@@ -34,7 +37,7 @@ Our test case involves a Kyverno policy that mutates a Deployment when a specifi
 ### Step-by-Step Explanation
 
 1. **Apply the ClusterRole**:
-   The test first applies the ClusterRole, which gives Kyverno the necessary permissions to mutate the "monitor-grafana" Deployment.
+   The test first applies the ClusterRole, which gives Kyverno the necessary permissions to mutate the "busybox" Deployment.
 
 2. **Apply and Assert the Policy**:
    The test then applies the Kyverno policy and immediately asserts that it's created successfully and in a "Ready" state.
@@ -68,8 +71,8 @@ A successful test run indicates that:
 
 After confirming that the policy is correctly in place, you could extend the test to:
 
-1. Create or update the "applicationsecret" Secret.
-2. Verify that the "monitor-grafana" Deployment is indeed mutated as expected.
+1. Create or update the "busybox" Secret.
+2. Verify that the "busybox" Deployment is indeed mutated as expected.
 3. Test edge cases, such as updates to other Secrets or Deployments, to ensure the policy only affects the intended resources.
 
 By using Chainsaw to test your Kyverno policies, you can ensure that your cluster's policy enforcement is working as expected, providing an additional layer of security and consistency to your EKS environment.

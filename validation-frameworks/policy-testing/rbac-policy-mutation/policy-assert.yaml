@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: policy-reload-on-secret-update
+  name: policy-reload-on-config-update
 status:
   conditions:
   - reason: Succeeded
