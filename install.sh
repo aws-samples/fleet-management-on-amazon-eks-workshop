@@ -10,9 +10,10 @@ set -u
 
 # Deploy the infrastructure
 echo "Deploy Git and IAM Roles"
-DEBUG=$DEBUG ${ROOTDIR}/terraform/common/deploy.sh
+DEBUG=$DEBUG TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD ${ROOTDIR}/terraform/common/deploy.sh
+
 echo "Configure Git"
-source ${ROOTDIR}/setup-git.sh
+GIT_PASS=$GITEA_PASSWORD GITOPS_DIR=/home/ec2-user/environment/gitops-repos ${ROOTDIR}/setup-git.sh
 echo "Deploy Hub Cluster"
 DEBUG=$DEBUG ${ROOTDIR}/terraform/hub/deploy.sh
 echo "Deploy Spoke Staging"
