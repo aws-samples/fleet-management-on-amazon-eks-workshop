@@ -76,6 +76,8 @@ configs:
       url: ghcr.io
       enableOCI: 'true'
   cm:
+    # setting to 60s for workshop purposes only, best practice is to use a git webhook
+    timeout.reconciliation: 60s
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane
     resource.exclusions: |
       - kinds:
