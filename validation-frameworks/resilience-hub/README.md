@@ -7,17 +7,10 @@ Command line tools: Install the latest version of [AWS CLI](https://docs.aws.ama
 
 **Step 1: Create an EKS Cluster**
 
-Use the `base-infra` module attached to this repsitory to create the required infrastructure that includes AWS VPC and EKS cluster.
-```bash
-cd eks-validation-frameworks-workshop/base-infra
-terraform init
-terraform apply
-```
-
-After you create your Amazon EKS cluster, you must configure your kubeconfig file using the AWS CLI. This configuration allows you to connect to your cluster using the `kubectl` command line. The following `update-kubeconfig` command will create a kubeconfig file for your cluster. Test and verify your cluster is up, you can reach/access it by running any `kubectl` get command.
+After you create fleet-hub-cluster Amazon EKS cluster, you must configure your kubeconfig file using the AWS CLI. This configuration allows you to connect to your cluster using the `kubectl` command line. The following `update-kubeconfig` command will create a kubeconfig file for your cluster. Test and verify your cluster is up, you can reach/access it by running any `kubectl` get command.
 
 ```bash
-aws eks update-kubeconfig —region $REGION —name $EKS_CLUSTER_NAME
+aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 kubectl get nodes
 ```
 
@@ -26,7 +19,7 @@ kubectl get nodes
 The next thing we need to do is deploy our sample application on Amazon EKS Cluster. We have an application deployment manifest ready for consumption.
 
 ```bash
-cd eks-validation-frameworks-workshop/frameworks/resilience-hub/eks-resilience-hub-integration/sample-app
+cd $VALIDATION_MODULE_HOME/resilience-hub/eks-resilience-hub-integration/sample-app
 kubectl apply -f components.yaml
 ```
 
@@ -144,14 +137,16 @@ EOF
 
 Then create a mapping between the IAM role `AwsResilienceHubAssessmentEKSAccessRole`, with the Kubernetes group `resilience-hub-eks-access-group`, granting the IAM roles permissions to access resources inside the Amazon EKS cluster.
 
-```bash
-eksctl create iamidentitymapping \
- --cluster $EKS_CLUSTER_NAME \
- --region=$REGION \
- --arn arn:aws:iam::"$ACCOUNT_ID":role/AwsResilienceHubAssessmentEKSAccessRole \
- --group resilience-hub-eks-access-group \
- --username AwsResilienceHubAssessmentEKSAccessRole
- ```
+* [Navigate to EKS Console](https://us-west-2.console.aws.amazon.com/eks/home?region=us-west-2)
+* Select EKS Clusters: select the corresponding cluster (fleet-spoke-staging)
+* Select 'Access' Tab
+* Click 'Create access entry'
+* Under IAM Principal, select 'AwsResilienceHubAssessmentEKSAccessRole'
+* Under Group, enter 'resilience-hub-eks-access-group' and click 'Next'
+* Under Policy 'Policy Name', select 'AmazonEKSViewPolicy'
+* Under 'Access Scope', select 'Kubernetes namespace' and 'Add New Namespace'
+* Enter 'demo-app' and click 'Add Policy'
+* Finally, click 'Next' and 'Create'
 
 ## Running the Resiliency assessment
 
@@ -159,7 +154,7 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
 
 1. Create a new Resiliency policy based on Foundational Core Service
 
-    * [Launch AWS Resilience Hub](https://us-east-1.console.aws.amazon.com/resiliencehub/home?region=us-east-1) → Policies (under Resilience management)
+    * [Launch AWS Resilience Hub](https://us-west-2.console.aws.amazon.com/resiliencehub/home?region=us-west-2) → Policies (under Resilience management)
 
     * Click on `Create resiliency policy`
         - Choose Select a policy based on a suggested policy
@@ -168,14 +163,14 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
 
 2. Add Amazon EKS Cluster and Demo Application to AWS Resilience Hub
 
-    * [Launch AWS Resilience Hub](https://us-east-1.console.aws.amazon.com/resiliencehub/home?region=us-east-1) → Click Add Application
+    * [Launch AWS Resilience Hub](https://us-west-2.console.aws.amazon.com/resiliencehub/home?region=us-west-2) → Click Add Application
 
     * Enter the following 
         - Application Name: `demo-app`
         - Description: `Demo Application Hosted on EKS`
         - How is this application managed? `Select EKS Only`
         - Add EKS clusters
-            Select EKS Clusters: select the corresponding cluster
+            Select EKS Clusters: select the corresponding cluster (fleet-spoke-staging)
         - Under Add namespace, enter `demo-app`, check the box to use the namespaces and click Save
     
     * Set RPO and RTO
@@ -184,7 +179,7 @@ Follow the below steps to run Resiliency assessment of `demo-app` application ru
         - Select the option: Use an IAM role and select `AwsResilienceHubAssessmentEKSAccessRole`
     * Setup scheduled assessment and drift notification
         - You can either setup automatic daily assessments or turn off the option
-    * Click on Add Application once this is all done
+    * Click on Add Application once this is all done, you should see a Blue banner at the top confirming the application has been added successfully.
 
 3. Running the Assessment
 
@@ -225,7 +220,7 @@ When you’re done testing, delete the resources you created so that you’re no
 
 * Remove Sample Application, AWS Resilience Hub ClusterRole and ClusterRoleBindings from Amazon EKS Cluster by running below commands in your terminal
 ```bash
-    cd eks-validation-frameworks-workshop/frameworks/resilience-hub/eks-resilience-hub-integration/sample-app
+    cd $VALIDATION_MODULE_HOME/resilience-hub/eks-resilience-hub-integration/sample-app
     kubectl delete -f components.yaml
     kubectl delete clusterrolebinding name resilience-hub-eks-access-cluster-role-binding
     kubectl delete clusterrole name resilience-hub-eks-access-cluster-role
@@ -250,7 +245,7 @@ When you initially created the Amazon EKS cluster, Karpenter was also installed 
 The next step is to deploy our sample application on the Amazon EKS cluster. We have an application deployment manifest prepared that will create a deployment with a single pod.
 
 ```bash
-  cd eks-validation-frameworks-workshop/frameworks/resilience-hub/fis-karpenter
+  cd $VALIDATION_MODULE_HOME/resilience-hub/fis-karpenter
   kubectl apply -f fis-deployment.yaml
 ```
 
@@ -326,7 +321,7 @@ When you’re done testing, delete the resources you created so that you’re no
 
 * Delete the sample Application, IAM role
 ```bash
-    cd eks-validation-frameworks-workshop/frameworks/resilience-hub/fis-karpenter
+    cd $VALIDATION_MODULE_HOME/resilience-hub/fis-karpenter
     kubectl delete -f -f fis-deployment.yaml
 ```
 

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "locust.fullname" . }}-test-readiness"
+  labels:
+    {{- include "locust.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: {{ include "locust.fullname" . }}-master
+  containers:
+  - name: test-readiness
+    image: bitnami/kubectl
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+      - -c
+      - |
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/name={{ include "locust.name" . }} --timeout=120s || exit 1
+        echo "locust pods are ready"
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
+  restartPolicy: Never

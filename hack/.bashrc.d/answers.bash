@@ -35,13 +35,27 @@ function deploy_prod (){
 function app_url_staging (){
   wait-for-lb $(kubectl --context fleet-staging-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
-function app_prod_staging (){
+function app_url_prod (){
   wait-for-lb $(kubectl --context fleet-prod-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 
 function apps_fix_kyverno_insights(){
   apps_fix_kyverno_insights_staging
   apps_fix_kyverno_insights_prod
+}
+
+function kyverno_policy_reporter_ui_staging_on(){
+  nohup kubectl --context fleet-staging-cluster port-forward -n kyverno svc/policy-reporter-ui 8085:8080 > /dev/null 2>&1 &
+  echo $IDE_URL/proxy/8085/#/
+}
+
+function kyverno_policy_reporter_ui_prod_on(){
+  nohup kubectl --context fleet-prod-cluster port-forward -n kyverno svc/policy-reporter-ui 8086:8080 > /dev/null 2>&1 &
+  echo $IDE_URL/proxy/8086/#/
+}
+
+function kyverno_policy_reporter_ui_off(){
+  pkill -f "kubectl.*port-forward.*policy-reporter-ui"
 }
 
 function apps_fix_kyverno_insights_staging (){
@@ -63,7 +77,7 @@ function apps_fix_kyverno_insights_staging (){
 
 }
 
-function apps_fix_kyverno_insights_staging (){
+function apps_fix_kyverno_prod_staging (){
   # Fix Kyverno Insights
 
   #staging

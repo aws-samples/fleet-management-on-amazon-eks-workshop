@@ -1,0 +1,58 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: locust-test
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "services"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["watch", "get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: locust-test
+subjects:
+- kind: ServiceAccount
+  name: locust-release-master # Change this to your ServiceAccount name
+  namespace: default # Change this to the namespace where your ServiceAccount is located
+roleRef:
+  kind: ClusterRole
+  name: locust-test
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "locust.fullname" . }}-test-resources"
+  labels:
+    {{- include "locust.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: {{ include "locust.fullname" . }}-master
+  containers:
+  - name: test-resources
+    image: bitnami/kubectl
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+      - -c
+      - |
+        # Test Locust Master Deployment
+        kubectl get deployment {{ include "locust.fullname" . }}-master || exit 1
+        
+        # Test Locust Worker Deployment
+        kubectl get deployment {{ include "locust.fullname" . }}-worker || exit 1
+        
+        # Test Locust Service
+        kubectl get service {{ include "locust.fullname" . }}
+        
+        echo "All Locust resources tested successfully"
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
+  restartPolicy: Never

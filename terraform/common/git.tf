@@ -35,7 +35,7 @@ locals {
     # private_key = tls_private_key.gitops.private_key_pem
     #org         = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
     org         = "${var.gitea_external_url}"
-    repo_prefix = "workshop-user/"
+    repo_prefix = var.gitea_repo_prefix
   }
 
   git_secrets_urls  = { for repo_key, repo in local.gitops_repos : repo_key => "${local.git_secrets_version_locals.org}/${local.git_secrets_version_locals.repo_prefix}${repo.name}" }
