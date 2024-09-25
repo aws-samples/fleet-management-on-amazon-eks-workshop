@@ -473,13 +473,15 @@ echo ""
 
 # Check if VPC endpoints exist
 echo "Checking if VPC endpoints exist..."
-vpc_endpoint_names=("com.amazonaws.eu-west-1.guardduty-data" "com.amazonaws.eu-west-1.ssm" "com.amazonaws.eu-west-1.ec2messages" "com.amazonaws.eu-west-1.ssmmessages" "com.amazonaws.eu-west-1.s3")
+vpc_endpoint_prefix="com.amazonaws."
+vpc_endpoint_names=("guardduty-data" "ssm" "ec2messages" "ssmmessages" "s3")
 vpc_names=("fleet-spoke-prod" "fleet-spoke-staging" "fleet-hub-cluster")
 
 for vpc_name in "${vpc_names[@]}"; do
     vpc_id=$(aws_debug ec2 describe-vpcs --filters "Name=tag:Name,Values=$vpc_name" --query "Vpcs[*].VpcId" --output text)
     vpc_endpoint_ids=()
     for endpoint_name in "${vpc_endpoint_names[@]}"; do
+        endpoint_name="${vpc_endpoint_prefix}${AWS_REGION}.${endpoint_name}"
         endpoint_exists=$(aws_debug ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$vpc_id" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
 
         if [ -z "$endpoint_exists" ]; then
