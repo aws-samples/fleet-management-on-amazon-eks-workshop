@@ -15,47 +15,15 @@
     "widgets": [
         {
             "height": 6,
-            "width": 20,
+            "width": 7,
             "y": 6,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "view": "singleValue",
-                "stacked": false,
-                "region": "**aws_region**",
-                "metrics": [
-                    [ "Kubernetes", "eniAllocated", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m1" } ],
-                    [ ".", "forceRemoveENI", ".", ".", { "id": "m3" } ],
-                    [ ".", "eniMaxAvailable", ".", ".", { "id": "m4" } ],
-                    [ ".", "awsAPILatency", ".", ".", { "id": "m5" } ],
-                    [ ".", "ec2ApiReqCount", ".", ".", { "id": "m6" } ],
-                    [ ".", "totalIPv4Prefixes", ".", ".", { "id": "m7" } ],
-                    [ ".", "delReqCount", ".", ".", { "id": "m8" } ],
-                    [ ".", "maxIPAddresses", ".", ".", { "id": "m9" } ],
-                    [ ".", "ipamdActionInProgress", ".", ".", { "id": "m11" } ],
-                    [ ".", "addReqCount", ".", ".", { "id": "m12" } ],
-                    [ ".", "assignIPAddresses", ".", ".", { "id": "m13" } ],
-                    [ ".", "totalIPAddresses", ".", ".", { "id": "m14" } ],
-                    [ ".", "reconcileCount", ".", ".", { "id": "m15" } ],
-                    [ ".", "forceRemoveIPs", ".", ".", { "id": "m25" } ],
-                    [ ".", "totalAssignedIPv4sPerCidr", ".", ".", { "id": "m45" } ]
-                ],
-                "stat": "Average",
-                "period": 300,
-                "title": "CNI Network Metrics"
-            }
-        },
-        {
-            "height": 6,
-            "width": 8,
-            "y": 0,
-            "x": 6,
+            "x": 7,
             "type": "metric",
             "properties": {
                 "metrics": [
                     [ { "expression": "100*m1/m2", "label": "eniUtilization", "id": "e1" } ],
                     [ "Kubernetes", "eniAllocated", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m1", "visible": false } ],
-                    [ ".", "eniMaxAvailable", ".", ".", { "id": "m2", "visible": false } ]
+                    [ "Kubernetes", "eniMaxAvailable", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m2", "visible": false } ]
                 ],
                 "sparkline": true,
                 "view": "gauge",
@@ -72,42 +40,8 @@
             }
         },
         {
-            "height": 3,
-            "width": 6,
-            "y": 0,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "sparkline": true,
-                "view": "singleValue",
-                "metrics": [
-                    [ "Kubernetes", "eniAllocated", "CLUSTER_ID", "${CLUSTER_ID}" ]
-                ],
-                "region": "**aws_region**",
-                "setPeriodToTimeRange": true,
-                "title": "ENIs - Allocated"
-            }
-        },
-        {
-            "height": 3,
-            "width": 6,
-            "y": 3,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "sparkline": true,
-                "view": "singleValue",
-                "metrics": [
-                    [ "Kubernetes", "eniMaxAvailable", "CLUSTER_ID", "${CLUSTER_ID}" ]
-                ],
-                "region": "**aws_region**",
-                "setPeriodToTimeRange": true,
-                "title": "ENIs - Max available"
-            }
-        },
-        {
             "height": 6,
-            "width": 6,
+            "width": 7,
             "y": 0,
             "x": 14,
             "type": "metric",
@@ -121,6 +55,75 @@
                 "stat": "Sum",
                 "period": 300,
                 "title": "EC2 API request count"
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "Kubernetes", "assignIPAddresses", "CLUSTER_ID", "${CLUSTER_ID}" ],
+                    [ "Kubernetes", "totalIPAddresses", "CLUSTER_ID", "${CLUSTER_ID}" ],
+                    [ "Kubernetes", "maxIPAddresses", "CLUSTER_ID", "${CLUSTER_ID}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "setPeriodToTimeRange": true,
+                "yAxis": {
+                    "right": {
+                        "showUnits": true
+                    }
+                },
+                "title": "IP addresses",
+                "period": 300
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 0,
+            "x": 7,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "m1/m3*100", "label": "IP addresses utilization", "id": "e1" } ],
+                    [ "Kubernetes", "assignIPAddresses", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m1", "visible": false } ],
+                    [ "Kubernetes", "totalIPv4Prefixes", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m2", "visible": false } ],
+                    [ "Kubernetes", "maxIPAddresses", "CLUSTER_ID", "${CLUSTER_ID}", { "id": "m3", "visible": false } ]
+                ],
+                "view": "gauge",
+                "region": "**aws_region**",
+                "stat": "Average",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 100
+                    }
+                },
+                "title": "IP addresses utilization"
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 6,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "Kubernetes", "eniAllocated", "CLUSTER_ID", "${CLUSTER_ID}" ],
+                    [ "Kubernetes", "eniMaxAvailable", "CLUSTER_ID", "${CLUSTER_ID}" ]
+                ],
+                "region": "**aws_region**",
+                "title": "ENIs",
+                "period": 300
             }
         }
     ]
