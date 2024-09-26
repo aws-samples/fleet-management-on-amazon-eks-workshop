@@ -4,10 +4,12 @@ set -euo pipefail
 set -x
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $SCRIPTDIR
 ROOTDIR=$SCRIPTDIR
 [[ -n "${DEBUG:-}" ]] && set -x
 
 GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/environment/gitops-repos}
+echo $GITOPS_DIR
 
 PROJECT_CONTECXT_PREFIX=${PROJECT_CONTECXT_PREFIX:-eks-fleet-workshop-gitops}
 # Clone and initialize the gitops repositories
