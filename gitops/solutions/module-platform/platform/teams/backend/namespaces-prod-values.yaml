@@ -255,7 +255,8 @@ namespaces:
         - Egress
         egress:
         - to:
-          - podSelector: {}
+          - ipBlock:
+              cidr: 0.0.0.0/0
     - name: allow-ingress-same-namespace-from-orders
       spec:
         podSelector: {}
