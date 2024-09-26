@@ -24,7 +24,7 @@ if [[ -n "${IDE_URL:-}" ]]; then
     GIT_CREDS="$HOME/.git-credentials"
     # Setup for HTTPs Gitea
     GITEA_URL=${IDE_URL}/gitea
-cat >> $GIT_CREDS << EOT
+cat > $GIT_CREDS << EOT
 ${GITEA_URL/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
 EOT
     git config --global credential.helper 'store'
