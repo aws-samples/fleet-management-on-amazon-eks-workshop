@@ -43,6 +43,6 @@ update_kubeconfig_if_needed_with_role "fleet-spoke-staging" "fleet-staging-clust
 update_kubeconfig_if_needed_with_role "fleet-spoke-prod" "fleet-prod-cluster-frontend" "fleet-prod-cluster-frontend" "$FRONTEND_TEAM_ROLE_ARN"
 
 # Setup kubectx for EKS clusters as Admin
-update_kubeconfig_if_needed "fleet-hub-cluster" "fleet-hub-cluster"
 update_kubeconfig_if_needed "fleet-spoke-prod" "fleet-prod-cluster"
 update_kubeconfig_if_needed "fleet-spoke-staging" "fleet-staging-cluster"
+update_kubeconfig_if_needed "fleet-hub-cluster" "fleet-hub-cluster"
