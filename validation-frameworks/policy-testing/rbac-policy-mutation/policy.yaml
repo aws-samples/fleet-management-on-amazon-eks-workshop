@@ -2,28 +2,31 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: policy-reload-on-secret-update
+  name: policy-reload-on-config-update
 spec:
+  mutateExistingOnPolicyUpdate: true
   rules:
-  - name: update-secret
+  - name: update-config
     match:
       any:
       - resources:
           kinds:
-          - Secret
+          - ConfigMap
           names:
-          - applicationsecret
+          - busybox-config
+          namespaces:
+          - kyverno
     preconditions:
       all:
       - key: "{{ request.operation || 'BACKGROUND' }}"
         operator: Equals
         value: UPDATE
     mutate:
-      mutateExistingOnPolicyUpdate: false
       targets:
         - apiVersion: apps/v1
           kind: Deployment
-          name: monitor-grafana
+          name: busybox
+          namespace: kyverno
       patchStrategicMerge:
         spec:
           template:

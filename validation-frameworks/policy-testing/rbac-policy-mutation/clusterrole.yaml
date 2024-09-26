@@ -12,7 +12,7 @@ rules:
   resources:
   - deployments
   resourceNames:
-  - "monitor-grafana"
+  - "*"
   verbs:
   - get
   - list

@@ -802,7 +802,7 @@ addons:
     #chart: policy-reporter
     chart: policy-reporter-preview
     repoUrl: https://kyverno.github.io/policy-reporter
-    targetRevision: '3.0.0-beta.13'
+    targetRevision: '3.0.0-beta.17'
     selector:
       matchExpressions:
         - key: enable_kyverno_policy_reporter
@@ -818,13 +818,13 @@ addons:
       ui:
         banner: '{{.metadata.annotations.aws_cluster_name}}'
         enabled: true
-        service:
-          annotations:
-            service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
-            service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
-            service.beta.kubernetes.io/aws-load-balancer-type: 'external'
-          type: LoadBalancer
-          port: 80
+        #service:
+          #annotations:
+          #  service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
+          #  service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
+          #  service.beta.kubernetes.io/aws-load-balancer-type: 'external'
+          #type: LoadBalancer
+          #port: 80
       target:
         securityHub:
           accountID: '{{.metadata.annotations.aws_account_id}}'

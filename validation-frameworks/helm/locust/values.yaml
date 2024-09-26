@@ -1,0 +1,206 @@
+loadtest:
+  # loadtest.name -- a name used for resources and settings in this load test
+  name: example
+  # loadtest.locust_locustfile -- the name of the locustfile
+  locust_locustfile: main.py
+  # loadtest.locust_locustfile_path -- the path of the locustfile (without trailing backslash)
+  locust_locustfile_path: "/mnt/locust"
+  # loadtest.locust_locustfile_configmap -- name of a configmap containing your locustfile (default uses the example locustfile)
+  locust_locustfile_configmap: "example-locustfile"
+  # loadtest.locust_lib_configmap -- name of a configmap containing your lib (default uses the example lib)
+  locust_lib_configmap: "example-lib"
+  # loadtest.locust_host -- the host you will load test
+  locust_host: https://www.google.com
+  # loadtest.pip_packages -- a list of extra python pip packages to install
+  pip_packages: []
+  # loadtest.environment -- environment variables used in the load test for both master and workers
+  environment: {}
+    # VAR: VALUE
+  # loadtest.environment_secret -- environment variables used in the load test for both master and workers, stored as secrets
+  environment_secret: {}
+    # VAR: VALUE
+  # loadtest.environment_external_secret -- environment variables used in the load test for both master and workers, stored in secrets created outside this chart. Each secret contains a list of values in it. Usage: `secret_name: [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]`
+  environment_external_secret: {}
+    # SECRET_NAME: VAR
+  # loadtest.mount_external_secret -- additional mount used in the load test for both master and workers, stored in secrets created outside this chart. Each secret contains a list of values in it. Usage: `mountPath: yourMountLocation, files: { secret_name: [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY] }`
+  mount_external_secret: {}
+    # mountPath: yourMountLocation
+    # files:
+      # secret_name: var
+  # loadtest.headless -- whether to run locust with headless settings
+  headless: false
+  # loadtest.tags -- whether to run locust with `--tags [TAG [TAG ...]]` options, so only tasks with any matching tags will be executed
+  tags: ""
+  # loadtest.excludeTags -- whether to run locust with `--exclude-tags [TAG [TAG ...]]` options, so only tasks with no matching tags will be executed
+  excludeTags: ""
+  # loadtest.locustCmd -- The command to run Locust
+  locustCmd: "/opt/venv/bin/locust"
+
+image:
+  repository: locustio/locust
+  tag: 2.15.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  annotations: {}
+  extraLabels: {}
+
+master:
+  # master.image -- A custom docker image including tag
+  image: ""
+  # master.logLevel -- Log level. Can be INFO or DEBUG
+  logLevel: INFO
+  # master.replicas -- Should be set to either 0 or 1.
+  replicas: 1
+  # master.resources -- resources for the locust master
+  resources: {}
+    # limits:
+    #   cpu: 2000m
+    #   memory: 1024Mi
+    # requests:
+    #   cpu: 1000m
+    #   memory: 1024Mi
+  serviceAccountAnnotations: {}
+  # master.deploymentAnnotations -- Annotations on the deployment for master
+  deploymentAnnotations: {}
+  # master.envs_include_default -- Whether to include default environment variables
+  envs_include_default: true
+  # master.environment -- environment variables for the master
+  environment: {}
+  # master.args -- Any extra command args for the master
+  args: []
+  command:
+    - sh
+    - /config/docker-entrypoint.sh
+  strategy:
+    type: RollingUpdate
+  # master.pdb.enabled -- Whether to create a PodDisruptionBudget for the master pod
+  pdb:
+    enabled: false
+  # master.auth.enabled -- When enabled, UI basic auth will be enforced with the given username and password
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+  # master.restartPolicy -- master pod's restartPolicy. Can be Always, OnFailure, or Never.
+  restartPolicy: Always
+  # master.nodeSelector -- Overwrites nodeSelector from global
+  nodeSelector: {}
+  # master.tolerations -- Overwrites tolerations from global
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
+  # master.affinity -- Overwrites affinity from global
+  affinity: {}
+
+worker:
+  # worker.image -- A custom docker image including tag
+  image: ""
+  # worker.logLevel -- Log level. Can be INFO or DEBUG
+  logLevel: INFO
+  replicas: 1
+  # worker.pdb.enabled -- Whether to create a PodDisruptionBudget for the worker pods
+  pdb:
+    enabled: false
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 40
+  # worker.resources -- resources for the locust worker
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 500m
+    #   memory: 256Mi
+  serviceAccountAnnotations: {}
+  # worker.deploymentAnnotations -- Annotations on the deployment for workers
+  deploymentAnnotations: {}
+  # worker.envs_include_default -- Whether to include default environment variables
+  envs_include_default: true
+  # worker.environment -- environment variables for the workers
+  environment: {}
+  # worker.args -- Any extra command args for the workers
+  args: []
+  command:
+    - sh
+    - /config/docker-entrypoint.sh
+  strategy:
+    type: RollingUpdate
+  # worker.restartPolicy -- worker pod's restartPolicy. Can be Always, OnFailure, or Never.
+  restartPolicy: Always
+  # worker.nodeSelector -- Overwrites nodeSelector from global
+  nodeSelector: {}
+  # worker.tolerations -- Overwrites tolerations from global
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
+  # worker.affinity -- Overwrites affinity from global
+  affinity: {}
+
+
+nameOverride: ""
+fullnameOverride: ""
+imagePullSecrets: []
+
+# hostAliases -- List of entries added to the /etc/hosts file on the pod to resolve custom hosts
+hostAliases: []
+  # - ip: "10.0.0.1"
+  #   hostnames:
+  #   - "example-host.com"
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  #  kubernetes.io/ingress.class: nginx
+  #  kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      pathType: ImplementationSpecific
+      path: /
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# extraConfigMaps -- Any extra configmaps to mount for the master and worker. Can be used for extra python packages
+extraConfigMaps: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+# extraLabels -- Any extra labels to apply to all resources
+extraLabels: {}
+
+# extraObjects -- Any extra manifests to deploy alongside locust. Can be used for external secret providers
+extraObjects: []
+  # - apiVersion: "kubernetes-client.io/v1"
+  #   kind: ExternalSecret
+  #   metadata:
+  #     name: locust-secrets
+  #   spec:
+  #     backendType: gcpSecretsManager
+  #     data:
+  #       - key: app-admin-password
+  #         name: adminPassword
+global:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"

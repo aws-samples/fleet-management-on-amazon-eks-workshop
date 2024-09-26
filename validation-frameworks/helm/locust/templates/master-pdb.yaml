@@ -1,0 +1,15 @@
+{{- if .Values.master.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "locust.fullname" . }}-master
+  labels:
+    component: master
+{{ include "locust.labels" . | indent 4 }}
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "locust.selectorLabels" . | nindent 6 }}
+      component: master
+{{- end }}

@@ -1,20 +1,20 @@
 variables {
-  eks_cluster_version = "1.30"
-  region = "us-east-1"
-  name                = "eks-validation-frameworks"
-  vpc_cidr            = "10.1.0.0/16"
+  kubernetes_version = "1.30"
+  vpc_cidr            = "10.2.0.0/16"    
 }
 
 run "create_eks_cluster" {
   command = plan
-  
+  module {
+    source = "../../../terraform/spokes"
+  }
   assert {
     condition     = module.eks.cluster_name != ""
     error_message = "EKS cluster name should not be empty"
   }
-  
+ 
   assert {
-    condition     = module.eks.cluster_version == var.eks_cluster_version
+    condition     = module.eks.cluster_version == var.kubernetes_version
     error_message = "EKS cluster version should match the specified version"
   }
 
@@ -24,28 +24,8 @@ run "create_eks_cluster" {
   }
 
   assert {
-    condition     = contains(keys(module.eks.eks_managed_node_groups), "karpenter")
-    error_message = "The managed node group should be named 'karpenter'"
-  }
-  
-  assert {
-    condition     = module.karpenter.node_iam_role_name == local.name
-    error_message = "Karpenter node IAM role name should match the local name"
-  }
-  
-  assert {
-    condition     = helm_release.karpenter.namespace == "kube-system"
-    error_message = "Karpenter Helm release should be in kube-system namespace"
-  }
-
-  assert {
-    condition     = helm_release.karpenter.chart == "karpenter"
-    error_message = "Karpenter Helm chart name should be 'karpenter'"
-  }
-
-  assert {
-    condition     = helm_release.karpenter.version == "0.37.0"
-    error_message = "Karpenter Helm chart version should be 0.37.0"
+    condition     = contains(keys(module.eks.eks_managed_node_groups), local.name)
+    error_message = "The managed node group should contain the cluster name"
   }
   
   assert {
@@ -67,10 +47,4 @@ run "create_eks_cluster" {
     condition     = length(module.vpc.public_subnets) == length(local.azs)
     error_message = "Number of public subnets should match the number of AZs"
   }
-
-  assert {
-    condition     = length(module.vpc.intra_subnets) == length(local.azs)
-    error_message = "Number of intra subnets should match the number of AZs"
-  }
-
 }
