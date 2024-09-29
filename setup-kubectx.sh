@@ -9,4 +9,3 @@ ROOTDIR=$SCRIPTDIR
 aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-staging --alias fleet-staging-cluster
 aws eks --region $AWS_REGION update-kubeconfig --name fleet-spoke-prod --alias fleet-prod-cluster
 aws eks --region $AWS_REGION update-kubeconfig --name fleet-hub-cluster --alias fleet-hub-cluster
-kubectl config use-context fleet-hub-cluster
