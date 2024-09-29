@@ -26,7 +26,9 @@ spec:
   {{- else }}
   {{- fail "nodeClass error: Either IamRole or IamInstanceProfile must be defined" }}
   {{- end }}
+  {{- if or (hasKey $v "amiFamily") (hasKey $.Values "amiFamily") }}
   amiFamily: {{ $v.amiFamily | default $.Values.amiFamily }}
+  {{- end }}
   {{- if or (hasKey $v "amiSelectorTerms") (hasKey $.Values "amiSelectorTerms") }}
   amiSelectorTerms:
     {{- toYaml ($v.amiSelectorTerms | default $.Values.amiSelectorTerms) | nindent 4 }}

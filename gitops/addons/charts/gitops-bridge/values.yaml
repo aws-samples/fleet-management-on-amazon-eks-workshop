@@ -148,7 +148,7 @@ addons:
     namespace: '.metadata.annotations.karpenter_namespace'
     chart: karpenter/karpenter
     repoUrl: public.ecr.aws
-    targetRevision: "0.37.0"
+    targetRevision: "1.0.4"
     selector:
       matchExpressions:
         - key: enable_karpenter

@@ -1,11 +1,12 @@
  ## Global Configuration
 
  # Karpenter API Version in CRD
-ApiVersion: v1beta1
+ApiVersion: v1
 
  # Nodes Configuration
 clusterName: "eks-cluster"    # My Cluster Name
-amiFamily: AL2    # Bottlerocket  #AL2023, Can be overridden by amiSelectorTerms
+# amiFamily is now optional
+#amiFamily: AL2    # Bottlerocket  #AL2023, Can be overridden by amiSelectorTerms
 IamRole: eks_nodes_role
 
 subnetSelectorTerms: []
