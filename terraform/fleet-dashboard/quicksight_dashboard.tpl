@@ -392,6 +392,15 @@
                                                     "Column": {
                                                         "DataSetIdentifier": "${CLUSTERS_DATA_DATASET}",
                                                         "ColumnName": "Cluster Version"
+                                                    },
+                                                    "FormatConfiguration": {
+                                                        "FormatConfiguration": {
+                                                            "NumberDisplayFormatConfiguration": {
+                                                                "DecimalPlacesConfiguration": {
+                                                                    "DecimalPlaces": 2
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -612,6 +621,15 @@
                                                     "Column": {
                                                         "DataSetIdentifier": "${SUPPORT_DATA_DATASET}",
                                                         "ColumnName": "Cluster Version"
+                                                    },
+                                                    "FormatConfiguration": {
+                                                        "FormatConfiguration": {
+                                                            "NumberDisplayFormatConfiguration": {
+                                                                "DecimalPlacesConfiguration": {
+                                                                    "DecimalPlaces": 2
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             },
@@ -748,6 +766,15 @@
                                                     "Column": {
                                                         "DataSetIdentifier": "${CLUSTERS_DETAILS_DATASET}",
                                                         "ColumnName": "Cluster Version"
+                                                    },
+                                                    "FormatConfiguration": {
+                                                        "FormatConfiguration": {
+                                                            "NumberDisplayFormatConfiguration": {
+                                                                "DecimalPlacesConfiguration": {
+                                                                    "DecimalPlaces": 2
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             },
@@ -910,6 +937,15 @@
                                                     "Column": {
                                                         "DataSetIdentifier": "${UPGRADE_INSIGHTS_DATASET}",
                                                         "ColumnName": "Cluster Version"
+                                                    },
+                                                    "FormatConfiguration": {
+                                                        "FormatConfiguration": {
+                                                            "NumberDisplayFormatConfiguration": {
+                                                                "DecimalPlacesConfiguration": {
+                                                                    "DecimalPlaces": 2
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             },
@@ -928,6 +964,15 @@
                                                     "Column": {
                                                         "DataSetIdentifier": "${UPGRADE_INSIGHTS_DATASET}",
                                                         "ColumnName": "API Deprecated Version"
+                                                    },
+                                                    "FormatConfiguration": {
+                                                        "FormatConfiguration": {
+                                                            "NumberDisplayFormatConfiguration": {
+                                                                "DecimalPlacesConfiguration": {
+                                                                    "DecimalPlaces": 2
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             },
