@@ -94,7 +94,10 @@ configs:
     # Changing this to `false` significantly reduce number of Application CRD updates and improves controller performance.
     controller.resource.health.persist: "false"
     ui.bannerpermanent: "true"
-    users.anonymous.enabled: "true"
+
+    # Disable as the banner will not work for anonymous users
+    # users.anonymous.enabled: "true"
+
     # setting to short time for workshop purposes only, best practice is to use a git webhook
     timeout.reconciliation: 30s
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane
