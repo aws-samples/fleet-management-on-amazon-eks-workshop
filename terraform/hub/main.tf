@@ -57,7 +57,7 @@ locals {
     service_account = "aws-load-balancer-controller-sa"
   }
   karpenter = {
-    namespace       = "karpenter"
+    namespace       = "kube-system"
     service_account = "karpenter"
   }
 

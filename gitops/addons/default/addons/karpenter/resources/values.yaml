@@ -12,7 +12,7 @@ nodeGroups:
       # cpu: 1000
       # memory: 1000Gi
       cpu: 50
-      memory: 50Gi      
+      memory: 50Gi
       nvidia.com/gpu: 0
 
 instances:
@@ -35,7 +35,9 @@ instances:
 
 clusterName: in-cluster
 IamRole: myRole
-amiFamily: Bottlerocket
+#amiFamily: Bottlerocket
+amiSelectorTerms:
+- alias: al2023@latest
 securityGroupSelectorTerms:
 - tags:
     karpenter.sh/discovery: 'in-cluster'
@@ -48,7 +50,7 @@ nodeTags:
 blockDeviceMappings:
 - deviceName: /dev/xvda
   ebs:
-    volumeSize: 10Gi
+    volumeSize: 20Gi
     volumeType: gp3
     encrypted: true
 - deviceName: /dev/xvdb

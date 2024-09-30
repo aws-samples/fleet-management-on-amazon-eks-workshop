@@ -2,4 +2,5 @@
 configs:
   cm:
     ui.bannercontent: "Production Environment"
-    ui.bannerpermanent: "true"
+  params:
+    server.basehref: /proxy/8083/

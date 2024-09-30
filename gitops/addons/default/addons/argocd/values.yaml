@@ -3,6 +3,10 @@ global:
   - key: "CriticalAddonsOnly"
     operator: "Exists"
 
+dex:
+  # -- Enable dex
+  enabled: false
+
 controller:
   replicas: 1 # Additional replicas will cause sharding of managed clusters across number of replicas.
   metrics:
@@ -15,6 +19,7 @@ controller:
       value: '300'
     - name: ARGOCD_SYNC_WAVE_DELAY
       value: '30'
+  controller.resource.health.persist: "true"
 repoServer:
   autoscaling:
     enabled: true
@@ -56,11 +61,11 @@ server:
     service:
       annotations:
         prometheus.io/scrape: true
-  service:
-    type: LoadBalancer
-    annotations:
-      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
-      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  # service:
+  #   type: LoadBalancer
+  #   annotations:
+  #     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+  #     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 
 configs:
   repositories:
@@ -75,7 +80,24 @@ configs:
       type: helm
       url: ghcr.io
       enableOCI: 'true'
+  params:
+    # -- Used if Argo CD is running behind reverse proxy under subpath different from /
+    server.rootpath: ''
+    server.insecure: true
+  rbac:
+    # -- The name of the default role which Argo CD will falls back to, when authorizing API requests (optional).
+    # If omitted or empty, users may be still be able to login, but will see no apps, projects, etc...
+    policy.default: 'role:readonly'
   cm:
+    controller.self.heal.timeout.seconds: "600"
+    # Specifies if resource health should be persisted in app CRD (default true)
+    # Changing this to `false` significantly reduce number of Application CRD updates and improves controller performance.
+    controller.resource.health.persist: "false"
+    ui.bannerpermanent: "true"
+
+    # Disable as the banner will not work for anonymous users
+    # users.anonymous.enabled: "true"
+
     # setting to short time for workshop purposes only, best practice is to use a git webhook
     timeout.reconciliation: 30s
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane

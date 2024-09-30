@@ -1,11 +1,12 @@
  ## Global Configuration
 
  # Karpenter API Version in CRD
-ApiVersion: v1beta1
+ApiVersion: v1
 
  # Nodes Configuration
 clusterName: "eks-cluster"    # My Cluster Name
-amiFamily: AL2    # Bottlerocket  #AL2023, Can be overridden by amiSelectorTerms
+# amiFamily is now optional
+#amiFamily: AL2    # Bottlerocket  #AL2023, Can be overridden by amiSelectorTerms
 IamRole: eks_nodes_role
 
 subnetSelectorTerms: []
@@ -37,6 +38,11 @@ nodeTags:
   team: devops
   component: eks-karpenter-nodes
 
+# References the Cloud Provider's NodeClass resource, see your cloud provider specific documentation
+nodeClassRef:
+  group: karpenter.k8s.aws  # Updated since only a single version will be served
+  kind: EC2NodeClass
+
 availabilityZones: []
 
  # MetaData Options
@@ -60,7 +66,7 @@ detailedMonitoring: false
 associatePublicIPAddress: false
  # Consolidation Options
 expireAfter: "720h"
-consolidationPolicy: "WhenUnderutilized"
+consolidationPolicy: "WhenEmptyOrUnderutilized"
 consolidateAfter: "5m"
 
  # Default Instance Sizing
