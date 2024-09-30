@@ -50,7 +50,7 @@ nodeTags:
 blockDeviceMappings:
 - deviceName: /dev/xvda
   ebs:
-    volumeSize: 10Gi
+    volumeSize: 20Gi
     volumeType: gp3
     encrypted: true
 - deviceName: /dev/xvdb
