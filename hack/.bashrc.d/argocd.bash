@@ -1,18 +1,20 @@
 function argocd_credentials (){
+	kubectl --context $1 port-forward svc/argocd-server -n argocd $2:80 > /dev/null 2>&1 &
 	export ARGOCD_SERVER=$(kubectl get svc -n argocd argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' --context $1)
 	export ARGOCD_PWD=$(kubectl get secrets argocd-initial-admin-secret -n argocd --template='{{index .data.password | base64decode}}' --context $1)
+	argocd login "localhost:$2" --plaintext --username admin --password $ARGOCD_PWD --name $1
 	echo "ArgoCD Username: admin"
 	echo "ArgoCD Password: $ARGOCD_PWD"
-	echo "ArgoCD URL: https://$ARGOCD_SERVER"
-	argocd login $ARGOCD_SERVER --username admin --password $ARGOCD_PWD --insecure --name $1
+	echo "ArgoCD URL: $IDE_URL/proxy/$2"
 }
 
 function argocd_hub_credentials (){
-	argocd_credentials fleet-hub-cluster
+	argocd_credentials fleet-hub-cluster 8081
 }
 function argocd_staging_credentials (){
-	argocd_credentials fleet-staging-cluster
+	argocd_credentials fleet-staging-cluster 8082
 }
 function argocd_prod_credentials (){
-	argocd_credentials fleet-prod-cluster
+	argocd_credentials fleet-prod-cluster 8083
 }
+

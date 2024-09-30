@@ -79,8 +79,18 @@ configs:
       type: helm
       url: ghcr.io
       enableOCI: 'true'
+  params:
+    # -- Used if Argo CD is running behind reverse proxy under subpath different from /
+    server.rootpath: ''
+    server.insecure: true
+  rbac:
+    # -- The name of the default role which Argo CD will falls back to, when authorizing API requests (optional).
+    # If omitted or empty, users may be still be able to login, but will see no apps, projects, etc...
+    policy.default: 'role:readonly'
   cm:
     # setting to short time for workshop purposes only, best practice is to use a git webhook
+    ui.bannerpermanent: "true"
+    users.anonymous.enabled: "true"
     timeout.reconciliation: 30s
     application.resourceTrackingMethod: 'annotation' #use annotation for tracking required for Crossplane
     resource.exclusions: |
