@@ -31,7 +31,18 @@ force_delete_vpc() {
   if [ -n "$VPCID" ]; then
       echo "VPC ID: $VPCID"
       echo "Cleaning VPC endpoints if exists..."
-      vpc_endpoint_names=("com.amazonaws.eu-west-1.guardduty-data" "com.amazonaws.eu-west-1.ssm" "com.amazonaws.eu-west-1.ec2messages" "com.amazonaws.eu-west-1.ssmmessages" "com.amazonaws.eu-west-1.s3")
+
+      # Use AWS_REGION if set, otherwise default to the region from AWS CLI configuration
+      REGION=${AWS_REGION:-$(aws configure get region)}
+
+      vpc_endpoint_names=(
+          "com.amazonaws.$REGION.guardduty-data"
+          "com.amazonaws.$REGION.ssm"
+          "com.amazonaws.$REGION.ec2messages"
+          "com.amazonaws.$REGION.ssmmessages"
+          "com.amazonaws.$REGION.s3"
+      )
+
       for endpoint_name in "${vpc_endpoint_names[@]}"; do
           endpoint_exists=$(aws ec2 describe-vpc-endpoints --filters "Name=service-name,Values=$endpoint_name" "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text 2>/dev/null)
           if [ -n "$endpoint_exists" ]; then
