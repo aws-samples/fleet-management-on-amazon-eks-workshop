@@ -802,7 +802,7 @@ addons:
     #chart: policy-reporter
     chart: policy-reporter-preview
     repoUrl: https://kyverno.github.io/policy-reporter
-    targetRevision: '3.0.0-beta.17'
+    targetRevision: '3.0.0-beta.18'
     selector:
       matchExpressions:
         - key: enable_kyverno_policy_reporter
