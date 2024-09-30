@@ -38,6 +38,11 @@ nodeTags:
   team: devops
   component: eks-karpenter-nodes
 
+# References the Cloud Provider's NodeClass resource, see your cloud provider specific documentation
+nodeClassRef:
+  group: karpenter.k8s.aws  # Updated since only a single version will be served
+  kind: EC2NodeClass
+
 availabilityZones: []
 
  # MetaData Options
@@ -61,7 +66,7 @@ detailedMonitoring: false
 associatePublicIPAddress: false
  # Consolidation Options
 expireAfter: "720h"
-consolidationPolicy: "WhenUnderutilized"
+consolidationPolicy: "WhenEmptyOrUnderutilized"
 consolidateAfter: "5m"
 
  # Default Instance Sizing
