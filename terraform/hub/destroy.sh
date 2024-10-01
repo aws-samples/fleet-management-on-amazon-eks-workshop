@@ -18,11 +18,11 @@ if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
 fi
 if kubectl get nodes; then
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd cluster-addons
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-control-plane
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members-init
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-spoke-argocd
+  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members-init
+  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-control-plane
+  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd cluster-addons
   scale_down_karpenter_nodes
   # delete all load balancers
   kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
