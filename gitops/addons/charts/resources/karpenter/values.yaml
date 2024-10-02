@@ -66,7 +66,8 @@ detailedMonitoring: false
 associatePublicIPAddress: false
  # Consolidation Options
 expireAfter: "720h"
-consolidationPolicy: "WhenEmptyOrUnderutilized"
+#consolidationPolicy: "WhenEmptyOrUnderutilized"
+consolidationPolicy: "WhenEmpty"
 consolidateAfter: "5m"
 
  # Default Instance Sizing
@@ -82,7 +83,7 @@ instances:
   - "8"
   - "16"
   capacityType:
-  - spot
+  #- spot
   - on-demand
   operatingSystems:
     - linux
