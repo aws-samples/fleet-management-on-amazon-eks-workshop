@@ -1,6 +1,12 @@
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  # Do not include local zones
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}
 data "aws_iam_session_context" "current" {
   # This data source provides information on the IAM source role of an STS assumed role
   # For non-role ARNs, this data source simply passes the ARN through issuer ARN
