@@ -7,7 +7,7 @@ variable "vpc_cidr" {
 variable "kubernetes_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.30"
+  default     = "1.29"
 }
 
 variable "kms_key_admin_roles" {
