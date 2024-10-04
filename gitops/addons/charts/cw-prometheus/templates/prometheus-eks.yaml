@@ -40,6 +40,7 @@ data:
                     "^karpenter_nodes_total_pod_limits$",
                     "^karpenter_nodes_total_pod_requests$",
                     "^karpenter_pods_startup_time_seconds$",
+                    "^karpenter_pods_startup_duration_seconds$",
                     "^karpenter_cloudprovider_batcher_batch_size$",
                     "^karpenter_cloudprovider_batcher_batch_time_seconds$",
                     "^karpenter_cloudprovider_duration_seconds$",
@@ -77,7 +78,9 @@ data:
                   ],
                   "metric_selectors": [
                     "^karpenter_nodepool_limit$",
-                    "^karpenter_nodepool_usage$"
+                    "^karpenter_nodepools_limit$",
+                    "^karpenter_nodepool_usage$",
+                    "^karpenter_nodepools_usage$"
                   ]
                 },
                 {
@@ -92,6 +95,7 @@ data:
                     "^karpenter_nodeclaims_drifted$",
                     "^karpenter_nodeclaims_initialized$",
                     "^karpenter_nodeclaims_launched$",
+                    "^karpenter_nodeclaims_created_total$",
                     "^karpenter_nodeclaims_registered$",
                     "^karpenter_nodeclaims_terminated$"
                   ]
@@ -138,6 +142,7 @@ data:
       - role: endpoints
         namespaces:
           names:
+          - kube-system
           - karpenter
       relabel_configs:
       - source_labels: [__meta_kubernetes_endpoint_port_name]
