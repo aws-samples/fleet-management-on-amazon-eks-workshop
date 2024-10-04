@@ -88,23 +88,6 @@
             }
         },
         {
-            "height": 6,
-            "width": 7,
-            "y": 6,
-            "x": 7,
-            "type": "metric",
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "**aws_region**",
-                "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_terminated", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
-                ],
-                "period": 300,
-                "stat": "Sum"
-            }
-        },
-        {
             "height": 3,
             "width": 7,
             "y": 0,
