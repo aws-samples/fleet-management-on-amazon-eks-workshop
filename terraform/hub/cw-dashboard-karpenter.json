@@ -8,7 +8,7 @@
             "label": "Cluster name",
             "defaultValue": "fleet-hub-cluster",
             "visible": true,
-            "search": "{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=karpenter_nodepool_limit",
+            "search": "{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=karpenter_nodepools_limit",
             "populateFrom": "ClusterName"
         },
         {
@@ -17,9 +17,9 @@
             "inputType": "select",
             "id": "nodepool",
             "label": "Node pool",
-            "defaultValue": "nodes-default-amd64-fleet-hub-cluster",
+            "defaultValue": "nodes-default-amd64",
             "visible": true,
-            "search": "ContainerInsights/Prometheus MetricName=karpenter_nodepool_limit",
+            "search": "ContainerInsights/Prometheus MetricName=karpenter_nodepools_limit",
             "populateFrom": "nodepool"
         }
     ],
@@ -34,10 +34,10 @@
                 "metrics": [
                     [ { "expression": "100*(m2/m1)", "label": "memory", "id": "e1" } ],
                     [ { "expression": "100*(m4/m3)", "label": "cpu", "id": "e2" } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_limit", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m2", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_limit", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m3", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m4", "visible": false } ]
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m2", "visible": false } ],
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m3", "visible": false } ],
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m4", "visible": false } ]
                 ],
                 "sparkline": true,
                 "view": "gauge",
@@ -63,7 +63,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_pods_startup_time_seconds", "ClusterName", "${ClusterName}" ]
+                    [ "ContainerInsights/Prometheus", "karpenter_pods_startup_duration_seconds", "ClusterName", "${ClusterName}" ]
                 ],
                 "region": "**aws_region**",
                 "period": 300,
@@ -78,7 +78,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_launched", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
+                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_created_total", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -114,8 +114,8 @@
                 "sparkline": true,
                 "view": "singleValue",
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "{ClusterName}" ],
-                    [ ".", "karpenter_nodepool_limit", ".", ".", ".", ".", ".", "." ]
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "{ClusterName}" ],
+                    [ ".", "karpenter_nodepools_limit", ".", ".", ".", ".", ".", "." ]
                 ],
                 "region": "**aws_region**",
                 "singleValueFullPrecision": false,
@@ -134,8 +134,8 @@
                 "sparkline": true,
                 "view": "singleValue",
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepool_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "{ClusterName}" ],
-                    [ ".", "karpenter_nodepool_limit", ".", ".", ".", ".", ".", "." ]
+                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "{ClusterName}" ],
+                    [ ".", "karpenter_nodepools_limit", ".", ".", ".", ".", ".", "." ]
                 ],
                 "region": "**aws_region**",
                 "stacked": true,
