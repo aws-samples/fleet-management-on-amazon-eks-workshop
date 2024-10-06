@@ -67,7 +67,14 @@
                 ],
                 "region": "**aws_region**",
                 "period": 300,
-                "title": "Karpenter pods startup time"
+                "title": "Karpenter pods startup time",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Seconds",
+                        "showUnits": false
+                    }
+                }
             }
         },
         {
@@ -84,7 +91,65 @@
                 "stacked": false,
                 "region": "**aws_region**",
                 "period": 300,
-                "stat": "Sum"
+                "stat": "Sum",
+                "title": "Created nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 6,
+            "x": 7,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_terminated_total", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "period": 300,
+                "stat": "Sum",
+                "title": "Terminated nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 6,
+            "x": 14,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "karpenter_cluster_state_node_count", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "period": 300,
+                "stat": "Average",
+                "title": "Cluster nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
             }
         },
         {
