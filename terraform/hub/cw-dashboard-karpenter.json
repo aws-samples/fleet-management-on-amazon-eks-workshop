@@ -32,8 +32,8 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "100*(m2/m1)", "label": "memory", "id": "e1" } ],
-                    [ { "expression": "100*(m4/m3)", "label": "cpu", "id": "e2" } ],
+                    [ { "expression": "100*(m2/m1)", "label": "memory (%)", "id": "e1", "unit": "Percent" } ],
+                    [ { "expression": "100*(m4/m3)", "label": "cpu (%)", "id": "e2", "unit": "Percent" } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m2", "visible": false } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m3", "visible": false } ],
