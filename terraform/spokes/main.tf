@@ -283,6 +283,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     "${local.name}" = {
+      ami_type = "AL2_x86_64"
       instance_types = ["m5.large"]
 
       # Attach additional IAM policies to the Karpenter node IAM role
@@ -309,19 +310,19 @@ module "eks" {
   # EKS Addons
   cluster_addons = {
     coredns    = {
-      most_recent    = true
+      addon_version  = "v1.11.3-eksbuild.1"
     }
     kube-proxy = {
-      most_recent    = true
+      addon_version  = "v1.30.3-eksbuild.9"
     }
     amazon-cloudwatch-observability = {
-      most_recent    = true
+      addon_version  = "v2.1.2-eksbuild.1"
     }
     aws-ebs-csi-driver = {
-      most_recent    = true
+      addon_version  = "v1.35.0-eksbuild.1"
     }
     eks-pod-identity-agent = {
-      most_recent    = true
+      addon_version  = "v1.3.2-eksbuild.2"
       before_compute = true
     }
     vpc-cni = {
@@ -329,7 +330,7 @@ module "eks" {
       # the addon is configured before data plane compute resources are created
       # See README for further details
       before_compute = true
-      most_recent    = true # To ensure access to the latest settings provided
+      addon_version  = "v1.18.5-eksbuild.1"
       configuration_values = jsonencode({
         env = {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
