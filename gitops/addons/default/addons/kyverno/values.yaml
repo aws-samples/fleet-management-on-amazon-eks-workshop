@@ -17,6 +17,20 @@ backgroundController:
   tolerations:
   - key: "CriticalAddonsOnly"
     operator: "Exists"
+  rbac:
+    clusterRole:
+      extraResources:
+        - apiGroups:
+            - apps
+          resources:
+            - deployments
+          verbs:
+            - get
+            - list
+            - create
+            - update
+            - delete
+            - patch
 
 cleanupController:
   tolerations:
