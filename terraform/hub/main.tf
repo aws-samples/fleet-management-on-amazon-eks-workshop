@@ -338,7 +338,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     "${local.name}" = {
-      ami_type = "AL2_x86_64"
+      ami_type = "BOTTLEROCKET_x86_64"
       instance_types = ["m5.large"]
 
       # Attach additional IAM policies to the Karpenter node IAM role

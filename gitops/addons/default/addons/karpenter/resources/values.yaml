@@ -37,7 +37,7 @@ clusterName: in-cluster
 IamRole: myRole
 #amiFamily: Bottlerocket
 amiSelectorTerms:
-- alias: al2023@latest
+- alias: bottlerocket@latest
 securityGroupSelectorTerms:
 - tags:
     karpenter.sh/discovery: 'in-cluster'
