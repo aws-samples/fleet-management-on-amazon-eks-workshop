@@ -32,8 +32,8 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "100*(m2/m1)", "label": "memory", "id": "e1" } ],
-                    [ { "expression": "100*(m4/m3)", "label": "cpu", "id": "e2" } ],
+                    [ { "expression": "100*(m2/m1)", "label": "memory (%)", "id": "e1", "unit": "Percent" } ],
+                    [ { "expression": "100*(m4/m3)", "label": "cpu (%)", "id": "e2", "unit": "Percent" } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m2", "visible": false } ],
                     [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m3", "visible": false } ],
@@ -67,7 +67,14 @@
                 ],
                 "region": "**aws_region**",
                 "period": 300,
-                "title": "Karpenter pods startup time"
+                "title": "Karpenter pods startup time",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Seconds",
+                        "showUnits": false
+                    }
+                }
             }
         },
         {
@@ -84,7 +91,65 @@
                 "stacked": false,
                 "region": "**aws_region**",
                 "period": 300,
-                "stat": "Sum"
+                "stat": "Sum",
+                "title": "Created nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 6,
+            "x": 7,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_terminated_total", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "period": 300,
+                "stat": "Sum",
+                "title": "Terminated nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 7,
+            "y": 6,
+            "x": 14,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ContainerInsights/Prometheus", "karpenter_cluster_state_node_count", "ClusterName", "${ClusterName}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "**aws_region**",
+                "period": 300,
+                "stat": "Average",
+                "title": "Cluster nodes",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "label": "Count",
+                        "showUnits": false
+                    }
+                }
             }
         },
         {

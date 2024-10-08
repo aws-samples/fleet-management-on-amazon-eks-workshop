@@ -39,6 +39,7 @@ data:
                     "^karpenter_nodes_total_daemon_requests$",
                     "^karpenter_nodes_total_pod_limits$",
                     "^karpenter_nodes_total_pod_requests$",
+                    "^karpenter_cluster_state_node_count$",
                     "^karpenter_pods_startup_time_seconds$",
                     "^karpenter_pods_startup_duration_seconds$",
                     "^karpenter_cloudprovider_batcher_batch_size$",
@@ -97,7 +98,8 @@ data:
                     "^karpenter_nodeclaims_launched$",
                     "^karpenter_nodeclaims_created_total$",
                     "^karpenter_nodeclaims_registered$",
-                    "^karpenter_nodeclaims_terminated$"
+                    "^karpenter_nodeclaims_terminated$",
+                    "^karpenter_nodeclaims_terminated_total$"
                   ]
                 },
                 {
