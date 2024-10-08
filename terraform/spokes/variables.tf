@@ -4,8 +4,9 @@ variable "vpc_cidr" {
 }
 
 variable "kubernetes_version" {
-  description = "EKS version"
+  description = "Kubernetes version"
   type        = string
+  default     = "1.30"
 }
 
 variable "addons" {
