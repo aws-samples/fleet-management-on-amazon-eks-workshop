@@ -11,8 +11,6 @@ rules:
   - apps
   resources:
   - deployments
-  resourceNames:
-  - "*"
   verbs:
   - get
   - list
