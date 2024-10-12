@@ -24,4 +24,6 @@ addons:
     enabled: true
   kube_state_metrics:
     enabled: true
+  adot_collector:
+    enabled: true
 

@@ -768,14 +768,28 @@ addons:
         - key: enable_grafana_operator
           operator: In
           values: ['true']
-
     resources:
       path: charts/resources/grafana-operator
       helm:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
           AMP_AWS_REGION: '{{.metadata.annotations.aws_region}}'
-
+  adot_collector:
+    enabled: false
+    namespace: '{{default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'
+    path: charts/adot-collector
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
+    targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+    values:
+       ekscluster: '{{.metadata.annotations.aws_cluster_name}}'
+       accountId: '{{.metadata.annotations.aws_account_id}}'
+       region: '{{.metadata.annotations.aws_region}}'    
+       ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'      
+    selector:
+      matchExpressions:
+        - key: enable_adot_collector
+          operator: In
+          values: ['true']
   kyverno:
     enabled: false
     releaseName: kyverno
