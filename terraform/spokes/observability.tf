@@ -70,12 +70,14 @@ locals{
 
 }
 
-module "operator" {
-  source = "../modules/adot-operator"
-  enable_cert_manager = true
-  kubernetes_version  = module.eks.cluster_version
-  addon_context       = local.context
-}
+
+
+# module "operator" {
+#   source = "../modules/adot-operator"
+#   enable_cert_manager = true
+#   kubernetes_version  = module.eks.cluster_version
+#   addon_context       = local.context
+# }
 
 # module "collector" {
 #   source = "../modules/adot-collector"

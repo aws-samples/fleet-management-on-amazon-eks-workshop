@@ -41,6 +41,58 @@ spec:
             scrape_interval: {{ .Values.globalScrapeInterval }}
             scrape_timeout: {{ .Values.globalScrapeTimeout }}
           scrape_configs:
+            - job_name: karpenter
+              kubernetes_sd_configs:
+                - role: endpoints
+                  namespaces:
+                    names:
+                    - kube-system
+              relabel_configs:
+                - source_labels:
+                  - __meta_kubernetes_endpoints_name
+                  - __meta_kubernetes_endpoint_port_name
+                  action: keep
+                  regex: karpenter;http-metrics
+            - job_name: coredns
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_container_port_name]
+                  regex: metrics
+                  action: keep
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                  regex: (.+)
+                  target_label: __metrics_path__
+                  action: replace
+                - source_labels: [__address__]
+                  target_label: __address__
+                  action: keep
+                - source_labels: [__meta_kubernetes_namespace]
+                  regex: 'kube-system'
+                  action: keep
+                - source_labels: [__meta_kubernetes_pod_name]
+                  regex: 'coredns-.*'
+                  action: keep            
+            
+            - job_name: 'aws-cni-metrics'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - action: keep
+                  source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                  regex: aws-node
+                - action: keep
+                  source_labels: [__meta_kubernetes_pod_labelpresent_k8s_app]
+                  regex: true
+                - action: keep
+                  source_labels: [__meta_kubernetes_pod_container_port_name]
+                  regex: metrics
+                - action: replace
+                  source_labels: [__metrics_path__]
+                  target_label: __metrics_path__
+                  regex: (.+)
+                  replacement: /metrics            
+
             - job_name: 'kubernetes-kubelet'
               scrape_interval: {{ .Values.globalScrapeInterval }}
               scrape_timeout: {{ .Values.globalScrapeTimeout }}
