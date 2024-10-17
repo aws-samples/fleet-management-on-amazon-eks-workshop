@@ -3,8 +3,7 @@ function argocd_kill_port_forward (){
 }
 
 function argocd_credentials (){
-    # This might not need it during workshop
-	# argocd_kill_port_forward $1 $2
+	argocd_kill_port_forward $1 $2
     kubectl --context $1 port-forward svc/argocd-server -n argocd $2:80 >/dev/null 2>&1 &
     # wait for port-forward to be up
     sleep 3
