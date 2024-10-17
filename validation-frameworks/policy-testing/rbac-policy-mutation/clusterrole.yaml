@@ -1,3 +1,4 @@
+# This policy is already applied via GitOps https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/gitops/addons/default/addons/kyverno/values.yaml#L20-L33
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -14,8 +15,5 @@ rules:
   resourceNames:
   - "*"
   verbs:
-  - get
-  - list
   - patch
   - update
-  - watch
