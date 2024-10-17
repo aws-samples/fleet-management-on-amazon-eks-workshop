@@ -2,14 +2,10 @@ apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test
 metadata:
   creationTimestamp: null
-  name: mutate-policy-with-clusterrole
+  name: mutate-deployment-policy
 spec:
   steps:
-  - name: step-01
-    try:
-    - apply:
-        file: clusterrole.yaml
-  - name: step-02
+  - name: step
     try:
     - apply:
         file: policy.yaml
