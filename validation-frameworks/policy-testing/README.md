@@ -10,18 +10,20 @@ Chainsaw is a testing framework that allows you to define and run tests for Kube
 
 ## Setting Up the Test Environment
 
-Before we begin, ensure you have Chainsaw and Kyverno installed in your EKS cluster.
+Before we begin, ensure you have Kyverno installed in your EKS cluster.
 ```bash
 kubectl get deployments -n kyverno
 ```
+
 If not, you can install them using the following commands:
-```bash
+```shell
 # Install Kyverno
 kubectl create -f https://github.com/kyverno/kyverno/releases/download/v1.12.5/install.yaml
+```
 
 # Install Chainsaw
-kubectl apply -f https://github.com/kyverno/chainsaw/releases/download/v0.2.9/install.yaml
-```
+Go to https://kyverno.github.io/chainsaw/latest/quick-start/install/
+
 
 ## The Test Case: Mutating Deployments on Secret Update
 
@@ -29,24 +31,21 @@ Our test case involves a Kyverno policy that mutates a Deployment when a specifi
 
 ### Test Components
 
-**ClusterRole** (`clusterrole.yaml`): Defines the permissions needed for Kyverno to mutate the specific Deployment.
+**ClusterRole** (`clusterrole.yaml`): Defines the permissions needed for Kyverno to mutate the specific Deployment. For the workshop this is done via GitOps when installing Kyverno
 **ClusterPolicy** (`policy.yaml`): The Kyverno policy that watches for updates to a specific ConfigMap and triggers a mutation on the Deployment.
 **Policy Assert** (`policy-assert.yaml`): Used to verify that the policy is correctly created and ready.
 **Test Definition** (`chainsaw-test.yaml`): The Chainsaw test definition that orchestrates the application of resources and assertions.
 
 ### Step-by-Step Explanation
 
-1. **Apply the ClusterRole**:
-   The test first applies the ClusterRole, which gives Kyverno the necessary permissions to mutate the "busybox" Deployment.
-
-2. **Apply and Assert the Policy**:
+- **Apply and Assert the Policy**:
    The test then applies the Kyverno policy and immediately asserts that it's created successfully and in a "Ready" state.
 
 ### Running the Test
 
 To run the test, use the following command:
 
-```bash
+```shell
 cd $VALIDATION_MODULE_HOME/policy-testing/rbac-policy-mutation
 chainsaw test --test-file chainsaw-test.yaml
 ```
@@ -57,15 +56,13 @@ This command will execute the steps defined in `chainsaw-test.yaml`, applying th
 
 If the test passes, you should see output indicating that both steps were successful. This means:
 
-1. The ClusterRole was successfully applied.
-2. The Kyverno policy was successfully created and is in a "Ready" state.
+- The Kyverno policy was successfully created and is in a "Ready" state.
 
 ### Interpreting the Results
 
 A successful test run indicates that:
 
-1. The necessary RBAC permissions are in place for Kyverno to perform its operations.
-2. The policy for mutating Deployments based on Secret updates is correctly defined and active.
+- The policy for mutating Deployments based on Secret updates is correctly defined and active.
 
 ### Next Steps
 
