@@ -111,9 +111,34 @@ module "operator" {
   addon_context       = local.context
 }
 
-module "collector" {
-  source = "../modules/adot-collector"
-  cluster_name = module.eks.cluster_name
-  tags = local.tags
+# module "collector" {
+#   source = "../modules/adot-collector"
+#   cluster_name = module.eks.cluster_name
+#   tags = local.tags
+# }
+locals{
+  adot_collector_namespace = "adot-collector-kubeprometheus"
+  adot_collector_serviceaccount = "adot-collector-kubeprometheus"    
 }
 
+module "adot_collector_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "adot-collector"
+
+  additional_policy_arns = {
+      "PrometheusReadWrite": "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess",
+      "XrayAccess": "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = local.adot_collector_namespace
+      service_account = local.adot_collector_serviceaccount
+    }
+  }
+  tags = local.tags
+}
