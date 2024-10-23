@@ -85,31 +85,31 @@ resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
 ################################################################################
 # ADOT
 ################################################################################
-data "aws_partition" "current" {}
+#data "aws_partition" "current" {}
 
-locals{
-  context = {
-    aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
-    aws_caller_identity_arn        = data.aws_caller_identity.current.arn
-    aws_eks_cluster_endpoint       = module.eks.cluster_endpoint
-    aws_partition_id               = data.aws_partition.current.partition
-    aws_region_name                = data.aws_region.current.name
-    eks_cluster_id                 = module.eks.cluster_name
-    eks_oidc_issuer_url            = module.eks.oidc_provider
-    eks_oidc_provider_arn          = module.eks.oidc_provider_arn
-    tags                           = local.tags
-    irsa_iam_role_path             = "/"
-    irsa_iam_permissions_boundary  = null
-  }  
+# locals{
+#   context = {
+#     aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
+#     aws_caller_identity_arn        = data.aws_caller_identity.current.arn
+#     aws_eks_cluster_endpoint       = module.eks.cluster_endpoint
+#     aws_partition_id               = data.aws_partition.current.partition
+#     aws_region_name                = data.aws_region.current.name
+#     eks_cluster_id                 = module.eks.cluster_name
+#     eks_oidc_issuer_url            = module.eks.oidc_provider
+#     eks_oidc_provider_arn          = module.eks.oidc_provider_arn
+#     tags                           = local.tags
+#     irsa_iam_role_path             = "/"
+#     irsa_iam_permissions_boundary  = null
+#   }  
 
-}
+# }
 
-module "operator" {
-  source = "../modules/adot-operator"
-  enable_cert_manager = true
-  kubernetes_version  = module.eks.cluster_version
-  addon_context       = local.context
-}
+# module "operator" {
+#   source = "../modules/adot-operator"
+#   enable_cert_manager = true
+#   kubernetes_version  = module.eks.cluster_version
+#   addon_context       = local.context
+# }
 
 # module "collector" {
 #   source = "../modules/adot-collector"
@@ -118,7 +118,13 @@ module "operator" {
 # }
 locals{
   adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"    
+  adot_collector_serviceaccount = "adot-collector-kubeprometheus"   
+  opentelemetry_namespace = "opentelemetry-operator-system"
+}
+resource "kubernetes_namespace" "opentelemetry_operator" {
+  metadata {
+    name = local.opentelemetry_namespace
+  }
 }
 
 module "adot_collector_pod_identity" {

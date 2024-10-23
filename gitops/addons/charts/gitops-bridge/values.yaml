@@ -421,10 +421,12 @@ addons:
   cert_manager:
     enabled: false
     releaseName: cert-manager
-    namespace: '{{.metadata.annotations.cert_manager_namespace}}'
+    namespace: '{{default "cert-manager" (index .metadata.annotations "cert-manager_namespace") }}'
     chart: cert-manager
     repoUrl: https://charts.jetstack.io
     targetRevision: "v1.15.2"
+    annotationsAppSet:
+      argocd.argoproj.io/sync-wave: '-2'
     selector:
       matchExpressions:
         - key: enable_cert_manager
@@ -432,10 +434,10 @@ addons:
           values: ['true']
     values:
       installCRDs: true
-      serviceAccount:
-        name: '{{.metadata.annotations.cert_manager_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.cert_manager_iam_role_arn}}'
+      # serviceAccount:
+      #   name: '{{.metadata.annotations.cert_manager_service_account}}'
+      #   annotations:
+      #     eks.amazonaws.com/role-arn: '{{.metadata.annotations.cert_manager_iam_role_arn}}'
   cluster_autoscaler:
     enabled: false
     releaseName: cluster-autoscaler
@@ -774,6 +776,22 @@ addons:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
           AMP_AWS_REGION: '{{.metadata.annotations.aws_region}}'
+  opentelemetry_operator:
+    enabled: false
+    releaseName: opentelemetry-operator
+    namespace: '{{default "opentelemetry-operator-system" (index .metadata.annotations "opentelemetry_operator_namespace")}}'
+    chart: opentelemetry-operator
+    repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: "0.71.1"
+    values:
+      manager:
+        collectorImage:
+          repository: "otel/opentelemetry-collector-k8s"    
+    selector:
+      matchExpressions:
+        - key: enable_opentelemetry_operator
+          operator: In
+          values: ['true']          
   adot_collector:
     enabled: false
     namespace: '{{default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'

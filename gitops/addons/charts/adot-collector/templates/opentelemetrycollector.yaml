@@ -4,6 +4,7 @@ metadata:
   name: adot
 spec:
   mode: deployment
+  image: public.ecr.aws/aws-observability/aws-otel-collector:v0.40.0
   serviceAccount: {{ default "adot-collector-kubeprometheus" .Values.serviceAccount }}
   env:
     - name: "K8S_NODE_NAME"
