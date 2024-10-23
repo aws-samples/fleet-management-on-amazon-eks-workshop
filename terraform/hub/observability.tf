@@ -86,16 +86,12 @@ resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
 # ADOT
 ################################################################################
 
-locals{
-  adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"   
-  opentelemetry_namespace = "opentelemetry-operator-system"
-}
-resource "kubernetes_namespace" "opentelemetry_operator" {
-  metadata {
-    name = local.opentelemetry_namespace
-  }
-}
+
+# resource "kubernetes_namespace" "opentelemetry_operator" {
+#   metadata {
+#     name = local.opentelemetry_operator_namespace
+#   }
+# }
 
 module "adot_collector_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"

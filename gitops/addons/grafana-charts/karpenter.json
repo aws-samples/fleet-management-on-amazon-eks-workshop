@@ -44,10 +44,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
       "description": "Total number of cpu resources requested by all pods on the current Nodepool",
       "fieldConfig": {
         "defaults": {
@@ -109,10 +105,6 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
       "description": "Total number of memory resources requested by all pods on the current Nodepool",
       "fieldConfig": {
         "defaults": {
@@ -174,10 +166,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -239,10 +228,7 @@
       "type": "piechart"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -304,10 +290,7 @@
       "type": "piechart"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -369,10 +352,7 @@
       "type": "piechart"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -434,10 +414,7 @@
       "type": "piechart"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "description": "Percentage of resources requested by all pods from those available on the current Nodepool nodes",
       "fieldConfig": {
         "defaults": {
@@ -501,10 +478,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+
       "description": "Percentage of resources requested by all pods from those available on the current Nodepool nodes",
       "fieldConfig": {
         "defaults": {
@@ -572,10 +546,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -635,10 +606,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -699,10 +667,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -775,10 +740,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "description": "Percentage of how many resources Karpenter launched from the total Nodepool limit",
       "fieldConfig": {
         "defaults": {
@@ -881,10 +843,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1021,10 +980,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1161,10 +1117,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1302,10 +1255,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1741,10 +1691,7 @@
       "type": "table"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1848,10 +1795,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1943,10 +1887,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2039,10 +1980,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2135,10 +2073,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2230,10 +2165,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2338,10 +2270,7 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2433,10 +2362,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2528,10 +2454,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-      },
+ 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2631,9 +2554,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "grafana-operator-amp-datasource",
-          "value": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
+          "selected": false
         },
         "hide": 0,
         "includeAll": false,

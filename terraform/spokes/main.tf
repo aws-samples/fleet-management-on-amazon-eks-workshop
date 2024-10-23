@@ -37,7 +37,10 @@ locals {
   vpc_cidr        = var.vpc_cidr
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
-
+  adot_collector_namespace = "adot-collector-kubeprometheus"
+  adot_collector_serviceaccount = "adot-collector-kubeprometheus"
+  opentelemetry_operator_namespace = "opentelemetry-operator-system"
+  
   external_secrets = {
     namespace             = "external-secrets"
     service_account       = "external-secrets-sa"
@@ -139,7 +142,11 @@ locals {
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     },
     {
+      # Opensource monitoring
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
+      adot_collector_namespace = local.adot_collector_namespace
+      adot_collector_serviceaccount = local.adot_collector_serviceaccount
+      opentelemetry_operator_namespace = local.opentelemetry_operator_namespace
     }
   )
 
