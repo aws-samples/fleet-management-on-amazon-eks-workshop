@@ -62,8 +62,7 @@ module "adot_collector_pod_identity" {
   name = "adot-collector"
 
   additional_policy_arns = {
-      "PrometheusReadWrite": "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess",
-      "XrayAccess": "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+      "PrometheusReadWrite": "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
   }
 
   # Pod Identity Associations
