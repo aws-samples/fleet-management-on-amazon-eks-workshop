@@ -2594,10 +2594,7 @@
         "current": {
           "selected": false
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-        },
+
         "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},nodepool)",
         "hide": 0,
         "includeAll": false,
@@ -2802,10 +2799,7 @@
         "current": {
           "selected": false
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "2ed07fee-6a43-47c6-9b56-5cda849238f1"
-        },
+
         "definition": "label_values(karpenter_cloudprovider_instance_type_cpu_cores,job)",
         "hide": 2,
         "includeAll": false,
