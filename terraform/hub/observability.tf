@@ -87,12 +87,6 @@ resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
 ################################################################################
 
 
-# resource "kubernetes_namespace" "opentelemetry_operator" {
-#   metadata {
-#     name = local.opentelemetry_operator_namespace
-#   }
-# }
-
 module "adot_collector_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"

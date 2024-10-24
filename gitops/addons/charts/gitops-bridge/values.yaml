@@ -434,10 +434,9 @@ addons:
           values: ['true']
     values:
       installCRDs: true
-      # serviceAccount:
-      #   name: '{{.metadata.annotations.cert_manager_service_account}}'
-      #   annotations:
-      #     eks.amazonaws.com/role-arn: '{{.metadata.annotations.cert_manager_iam_role_arn}}'
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: '' # We are using pod identity not IRSA
   cluster_autoscaler:
     enabled: false
     releaseName: cluster-autoscaler
@@ -779,7 +778,7 @@ addons:
   opentelemetry_operator:
     enabled: false
     releaseName: opentelemetry-operator
-    namespace: '{{default "opentelemetry-operator-system" (index .metadata.annotations "opentelemetry_operator_namespace")}}'
+    namespace: "opentelemetry-operator-system" 
     chart: opentelemetry-operator
     repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
     targetRevision: "0.71.1"

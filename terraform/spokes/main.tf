@@ -39,7 +39,6 @@ locals {
   argocd_namespace    = "argocd"
   adot_collector_namespace = "adot-collector-kubeprometheus"
   adot_collector_serviceaccount = "adot-collector-kubeprometheus"
-  opentelemetry_operator_namespace = "opentelemetry-operator-system"
   
   external_secrets = {
     namespace             = "external-secrets"
@@ -146,7 +145,6 @@ locals {
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
       adot_collector_serviceaccount = local.adot_collector_serviceaccount
-      opentelemetry_operator_namespace = local.opentelemetry_operator_namespace
     }
   )
 
