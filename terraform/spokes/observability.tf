@@ -48,4 +48,30 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
 
 }
 
+################################################################################
+# ADOT
+################################################################################
 
+
+
+
+module "adot_collector_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "adot-collector"
+
+  additional_policy_arns = {
+      "PrometheusReadWrite": "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
+  }
+
+  # Pod Identity Associations
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace       = local.adot_collector_namespace
+      service_account = local.adot_collector_serviceaccount
+    }
+  }
+  tags = local.tags
+}

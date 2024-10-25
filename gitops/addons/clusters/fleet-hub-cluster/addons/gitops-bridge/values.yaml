@@ -24,4 +24,11 @@ addons:
     enabled: true
   kube_state_metrics:
     enabled: true
+  adot_collector:
+    enabled: true
+  opentelemetry_operator:
+    enabled: true
+  cert_manager:    
+    enabled: true
+
 

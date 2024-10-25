@@ -421,10 +421,12 @@ addons:
   cert_manager:
     enabled: false
     releaseName: cert-manager
-    namespace: '{{.metadata.annotations.cert_manager_namespace}}'
+    namespace: '{{default "cert-manager" (index .metadata.annotations "cert-manager_namespace") }}'
     chart: cert-manager
     repoUrl: https://charts.jetstack.io
     targetRevision: "v1.15.2"
+    annotationsAppSet:
+      argocd.argoproj.io/sync-wave: '-2'
     selector:
       matchExpressions:
         - key: enable_cert_manager
@@ -433,9 +435,9 @@ addons:
     values:
       installCRDs: true
       serviceAccount:
-        name: '{{.metadata.annotations.cert_manager_service_account}}'
+        name: '{{default "" (index .metadata.annotations "cert_manager_service_account") }}'
         annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.cert_manager_iam_role_arn}}'
+          eks.amazonaws.com/role-arn: '{{default "" (index .metadata.annotations "cert_manager_iam_role_arn") }}'
   cluster_autoscaler:
     enabled: false
     releaseName: cluster-autoscaler
@@ -768,14 +770,45 @@ addons:
         - key: enable_grafana_operator
           operator: In
           values: ['true']
-
     resources:
       path: charts/resources/grafana-operator
       helm:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
           AMP_AWS_REGION: '{{.metadata.annotations.aws_region}}'
-
+  opentelemetry_operator:
+    enabled: false
+    releaseName: opentelemetry-operator
+    namespace: "opentelemetry-operator-system" 
+    chart: opentelemetry-operator
+    repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: "0.71.1"
+    values:
+      manager:
+        collectorImage:
+          repository: "otel/opentelemetry-collector-k8s"    
+    selector:
+      matchExpressions:
+        - key: enable_opentelemetry_operator
+          operator: In
+          values: ['true']          
+  adot_collector:
+    enabled: false
+    namespace: '{{default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'
+    path: charts/adot-collector
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
+    targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+    values:
+       ekscluster: '{{.metadata.annotations.aws_cluster_name}}'
+       accountId: '{{.metadata.annotations.aws_account_id}}'
+       region: '{{.metadata.annotations.aws_region}}'    
+       ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'
+       serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'     
+    selector:
+      matchExpressions:
+        - key: enable_adot_collector
+          operator: In
+          values: ['true']
   kyverno:
     enabled: false
     releaseName: kyverno
