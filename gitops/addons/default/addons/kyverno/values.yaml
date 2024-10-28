@@ -193,7 +193,9 @@ config:
     - '[*,amazon-cloudwatch,*]'
     - '[*,amazon-guardduty,*]'
     - '[*,argocd,*]'
-    - '[*,kube-prometheus-stack,*]'    
+    - '[*,kube-prometheus-stack,*]'
+    - '[*,opentelemetry-operator-system,*]'
+    - '[*,adot-collector-kubeprometheus,*]'
 
 
 features:
