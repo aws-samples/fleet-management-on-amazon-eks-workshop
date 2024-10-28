@@ -845,7 +845,7 @@ addons:
         name: policy-reporter
 
       logging:
-        logLevel: -1
+        logLevel: 0
 
       plugin:
         kyverno:
