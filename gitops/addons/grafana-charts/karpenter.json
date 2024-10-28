@@ -11,24 +11,15 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
   },
-  "description": "Display all useful Karpenter metrics",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 20398,
-  "graphTooltip": 1,
-  "id": 16,
+  "graphTooltip": 0,
+  "id": 30,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -38,74 +29,13 @@
         "x": 0,
         "y": 0
       },
-      "id": 17,
+      "id": 21,
       "panels": [],
-      "title": "Summary",
+      "title": "Cluster Resource Distribution Overview - nodepool \"$nodepool\"",
       "type": "row"
     },
     {
-      "description": "Total number of cpu resources requested by all pods on the current Nodepool",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 1
-      },
-      "id": 7,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"cpu\", cluster=\"$cluster\"})",
-          "legendFormat": "{{node_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Cluster CPU Requests",
-      "type": "stat"
-    },
-    {
-      "description": "Total number of memory resources requested by all pods on the current Nodepool",
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -118,28 +48,33 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 4,
-        "x": 4,
+        "x": 0,
         "y": 1
       },
-      "id": 6,
+      "id": 2,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -151,22 +86,86 @@
       "pluginVersion": "10.4.3",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"memory\",cluster=\"$cluster\"})",
-          "legendFormat": "{{node_name}}",
-          "range": true,
-          "refId": "A"
+          "exemplar": false,
+          "expr": "count(sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\",cluster=\"$cluster\"}) by (node_name))",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
         }
       ],
-      "title": "Cluster Memory Requests",
+      "title": "Nodes ($nodepool)",
       "type": "stat"
     },
     {
 
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(karpenter_pods_state{namespace=~\"$namespace\",nodepool=~\"$nodepool\",cluster=\"$cluster\"})",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Pods ($namespace)",
+      "type": "stat"
+    },
+    {
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -184,9 +183,123 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 4,
         "x": 8,
+        "y": 1
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"pods\",cluster=\"$cluster\"}) by (zone)",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Nodes  per AZ",
+      "type": "piechart"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\",cluster=\"$cluster\"}) by (zone)",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Pods  per AZ",
+      "type": "piechart"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
         "y": 1
       },
       "id": 10,
@@ -211,20 +324,16 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"pods\",cluster=\"$cluster\"}) by (zone)",
+          "expr": "count(karpenter_nodes_total_pod_requests{nodepool!=\"\",resource_type=\"pods\",cluster=\"$cluster\"}) by (nodepool)",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Node  Distribution by AZ",
+      "title": "Nodes  per Nodepool",
       "type": "piechart"
     },
     {
@@ -246,136 +355,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 12,
-        "y": 1
-      },
-      "id": 39,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"pods\",cluster=\"$cluster\"}) by (nodepool)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Node  Distribution by Nodepool",
-      "type": "piechart"
-    },
-    {
-
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
-      "id": 11,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\",cluster=\"$cluster\"}) by (zone)",
-          "instant": true,
-          "legendFormat": "{{name}}",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Pod  Distribution by Aviability Zone",
-      "type": "piechart"
-    },
-    {
-
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 4,
         "x": 20,
         "y": 1
       },
-      "id": 40,
+      "id": 9,
       "options": {
         "legend": {
           "displayMode": "list",
@@ -397,453 +382,112 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\",cluster=\"$cluster\"}) by (nodepool)",
+          "expr": "sum(karpenter_pods_state{phase=\"Running\",nodepool!=\"\",cluster=\"$cluster\"}) by (nodepool)",
           "instant": true,
-          "legendFormat": "{{name}}",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Pod  Distribution by Nodepool",
+      "title": "Pods  per Nodepool",
       "type": "piechart"
     },
     {
 
-      "description": "Percentage of resources requested by all pods from those available on the current Nodepool nodes",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
-          "max": 1,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "percentunit"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
+        "h": 8,
+        "w": 12,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 31,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
-            "lastNotNull"
+            "max"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "10.4.3",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"cpu\",cluster=\"$cluster\"}) / sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\", resource_type=\"cpu\",cluster=\"$cluster\"})",
-          "legendFormat": "{{node_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Cluster CPU Allocation",
-      "type": "stat"
-    },
-    {
 
-      "description": "Percentage of resources requested by all pods from those available on the current Nodepool nodes",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 6
-      },
-      "id": 30,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"memory\",cluster=\"$cluster\"}) / sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\", resource_type=\"memory\",cluster=\"$cluster\"})",
-          "legendFormat": "{{node_name}}",
+          "expr": "count(sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\",cluster=\"$cluster\"}) by (node_name))",
+          "instant": false,
+          "legendFormat": "nodes",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Cluster Memory Allocation",
-      "type": "stat"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-purple",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 8,
-        "y": 6
-      },
-      "id": 13,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count(karpenter_nodes_allocatable{nodepool=~\"$nodepool\",resource_type=\"pods\",cluster=\"$cluster\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Total number of Nodes",
-      "type": "stat"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 12,
-        "y": 6
-      },
-      "id": 41,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "(count(karpenter_nodes_allocatable{capacity_type=\"spot\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"}) or vector(0)) / count(karpenter_nodes_allocatable{instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"})*100",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Spot Node Percentage",
-      "type": "stat"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-purple",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 16,
-        "y": 6
-      },
-      "id": 38,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\",cluster=\"$cluster\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Total number of pods",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 11
-      },
-      "id": 35,
-      "panels": [],
-      "title": "Cluster",
-      "type": "row"
-    },
-    {
- 
-      "description": "Percentage of how many resources Karpenter launched from the total Nodepool limit",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "line+area"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 70
-              },
-              {
-                "color": "dark-red",
-                "value": 90
-              },
-              {
-                "color": "#6ED0E0",
-                "value": 100
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 0,
-        "y": 12
-      },
-      "id": 42,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "9.4.7",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "karpenter_nodepools_usage{nodepool=~\"${nodepool}\", resource_type=~\"memory|cpu\",cluster=\"$cluster\"} / karpenter_nodepools_limit{nodepool=~\"${nodepool}\",resource_type=~\"memory|cpu\",cluster=\"$cluster\"} * 100",
-          "legendFormat": "{{nodepool}}-{{resource_type}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Nodepool usage percentage of limit",
+      "title": "Nodes Historical View",
       "type": "timeseries"
     },
     {
- 
+      "datasource": {},
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -895,350 +539,43 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Requested"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Allocatable"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 12
-      },
-      "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "9.4.7",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\", resource_type=\"cpu\",cluster=\"$cluster\"})",
-          "legendFormat": "Allocatable",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"cpu\"})",
-          "hide": false,
-          "legendFormat": "Requested",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Cluster CPU",
-      "type": "timeseries"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Requested"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Allocatable"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
+        "h": 8,
+        "w": 12,
         "x": 12,
-        "y": 12
+        "y": 7
       },
       "id": 33,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "max"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          "mode": "single",
+          "sort": "none"
         }
       },
-      "pluginVersion": "9.4.7",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
-          "expr": "sum(karpenter_nodes_allocatable{nodepool=~\"$nodepool\", resource_type=\"memory\",cluster=\"$cluster\"})",
-          "legendFormat": "Allocatable",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"memory\",cluster=\"$cluster\"})",
-          "hide": false,
-          "legendFormat": "Requested",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Cluster Memory",
-      "type": "timeseries"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Requested"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Allocatable"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 18,
-        "y": 12
-      },
-      "id": 43,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "9.4.7",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "karpenter_cloudprovider_errors_total{controller!~\"node.termination|nodeclaim.termination\", error!=\"NodeClaimNotFoundError\",cluster=\"$cluster\"}",
-          "legendFormat": "{{controller}}-{{error}}",
+          "expr": "count(karpenter_pods_state{namespace=~\"$namespace\",nodepool=~\"$nodepool\",cluster=\"$cluster\"})",
+          "instant": false,
+          "legendFormat": "pods",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total number of errors returned from CloudProvider calls.",
+      "title": "Pods Historical View ($namespace)",
       "type": "timeseries"
     },
     {
@@ -1247,35 +584,559 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 15
       },
-      "id": 15,
+      "id": 23,
       "panels": [],
-      "title": "Nodes",
+      "title": "Nodepool Summary",
       "type": "row"
     },
     {
- 
+
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "continuous-RdYlGr"
           },
           "custom": {
-            "align": "center",
+            "align": "left",
             "cellOptions": {
               "type": "auto"
             },
-            "filterable": true,
-            "inspect": false,
-            "minWidth": 150
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*Utilization$"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 1
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Provisioned"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 18,
+        "x": 0,
+        "y": 16
+      },
+      "id": 24,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "karpenter_nodepools_usage{resource_type=\"cpu\",cluster=\"$cluster\", nodepool!=\"\"} / karpenter_nodepools_limit{resource_type=\"cpu\",cluster=\"$cluster\", nodepool!=\"\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "CPU Limit Utilization",
+          "range": false,
+          "refId": "CPU Limit Utilization"
+        },
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count by (nodepool)(karpenter_nodes_allocatable{nodepool!=\"\",resource_type=\"cpu\",cluster=\"$cluster\"}) # Selects a single resource type to get node count",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "range": false,
+          "refId": "Node Count"
+        },
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "karpenter_nodepools_usage{nodepool!=\"\",resource_type=\"memory\",cluster=\"$cluster\"} / karpenter_nodepools_limit{nodepool!=\"\",resource_type=\"memory\",cluster=\"$cluster\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "Memory Limit Utilization",
+          "range": false,
+          "refId": "Memory Limit Utilization"
+        },
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (nodepool)(karpenter_nodes_allocatable{nodepool!=\"\",resource_type=\"cpu\",cluster=\"$cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "range": false,
+          "refId": "CPU Capacity"
+        },
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by (nodepool)(karpenter_nodes_allocatable{nodepool!=\"\",resource_type=\"memory\",cluster=\"$cluster\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "range": false,
+          "refId": "Memory Capacity"
+        }
+      ],
+      "title": "Nodepool Summary",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "nodepool"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "__name__": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "resource_type": true,
+              "resource_type 1": true,
+              "resource_type 2": true
+            },
+            "indexByName": {
+              "Time 1": 6,
+              "Time 2": 7,
+              "Time 3": 11,
+              "Time 4": 15,
+              "Time 5": 16,
+              "Value #CPU Capacity": 2,
+              "Value #CPU Limit Utilization": 3,
+              "Value #Memory Capacity": 4,
+              "Value #Memory Limit Utilization": 5,
+              "Value #Node Count": 1,
+              "instance 1": 8,
+              "instance 2": 12,
+              "job 1": 9,
+              "job 2": 13,
+              "nodepool": 0,
+              "resource_type 1": 10,
+              "resource_type 2": 14
+            },
+            "renameByName": {
+              "Time 1": "",
+              "Value": "CPU Utilization",
+              "Value #CPU Capacity": "CPU Provisioned",
+              "Value #CPU Limit Utilization": "CPU Limit Utilization",
+              "Value #CPU Utilization": "CPU Limit Utilization",
+              "Value #Memory Capacity": "Memory Provisioned",
+              "Value #Memory Limit Utilization": "Memory Limit Utilization",
+              "Value #Memory Utilization": "Memory Utilization",
+              "Value #Node Count": "Node Count",
+              "instance": "",
+              "instance 1": "",
+              "job": "",
+              "nodepool": "Nodepool"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 6,
+        "x": 18,
+        "y": 16
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "expr": "(count(karpenter_nodes_allocatable{capacity_type=\"spot\",nodepool=~\"$nodepool\",cluster=\"$cluster\"}) or vector(0)) / count(karpenter_nodes_allocatable{nodepool=~\"$nodepool\",cluster=\"$cluster\"})",
+          "legendFormat": "Percentage",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Spot Node Percentage",
+      "type": "timeseries"
+    },
+    {
+
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "expr": "count(sum(karpenter_nodes_allocatable{nodepool!=\"\",cluster=\"$cluster\"}) by (node_name,nodepool)) by (nodepool)",
+          "instant": false,
+          "legendFormat": "nodes:{{nodepool}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+
+          "editorMode": "code",
+          "expr": "count(sum(karpenter_nodes_allocatable{cluster=\"\",nodepool!=\"\",cluster=\"$cluster\"}) by (node_name))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "nodes total",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Nodes per Nodepool",
+      "type": "timeseries"
+    },
+    {
+
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "expr": "count(karpenter_pods_state{namespace=~\"$namespace\",nodepool=\"$nodepool\",cluster=\"$cluster\"}) by (nodepool)",
+          "instant": false,
+          "legendFormat": "pods:{{nodepool}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+
+          "editorMode": "code",
+          "expr": "count(karpenter_pods_state{namespace=~\"$namespace\",nodepool=\"$nodepool\",cluster=\"$cluster\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "pods total",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Pods per Nodepool",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 26,
+      "panels": [],
+      "title": "Node Summary",
+      "type": "row"
+    },
+    {
+
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1300,7 +1161,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": ".*Allocation"
+              "options": ".*Utilization"
             },
             "properties": [
               {
@@ -1324,7 +1185,8 @@
                   "mode": "percentage",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "red",
@@ -1358,18 +1220,17 @@
         ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 9,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 36
       },
-      "id": 4,
+      "id": 27,
       "options": {
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "enablePagination": false,
-          "fields": [],
+          "fields": "",
           "reducer": [
             "sum"
           ],
@@ -1386,13 +1247,10 @@
       "pluginVersion": "10.4.3",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
           "exemplar": false,
-          "expr": "((karpenter_nodes_total_daemon_requests{resource_type=\"cpu\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0) + \n(karpenter_nodes_total_pod_requests{resource_type=\"cpu\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0)) / \nkarpenter_nodes_allocatable{resource_type=\"cpu\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"}",
+          "expr": "((karpenter_nodes_total_daemon_requests{resource_type=\"cpu\",nodepool=~\"$nodepool\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0) + \n(karpenter_nodes_total_pod_requests{resource_type=\"cpu\",nodepool=~\"$nodepool\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0)) / \nkarpenter_nodes_allocatable{resource_type=\"cpu\",nodepool=~\"$nodepool\",cluster=\"$cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1401,13 +1259,10 @@
           "refId": "CPU Utilization"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
           "exemplar": false,
-          "expr": "((karpenter_nodes_total_daemon_requests{resource_type=\"memory\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0) + \n(karpenter_nodes_total_pod_requests{resource_type=\"memory\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0)) / \nkarpenter_nodes_allocatable{resource_type=\"memory\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"}",
+          "expr": "((karpenter_nodes_total_daemon_requests{resource_type=\"memory\",nodepool=~\"$nodepool\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0) + \n(karpenter_nodes_total_pod_requests{resource_type=\"memory\",nodepool=~\"$nodepool\",cluster=\"$cluster\"} or karpenter_nodes_allocatable*0)) / \nkarpenter_nodes_allocatable{resource_type=\"memory\",nodepool=~\"$nodepool\",cluster=\"$cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1416,13 +1271,10 @@
           "refId": "Memory Utilization"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
           "exemplar": false,
-          "expr": "karpenter_nodes_total_daemon_requests{resource_type=\"pods\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"} + \nkarpenter_nodes_total_pod_requests{resource_type=\"pods\",arch=~\"$arch\",capacity_type=~\"$capacity_type\",instance_type=~\"$instance_type\",nodepool=~\"$nodepool\",zone=~\"$zone\",cluster=\"$cluster\"}",
+          "expr": "karpenter_nodes_total_daemon_requests{resource_type=\"pods\",nodepool=~\"$nodepool\",cluster=\"$cluster\"} + \nkarpenter_nodes_total_pod_requests{resource_type=\"pods\",nodepool=~\"$nodepool\",cluster=\"$cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1431,13 +1283,10 @@
           "refId": "Pod Count"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
           "exemplar": false,
-          "expr": "label_replace(\n    sum by (node)(node_time_seconds) - sum by (node)(node_boot_time_seconds),\n    \"node_name\", \"$1\", \"node\", \"(.+)\"\n)",
+          "expr": "label_replace(\n    sum by (node)(node_time_seconds{cluster=\"$cluster\"}) - sum by (node)(node_boot_time_seconds{cluster=\"$cluster\"}),\n    \"node_name\", \"$1\", \"node\", \"(.+)\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1455,10 +1304,6 @@
           }
         },
         {
-          "filter": {
-            "id": "byRefId",
-            "options": ""
-          },
           "id": "organize",
           "options": {
             "excludeByName": {
@@ -1474,7 +1319,6 @@
               "arch 1": true,
               "arch 2": true,
               "arch 3": true,
-              "capacity_type 1": false,
               "capacity_type 2": true,
               "capacity_type 3": true,
               "container 1": true,
@@ -1491,10 +1335,13 @@
               "instance_category 2": true,
               "instance_category 3": true,
               "instance_cpu": true,
-              "instance_cpu 1": false,
-              "instance_cpu 2": false,
+              "instance_cpu 1": true,
+              "instance_cpu 2": true,
               "instance_cpu 3": true,
-              "instance_encryption_in_transit_supported 1": true,
+              "instance_cpu_manufacturer 2": true,
+              "instance_cpu_manufacturer 3": true,
+              "instance_ebs_bandwidth 2": true,
+              "instance_ebs_bandwidth 3": true,
               "instance_encryption_in_transit_supported 2": true,
               "instance_encryption_in_transit_supported 3": true,
               "instance_family": true,
@@ -1528,7 +1375,7 @@
               "instance_local_nvme 2": true,
               "instance_local_nvme 3": true,
               "instance_memory": true,
-              "instance_memory 1": false,
+              "instance_memory 1": true,
               "instance_memory 2": true,
               "instance_memory 3": true,
               "instance_network_bandwidth 1": false,
@@ -1563,7 +1410,6 @@
               "pod 1": true,
               "pod 2": true,
               "pod 3": true,
-              "region 1": true,
               "region 2": true,
               "region 3": true,
               "resource_type": true,
@@ -1575,96 +1421,87 @@
               "service 3": true,
               "zone 1": false,
               "zone 2": true,
-              "zone 3": true
+              "zone 3": true,
+              "zone_id 2": true,
+              "zone_id 3": true
             },
+            "includeByName": {},
             "indexByName": {
               "Time 1": 1,
-              "Time 2": 20,
-              "Time 3": 34,
-              "Value #CPU Utilization": 9,
-              "Value #Memory Utilization": 10,
-              "Value #Pod Count": 8,
+              "Time 2": 25,
+              "Time 3": 45,
+              "Time 4": 65,
+              "Value #CPU Utilization": 10,
+              "Value #Memory Utilization": 11,
+              "Value #Pod Count": 9,
+              "Value #Uptime": 8,
               "arch 1": 5,
-              "arch 2": 21,
-              "arch 3": 35,
+              "arch 2": 26,
+              "arch 3": 46,
               "capacity_type 1": 6,
-              "capacity_type 2": 15,
-              "capacity_type 3": 36,
-              "container 1": 49,
-              "container 2": 59,
-              "container 3": 69,
-              "endpoint 1": 50,
-              "endpoint 2": 60,
-              "endpoint 3": 70,
+              "capacity_type 2": 27,
+              "capacity_type 3": 47,
               "instance 1": 4,
-              "instance 2": 22,
-              "instance 3": 37,
-              "instance_category 1": 51,
-              "instance_category 2": 61,
-              "instance_category 3": 71,
-              "instance_cpu 1": 11,
-              "instance_cpu 2": 23,
-              "instance_cpu 3": 38,
-              "instance_encryption_in_transit_supported 1": 52,
-              "instance_encryption_in_transit_supported 2": 62,
-              "instance_encryption_in_transit_supported 3": 72,
-              "instance_family 1": 12,
-              "instance_family 2": 24,
-              "instance_family 3": 39,
-              "instance_generation 1": 53,
-              "instance_generation 2": 63,
-              "instance_generation 3": 73,
-              "instance_hypervisor 1": 13,
-              "instance_hypervisor 2": 25,
-              "instance_hypervisor 3": 40,
-              "instance_memory 1": 14,
-              "instance_memory 2": 26,
-              "instance_memory 3": 41,
-              "instance_network_bandwidth 1": 54,
-              "instance_network_bandwidth 2": 64,
-              "instance_network_bandwidth 3": 74,
-              "instance_size 1": 16,
-              "instance_size 2": 27,
-              "instance_size 3": 42,
+              "instance 2": 28,
+              "instance 3": 48,
+              "instance_cpu 1": 12,
+              "instance_cpu 2": 29,
+              "instance_cpu 3": 49,
+              "instance_family 1": 13,
+              "instance_family 2": 30,
+              "instance_family 3": 50,
+              "instance_gpu_count 1": 14,
+              "instance_gpu_count 2": 31,
+              "instance_gpu_count 3": 51,
+              "instance_gpu_manufacturer 1": 15,
+              "instance_gpu_manufacturer 2": 32,
+              "instance_gpu_manufacturer 3": 52,
+              "instance_gpu_memory 1": 16,
+              "instance_gpu_memory 2": 33,
+              "instance_gpu_memory 3": 53,
+              "instance_gpu_name 1": 17,
+              "instance_gpu_name 2": 34,
+              "instance_gpu_name 3": 54,
+              "instance_hypervisor 1": 18,
+              "instance_hypervisor 2": 35,
+              "instance_hypervisor 3": 55,
+              "instance_memory 1": 19,
+              "instance_memory 2": 36,
+              "instance_memory 3": 56,
+              "instance_pods 1": 20,
+              "instance_pods 2": 37,
+              "instance_pods 3": 57,
+              "instance_size 1": 21,
+              "instance_size 2": 38,
+              "instance_size 3": 58,
               "instance_type 1": 3,
-              "instance_type 2": 28,
-              "instance_type 3": 43,
-              "job 1": 17,
-              "job 2": 29,
-              "job 3": 44,
-              "namespace 1": 55,
-              "namespace 2": 65,
-              "namespace 3": 75,
+              "instance_type 2": 39,
+              "instance_type 3": 59,
+              "job 1": 22,
+              "job 2": 40,
+              "job 3": 60,
+              "node": 66,
               "node_name": 0,
               "nodepool 1": 2,
-              "nodepool 2": 31,
-              "nodepool 3": 46,
-              "os 1": 18,
-              "os 2": 30,
-              "os 3": 45,
-              "pod 1": 56,
-              "pod 2": 66,
-              "pod 3": 76,
-              "region 1": 57,
-              "region 2": 67,
-              "region 3": 77,
-              "resource_type 1": 19,
-              "resource_type 2": 32,
-              "resource_type 3": 47,
-              "service 1": 58,
-              "service 2": 68,
-              "service 3": 78,
+              "nodepool 2": 42,
+              "nodepool 3": 62,
+              "os 1": 23,
+              "os 2": 41,
+              "os 3": 61,
+              "resource_type 1": 24,
+              "resource_type 2": 43,
+              "resource_type 3": 63,
               "zone 1": 7,
-              "zone 2": 33,
-              "zone 3": 48
+              "zone 2": 44,
+              "zone 3": 64
             },
             "renameByName": {
               "Time": "",
               "Time 1": "",
               "Value": "CPU Utilization",
               "Value #Allocatable": "",
-              "Value #CPU Utilization": "CPU Allocation",
-              "Value #Memory Utilization": "Memory Allocation",
+              "Value #CPU Utilization": "CPU Utilization",
+              "Value #Memory Utilization": "Memory Utilization",
               "Value #Pod CPU": "",
               "Value #Pod Count": "Pods",
               "Value #Uptime": "Uptime",
@@ -1672,15 +1509,10 @@
               "arch 1": "Arch",
               "capacity_type": "Capacity Type",
               "capacity_type 1": "Capacity Type",
-              "capacity_type 2": "",
               "instance 1": "Instance",
-              "instance_cpu 1": "",
-              "instance_hypervisor 1": "",
-              "instance_memory 1": "",
-              "instance_network_bandwidth 1": "Network Bandwidth",
+              "instance_cpu 1": "vCPU",
               "instance_type": "Instance Type",
               "instance_type 1": "Instance Type",
-              "namespace 1": "",
               "node_name": "Node Name",
               "nodepool 1": "Nodepool",
               "zone 1": "Zone"
@@ -1691,248 +1523,93 @@
       "type": "table"
     },
     {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
-        "y": 30
+        "y": 45
       },
-      "id": 29,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "increase(karpenter_nodeclaims_created_total{nodepool=~\"$nodepool\",cluster=\"$cluster\"}[5m])",
-          "hide": false,
-          "legendFormat": "created-\"{{nodepool}}\"-{{reason}}",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "- increase(karpenter_nodeclaims_terminated_total{nodepool=~\"$nodepool\",cluster=\"$cluster\"}[5m])",
-          "hide": false,
-          "legendFormat": "terminated-\"{{nodepool}}\"-{{reason}}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Node Activity",
-      "type": "timeseries"
+      "id": 19,
+      "panels": [],
+      "title": "Nodeclaim Ready and Uptime  - nodeclaim \"$nodeclaim\"",
+      "type": "row"
     },
     {
- 
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 30
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 46
       },
-      "id": 5,
+      "id": 20,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.4.3",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
-          "expr": "count(karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"pods\",cluster=\"$cluster\"}) by (zone)",
+          "expr": "operator_status_condition_current_status_seconds{kind=\"NodeClaim\", name=\"$nodeclaim\",status=\"True\", type=\"Launched\", cluster=\"$cluster\"} - ignoring(type,reason) operator_status_condition_current_status_seconds{kind=\"NodeClaim\", name=\"$nodeclaim\",status=\"True\", type=\"Ready\", cluster=\"$cluster\"}",
+          "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Node AZ Distribution",
-      "type": "timeseries"
+      "title": "Ready time",
+      "type": "stat"
     },
     {
- 
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1940,47 +1617,63 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 2,
+        "w": 3,
+        "x": 3,
+        "y": 46
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "operator_status_condition_current_status_seconds{kind=\"NodeClaim\", name=\"$nodeclaim\",status=\"True\", type=\"Ready\", cluster=\"$cluster\"}",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uptime",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
         "x": 0,
-        "y": 38
+        "y": 48
       },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"cpu\",cluster=\"$cluster\"} / karpenter_nodes_allocatable{nodepool=~\"$nodepool\",resource_type=\"cpu\",cluster=\"$cluster\"}",
-          "legendFormat": "{{node_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Node CPU Reservation",
-      "type": "timeseries"
+      "id": 13,
+      "panels": [],
+      "title": "AWS API",
+      "type": "row"
     },
     {
- 
+      "datasource": {},
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1990,7 +1683,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "sec",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -2019,105 +1712,12 @@
             }
           },
           "mappings": [],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 38
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "karpenter_nodes_total_pod_requests{nodepool=~\"$nodepool\",resource_type=\"memory\",cluster=\"$cluster\"} / karpenter_nodes_allocatable{nodepool=~\"$nodepool\", resource_type=\"memory\",cluster=\"$cluster\"}",
-          "legendFormat": "{{node_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Node Memory Reservation",
-      "type": "timeseries"
-    },
-    {
- 
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2132,40 +1732,37 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 49
       },
-      "id": 25,
+      "id": 5,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
-          "expr": "idelta(karpenter_interruption_received_messages_total[1m])",
+          "expr": "histogram_quantile(0.99, sum(rate(aws_sdk_go_request_duration_seconds_bucket{cluster=\"$cluster\"}[$__rate_interval])) by (le,exported_service,action))",
           "hide": false,
-          "legendFormat": "{{message_type}}",
+          "instant": false,
+          "legendFormat": "{{exported_service}}:{{action}}",
           "range": true,
-          "refId": "A"
+          "refId": "B"
         }
       ],
-      "title": "Interruption Messages",
+      "title": "AWS API Request Latency P99",
       "type": "timeseries"
     },
     {
- 
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2175,7 +1772,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Rate",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -2203,13 +1800,13 @@
               "mode": "off"
             }
           },
-          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2224,36 +1821,33 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 49
       },
-      "id": 27,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(idelta(karpenter_interruption_deleted_messages_total{cluster=\"$cluster\"}[1m]))",
-          "legendFormat": "Number of messages deleted",
+          "expr": "irate(aws_sdk_go_request_attempt_duration_seconds_count{code!=\"200\",cluster=\"$cluster\"}[$__rate_interval])",
+          "instant": false,
+          "legendFormat": "{{exported_service}}:{{action}}:{{code}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Deleted Interruption Messages",
+      "title": "AWS API Errors",
       "type": "timeseries"
     },
     {
@@ -2262,15 +1856,15 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 57
       },
-      "id": 19,
+      "id": 12,
       "panels": [],
-      "title": "Pods by Application",
+      "title": "Operational",
       "type": "row"
     },
     {
- 
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2280,7 +1874,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Delta",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -2308,14 +1902,13 @@
               "mode": "off"
             }
           },
-          "decimals": 0,
-          "displayName": "Number of pods",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2330,9 +1923,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 58
       },
-      "id": 21,
+      "id": 6,
       "options": {
         "legend": {
           "calcs": [],
@@ -2347,22 +1940,19 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
-          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\", name=~\"$application.*\",cluster=\"$cluster\"})",
-          "legendFormat": "{{name}}",
+          "expr": "operator_status_condition_transitions_total{group=\"karpenter.sh\",kind=\"NodeClaim\",reason=\"Launched\",status=\"True\",type=\"Launched\",cluster=\"$cluster\"} - ignoring(type,reason) operator_status_condition_transitions_total{group=\"karpenter.sh\",kind=\"NodeClaim\",reason=\"Ready\",status=\"True\",type=\"Ready\",cluster=\"$cluster\"}  ",
+          "instant": false,
+          "legendFormat": "Delta Launched - Ready",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total Number of Pods",
+      "title": "Stuck NodeClaim",
       "type": "timeseries"
     },
     {
- 
+
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2376,7 +1966,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 25,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -2394,20 +1984,309 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
-          "decimals": 0,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "P99 "
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 58
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "expr": "max(karpenter_nodes_termination_duration_seconds{quantile=\"0.99\",nodepool=~\"$nodepool\",cluster=\"$cluster\"})",
+          "instant": false,
+          "legendFormat": "P99 ",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Node Termination Latency - Nodepool \"$nodepool\"",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "max(karpenter_pods_startup_duration_seconds{quantile=\"0.99\",cluster=\"$cluster\"})",
+          "instant": false,
+          "legendFormat": "P99",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Pod Startup Latency",
+      "type": "timeseries"
+    },
+    {
+
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(phase)(karpenter_pods_state{cluster=\"$cluster\", nodepool=\"$nodepool\"})",
+          "instant": false,
+          "legendFormat": "{{phase}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Pod phase",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Rate",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2421,10 +2300,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 55
+        "x": 0,
+        "y": 74
       },
-      "id": 9,
+      "id": 14,
       "options": {
         "legend": {
           "calcs": [],
@@ -2433,28 +2312,38 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
           "editorMode": "code",
-          "expr": "sum(karpenter_pods_state{nodepool=~\"$nodepool\",name=~\"$application.*\",cluster=\"$cluster\"}) by (zone)",
-          "legendFormat": "{{name}}",
+          "exemplar": false,
+          "expr": "rate(karpenter_cloudprovider_errors_total{cluster=\"$cluster\"}[$__rate_interval])",
+          "instant": false,
+          "legendFormat": "{{controller}}:{{error}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Pod  Distribution by Availability zone",
+      "title": "Cloud Provider Errors",
       "type": "timeseries"
     },
     {
- 
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 82
+      },
+      "id": 11,
+      "panels": [],
+      "title": "Controller Performance",
+      "type": "row"
+    },
+    {
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2468,7 +2357,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 25,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -2486,15 +2375,166 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
-          "decimals": 0,
           "mappings": [],
-          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 83
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, rate(controller_runtime_reconcile_time_seconds_bucket{controller=\"$workqueue_controller\",cluster=\"$cluster\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "P99",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Controller Reconciliation Latency - Workqueue Controller \"$workqueue_controller\"",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 83
+      },
+      "id": 18,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(controller_runtime_reconcile_total{job=\"$job\",cluster=\"$cluster\"}[$__rate_interval])) by (controller)",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Workqueue Controller Reconciliation Rate",
+      "type": "bargauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2506,48 +2546,138 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
-        "y": 63
+        "y": 91
       },
-      "id": 37,
+      "id": 28,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "max"
+          ],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+
           "editorMode": "code",
-          "expr": "max(sum(karpenter_pods_state{nodepool=~\"$nodepool\", name=~\"$application.*\",cluster=\"$cluster\"}) by (zone)) - min(sum(karpenter_pods_state{nodepool=~\"$nodepool\", name=~\"$application.*\",cluster=\"$cluster\"}) by (zone))",
-          "legendFormat": "{{name}}",
+          "expr": "histogram_quantile(0.99, rate(karpenter_scheduler_scheduling_duration_seconds_bucket{controller=\"$workqueue_controller\",cluster=\"$cluster\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "P99",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Pod Skew By  Availability zone",
+      "title": "Controller Simulation Latency - Scheduling Controller \"$scheduling_controller\"",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 91
+      },
+      "id": 29,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+
+          "editorMode": "code",
+          "expr": "sum(karpenter_scheduler_queue_depth{controller=\"$scheduling_controller\",cluster=\"$cluster\"})",
+          "instant": false,
+          "legendFormat": "queue depth",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Controller Queue Depth - Scheduling Controller \"$scheduling_controller\"",
       "type": "timeseries"
     }
   ],
-  "refresh": "",
-  "revision": 1,
+  "refresh": "5s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -2556,32 +2686,17 @@
         "current": {
           "selected": false
         },
+
+        "definition": "label_values(up,cluster)",
         "hide": 0,
         "includeAll": false,
-        "multi": false,
-        "name": "datasource",
-        "options": [],
-        "query": "prometheus",
-        "queryValue": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "type": "datasource"
-      },
-      {
-        "current": {
-          "selected": false
-        },
-        "definition": "label_values(up{job=\"$job\"},cluster)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "cluster",
+        "label": "Cluster",
         "multi": false,
         "name": "cluster",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(up{job=\"$job\"},cluster)",
+          "query": "label_values(up,cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -2589,152 +2704,81 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },      
+      },
       {
         "current": {
           "selected": false
+
         },
 
-        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},nodepool)",
+        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\", capacity_type=~\".+\"},node_name)",
         "hide": 0,
         "includeAll": false,
+        "label": "Node Name",
         "multi": false,
+        "name": "node_name",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\", capacity_type=~\".+\"},node_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+
+        "definition": "label_values(karpenter_pods_state{cluster=\"$cluster\"},namespace)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Namespace",
+        "multi": true,
+        "name": "namespace",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(karpenter_pods_state{cluster=\"$cluster\"},namespace)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+
+        "definition": "label_values(karpenter_nodepools_usage{cluster=\"$cluster\"},nodepool)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Nodepool",
+        "multi": true,
         "name": "nodepool",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},nodepool)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
-        },
-        "definition": "query_result(kube_deployment_created OR kube_statefulset_created)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": false,
-        "name": "application",
-        "options": [],
-        "query": {
-          "query": "query_result(kube_deployment_created OR kube_statefulset_created)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/.*(?:statefulset|deployment)=\"([^\"]*).*/",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},zone)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "zone",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},zone)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},arch)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "arch",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},arch)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},capacity_type)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "capacity_type",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},capacity_type)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},instance_type)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "instance_type",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},instance_type)",
+          "query": "label_values(karpenter_nodepools_usage{cluster=\"$cluster\"},nodepool)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -2746,54 +2790,77 @@
       {
         "current": {
           "selected": false,
-          "text": "nodepool",
-          "value": "nodepool"
+          "text": "provisioner",
+          "value": "provisioner"
         },
+
+        "definition": "label_values(controller_runtime_reconcile_time_seconds_count{cluster=\"$cluster\", job=\"$job\"},controller)",
         "hide": 0,
         "includeAll": false,
+        "label": "Workqueue Controller",
         "multi": false,
-        "name": "distribution_filter",
-        "options": [
-          {
-            "selected": false,
-            "text": "arch",
-            "value": "arch"
-          },
-          {
-            "selected": false,
-            "text": "capacity_type",
-            "value": "capacity_type"
-          },
-          {
-            "selected": false,
-            "text": "instance_type",
-            "value": "instance_type"
-          },
-          {
-            "selected": false,
-            "text": "namespace",
-            "value": "namespace"
-          },
-          {
-            "selected": false,
-            "text": "node",
-            "value": "node"
-          },
-          {
-            "selected": true,
-            "text": "nodepool",
-            "value": "nodepool"
-          },
-          {
-            "selected": false,
-            "text": "zone",
-            "value": "zone"
-          }
-        ],
-        "query": "arch,capacity_type,instance_type,namespace,node,nodepool,zone",
-        "queryValue": "",
+        "name": "workqueue_controller",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(controller_runtime_reconcile_time_seconds_count{cluster=\"$cluster\", job=\"$job\"},controller)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "provisioner",
+          "value": "provisioner"
+        },
+
+        "definition": "label_values(karpenter_scheduler_queue_depth{cluster=\"$cluster\"},controller)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Scheduling Controller",
+        "multi": false,
+        "name": "scheduling_controller",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(karpenter_scheduler_queue_depth{cluster=\"$cluster\"},controller)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+
+        "definition": "label_values(operator_status_condition_current_status_seconds{kind=\"NodeClaim\", cluster=\"$cluster\"},name)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Nodeclaim",
+        "multi": true,
+        "name": "nodeclaim",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(operator_status_condition_current_status_seconds{kind=\"NodeClaim\", cluster=\"$cluster\"},name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       },
       {
         "current": {
@@ -2803,7 +2870,6 @@
         "definition": "label_values(karpenter_cloudprovider_instance_type_cpu_cores,job)",
         "hide": 2,
         "includeAll": false,
-        "label": "job",
         "multi": false,
         "name": "job",
         "options": [],
@@ -2817,17 +2883,40 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false
+        },
+
+        "definition": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},capacity_type)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Capacity Type",
+        "multi": false,
+        "name": "capacity_type",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(karpenter_nodes_allocatable{cluster=\"$cluster\"},capacity_type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
-  "title": "Karpenter",
-  "uid": "karpenter",
-  "version": 27,
+  "timezone": "browser",
+  "title": "Karpenter Operational Dashboard (AWS)",
+  "uid": "fe1yy449rvlz4d",
+  "version": 22,
   "weekStart": ""
 }
