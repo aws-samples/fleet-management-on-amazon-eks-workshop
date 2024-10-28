@@ -833,9 +833,8 @@ addons:
     releaseName: kyverno-policy-reporter
     namespace: '{{default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
     chart: policy-reporter
-    #chart: policy-reporter-preview
     repoUrl: https://kyverno.github.io/policy-reporter
-    targetRevision: '3.0.0-rc.6'
+    targetRevision: '3.0.0-rc.7'
     selector:
       matchExpressions:
         - key: enable_kyverno_policy_reporter
