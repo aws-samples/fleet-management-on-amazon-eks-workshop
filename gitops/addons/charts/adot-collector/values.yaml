@@ -12,8 +12,8 @@ globalScrapeSampleLimit: 60s
 enableAPIserver: true
 
 enableTracing: false
-otlpGrpcEndpoint: ""
-otlpHttpEndpoint: ""
+otlpGrpcEndpoint: "0.0.0.0:4317"
+otlpHttpEndpoint: "0.0.0.0:4318"
 tracingTimeout: ""
 tracingBatchSize: ""
 
@@ -37,4 +37,5 @@ adotServiceTelemetryLoglevel: INFO
 enableAdotcollectorMetrics: false
 
 serviceAccount: "adot-collector-kubeprometheus"
+
 
