@@ -28,7 +28,8 @@ addons:
     enabled: true
   opentelemetry_operator:
     enabled: true
-  cert_manager:    
+  cert_manager:
     enabled: true
-
+  eks_upgrade_insights_demo:
+    enabled: true
 

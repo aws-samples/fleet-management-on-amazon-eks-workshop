@@ -779,19 +779,19 @@ addons:
   opentelemetry_operator:
     enabled: false
     releaseName: opentelemetry-operator
-    namespace: "opentelemetry-operator-system" 
+    namespace: "opentelemetry-operator-system"
     chart: opentelemetry-operator
     repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
     targetRevision: "0.71.1"
     values:
       manager:
         collectorImage:
-          repository: "otel/opentelemetry-collector-k8s"    
+          repository: "otel/opentelemetry-collector-k8s"
     selector:
       matchExpressions:
         - key: enable_opentelemetry_operator
           operator: In
-          values: ['true']          
+          values: ['true']
   adot_collector:
     enabled: false
     namespace: '{{default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'
@@ -801,9 +801,9 @@ addons:
     values:
        ekscluster: '{{.metadata.annotations.aws_cluster_name}}'
        accountId: '{{.metadata.annotations.aws_account_id}}'
-       region: '{{.metadata.annotations.aws_region}}'    
+       region: '{{.metadata.annotations.aws_region}}'
        ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'
-       serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'     
+       serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'
     selector:
       matchExpressions:
         - key: enable_adot_collector
@@ -1139,3 +1139,11 @@ addons:
         - key: enable_cw_prometheus
           operator: In
           values: ['true']
+
+  eks_upgrade_insights_demo:
+    enabled: false
+    releaseName: eks-upgrade-insights-demo
+    namespace: 'argocd'
+    path: charts/eks-upgrade-insights-demo
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
+    targetRevision: '{{.metadata.annotations.addons_repo_revision}}'

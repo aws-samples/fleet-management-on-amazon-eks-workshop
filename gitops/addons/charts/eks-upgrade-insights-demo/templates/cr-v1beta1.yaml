@@ -1,0 +1,6 @@
+apiVersion: eks-fleet-workshop-demo.com/v1beta1
+kind: Example
+metadata:
+  name: example-v1beta1
+spec:
+  message: "Hello from v1beta1"
