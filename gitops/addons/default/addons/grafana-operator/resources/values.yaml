@@ -8,7 +8,6 @@ GRAFANA_NODEEXP_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-m
 GRAFANA_NODES_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/nodes.json'
 GRAFANA_WORKLOADS_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/workloads.json'
 GRAFANA_FLEET_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/fleet-monitoring.json'
-GRAFANA_KARPENTER_CAPACITY_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/karpenter-capacity-dashboard.json'
-GRAFANA_KARPENTER_PERFORMANCE_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/karpenter-performance-dashboard.json'
+GRAFANA_KARPENTER_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/karpenter.json'
 GRAFANA_COREDNS_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/coredns.json'
 GRAFANA_VPCCNI_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/vpccni.json'

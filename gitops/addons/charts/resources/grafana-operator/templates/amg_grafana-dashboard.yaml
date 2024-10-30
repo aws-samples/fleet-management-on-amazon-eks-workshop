@@ -141,30 +141,16 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: kube-karpenter-capacity-grafanadashboard
+  name: kube-karpenter-grafanadashboard
   namespace: grafana-operator
 spec:
   folder: "EKS Fleet Workshop"
   instanceSelector:
     matchLabels:
       dashboards: "grafana"
-  url: {{ .Values.GRAFANA_KARPENTER_CAPACITY_DASH_URL }}  
+  url: {{ .Values.GRAFANA_KARPENTER_DASH_URL }}  
 
----  
-  
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: kube-karpenter-performance-grafanadashboard
-  namespace: grafana-operator
-spec:
-  folder: "EKS Fleet Workshop"
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
-  url: {{ .Values.GRAFANA_KARPENTER_PERFORMANCE_DASH_URL }}  
-
----  
+---   
   
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
