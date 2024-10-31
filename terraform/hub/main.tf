@@ -369,16 +369,16 @@ module "eks" {
   # EKS Addons
   cluster_addons = {
     coredns    = {
-      addon_version  = "v1.11.3-eksbuild.1"
+      addon_version  = "v1.11.3-eksbuild.2"
     }
     kube-proxy = {
-      addon_version  = "v1.29.7-eksbuild.9"
+      addon_version  = "v1.31.1-eksbuild.2"
     }
     amazon-cloudwatch-observability = {
-      addon_version  = "v2.1.2-eksbuild.1"
+      addon_version  = "v2.2.1-eksbuild.1"
     }
     aws-ebs-csi-driver = {
-      addon_version  = "v1.35.0-eksbuild.1"
+      addon_version  = "v1.36.0-eksbuild.1"
     }
     eks-pod-identity-agent = {
       addon_version  = "v1.3.2-eksbuild.2"
