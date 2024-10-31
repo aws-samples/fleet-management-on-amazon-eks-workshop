@@ -1,2 +1,1 @@
-This helm charts deploys a CRD that contains a deprecated api version (v1beta1)
 This helm chart is for demo purpose only to show the capability of [EKS Upgrade Insights](https://docs.aws.amazon.com/eks/latest/userguide/cluster-insights.html)
