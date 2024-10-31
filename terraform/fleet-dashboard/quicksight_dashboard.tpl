@@ -2074,6 +2074,19 @@
                                             "TextFormat": {
                                                 "BackgroundColor": {
                                                     "Solid": {
+                                                        "Expression": "locate({Resource Health}, \"Not Applicable\") > 0",
+                                                        "Color": "#E5E52F"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "Cell": {
+                                            "FieldId": "0b14bdd9-adc0-4382-be41-046e999e7090.Resource Health.6.1724627115136",
+                                            "TextFormat": {
+                                                "BackgroundColor": {
+                                                    "Solid": {
                                                         "Expression": "locate({Resource Health}, \"Missing, Healthy\") = 0",
                                                         "Color": "#FF8700"
                                                     }
