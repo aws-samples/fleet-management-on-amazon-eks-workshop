@@ -382,7 +382,7 @@ def get_argo_app_details(cluster, account_id, region):
             app_details = item.rstrip(',').split(',')
             if len(app_details) == 13:
                 app_name, repo, health, sync_status, operation_state, source_type, last_sync, resource_kind, resource_name, resource_namespace, resource_health, resource_status, resource_version = app_details
-                data.append([account_id, region, cluster, app_name, repo, health, sync_status, operation_state, source_type, last_sync, resource_kind, resource_name, resource_namespace, resource_health, resource_status, resource_version])
+                data.append([account_id, region, cluster, app_name, repo, health, sync_status, operation_state, source_type, last_sync, resource_kind, resource_name, resource_namespace, "Not Applicable" if not resource_health or resource_health.strip() == "" else resource_health.strip(), resource_status, resource_version])
     except subprocess.CalledProcessError:
             print(f"Warning: Argo Apps server not found in {cluster} (account: {account_id}, region: {region})")
             
