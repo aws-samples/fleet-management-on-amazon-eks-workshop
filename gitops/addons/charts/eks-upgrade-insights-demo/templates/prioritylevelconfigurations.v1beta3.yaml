@@ -1,0 +1,11 @@
+apiVersion: flowcontrol.apiserver.k8s.io/v1beta3
+kind: PriorityLevelConfiguration
+metadata:
+  name: eks-fleet-workshop-demo
+spec:
+  limited:
+    lendablePercent: 0
+    limitResponse:
+      type: Reject
+    nominalConcurrencyShares: 5
+  type: Limited
