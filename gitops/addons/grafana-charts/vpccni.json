@@ -603,7 +603,7 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "IP Addresses usage on attached ENIs",
+      "description": "IP usage on attached ENIs",
       "fieldConfig": {
         "defaults": {
           "color": {
