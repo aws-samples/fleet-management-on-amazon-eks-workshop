@@ -59,7 +59,7 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "agents and nodes should match\n\nnormal pods + preemptible pods should match\nthe assigned ip addresses count,\nmodulo pods using the host network",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -111,36 +111,8 @@
           "interval": "",
           "legendFormat": "Agents",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum(kube_node_labels{cluster=\"$cluster\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "Nodes",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "expr": "sum(kube_pod_info{priority_class!=\"overprovisioning\",created_by_name!~\"aws-node|kube-proxy|kube-prometheus-stack-prometheus-node-exporter\"})",
-          "interval": "",
-          "legendFormat": "Normal Pods",
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "expr": "sum(kube_pod_info{priority_class=\"overprovisioning\"})",
-          "interval": "",
-          "legendFormat": "Preemptible Pods",
-          "refId": "C"
         }
+
       ],
       "title": "CNI Pods",
       "type": "stat"
@@ -290,7 +262,7 @@
           "refId": "B"
         }
       ],
-      "title": "IP Addresses in the Cluster",
+      "title": "IP Capacity",
       "type": "stat"
     },
     {
@@ -363,7 +335,7 @@
           "refId": "A"
         }
       ],
-      "title": "Available IP Addresses in the Cluster",
+      "title": "IP Distribution",
       "type": "stat"
     },
     {
@@ -549,14 +521,14 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "count_values(\"value\", 100*awscni_eni_allocated{cluster=\"$cluster\"}/awscni_eni_max{cluster=\"$cluster\"})",
+          "expr": "count_values(\"value\", floor(100*awscni_eni_allocated{cluster=\"$cluster\"}/awscni_eni_max{cluster=\"$cluster\"}))",
           "interval": "",
-          "legendFormat": "{{value}}",
+          "legendFormat": "{{value}}%",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "ENI Usage (node count per usage %)",
+      "title": "ENI Usage %",
       "type": "piechart"
     },
     {
@@ -631,7 +603,7 @@
         "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "IP Addresses usage on attached ENIs",
+      "description": "IP usage on attached ENIs",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -835,7 +807,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 3,
+        "w": 4,
         "x": 6,
         "y": 13
       },
@@ -915,7 +887,7 @@
       "gridPos": {
         "h": 6,
         "w": 3,
-        "x": 9,
+        "x": 10,
         "y": 13
       },
       "id": 26,
@@ -950,7 +922,7 @@
           "refId": "A"
         }
       ],
-      "title": "Delete IP Address Errors",
+      "title": "Del IP Errors",
       "type": "stat"
     },
     {
@@ -958,180 +930,6 @@
         "uid": "$datasource"
       },
       "description": "Zero is good",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 3,
-        "x": 12,
-        "y": 13
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum by (reason) (awscni_del_ip_req_count{cluster=\"$cluster\",reason!=\"PodDeleted\"})",
-          "interval": "",
-          "legendFormat": "{{reason}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Delete IP Address Errors (by Reason)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Zero is good",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "text": "OK"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 3,
-        "x": 15,
-        "y": 13
-      },
-      "id": 33,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.4.3",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count{cluster=\"$cluster\"}[$__interval]))",
-          "interval": "",
-          "legendFormat": "{{api}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "API Errors on the Period",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
-      "description": "Non zero means errors or IP addresses leaks",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1191,10 +989,10 @@
       "gridPos": {
         "h": 6,
         "w": 5,
-        "x": 18,
+        "x": 13,
         "y": 13
       },
-      "id": 34,
+      "id": 32,
       "options": {
         "legend": {
           "calcs": [],
@@ -1214,6 +1012,82 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by (reason) (awscni_del_ip_req_count{cluster=\"$cluster\",reason!=\"PodDeleted\"})",
+          "interval": "",
+          "legendFormat": "{{reason}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Delete IP Errors by Reason",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
+      "description": "Zero is good",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 18,
+        "y": 13
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
           "expr": "sum by (api) (sum_over_time(awscni_aws_api_error_count{cluster=\"$cluster\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{api}}",
@@ -1221,8 +1095,8 @@
           "refId": "A"
         }
       ],
-      "title": "API Errors on the Period (by API)",
-      "type": "timeseries"
+      "title": "API Errors",
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -1539,7 +1413,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(awscni_reconcile_count{cluster=\"$cluster\"}[5m])) by (fn)",
+          "expr": "sum(rate(awscni_reconcile_count_total{cluster=\"$cluster\"}[5m])) by (fn)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{fn}}",
@@ -1730,7 +1604,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "awscni_del_ip_req_count{cluster=\"$cluster\"}",
+          "expr": "awscni_del_ip_req_count_total{cluster=\"$cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
