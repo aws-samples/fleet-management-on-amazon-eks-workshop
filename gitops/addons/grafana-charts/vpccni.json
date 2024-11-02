@@ -1413,7 +1413,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(awscni_reconcile_count{cluster=\"$cluster\"}[5m])) by (fn)",
+          "expr": "sum(rate(awscni_reconcile_count_total{cluster=\"$cluster\"}[5m])) by (fn)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{fn}}",
@@ -1604,7 +1604,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "awscni_del_ip_req_count{cluster=\"$cluster\"}",
+          "expr": "awscni_del_ip_req_count_total{cluster=\"$cluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
