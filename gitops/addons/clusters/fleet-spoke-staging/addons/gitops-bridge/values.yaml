@@ -21,14 +21,14 @@ addons:
   prometheus_node_exporter:
     enabled: true
   kube_state_metrics:
-    enabled: true        
+    enabled: true
   argocd:
-    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet from the Hub Cluster
+    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet from the Hub Cluster https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/gitops/fleet/bootstrap/control-plane/members-init/addons-argo-cd-appset.yaml
   external_secrets:
-    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-external-secrets ApplicationSet the Hub Cluster
+    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-external-secrets ApplicationSet the Hub Cluster https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/gitops/fleet/bootstrap/control-plane/members-init/addons-aws-oss-external-secrets-appset.yaml
   adot_collector:
     enabled: true
   opentelemetry_operator:
     enabled: true
-  cert_manager:    
-    enabled: true 
+  cert_manager:
+    enabled: true
