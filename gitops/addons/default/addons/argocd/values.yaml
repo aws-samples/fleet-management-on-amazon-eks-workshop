@@ -23,14 +23,14 @@ controller:
 repoServer:
   autoscaling:
     enabled: true
-    minReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
   resources: # Adjust based on your specific use case (required for HPA)
     requests:
-      cpu: '100m'
-      memory: '256Mi'
-    limits:
-      cpu: '200m'
+      cpu: '500m'
       memory: '512Mi'
+    limits:
+      memory: '1Gi'
   metrics:
     enabled: true
     service:
@@ -48,14 +48,14 @@ applicationSet:
 server:
   autoscaling:
     enabled: true
-    minReplicas: 1
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
   resources: # Adjust based on your specific use case (required for HPA)
     requests:
-      cpu: '100m'
-      memory: '256Mi'
-    limits:
-      cpu: '200m'
+      cpu: '500m'
       memory: '512Mi'
+    limits:
+      memory: '1Gi'
   metrics:
     enabled: true
     service:
