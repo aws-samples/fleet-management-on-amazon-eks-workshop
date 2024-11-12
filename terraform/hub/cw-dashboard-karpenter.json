@@ -6,7 +6,7 @@
             "inputType": "select",
             "id": "ClusterName",
             "label": "Cluster name",
-            "defaultValue": "fleet-hub-cluster",
+            "defaultValue": "**default_cluster**",
             "visible": true,
             "search": "{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=karpenter_nodepools_limit",
             "populateFrom": "ClusterName"
@@ -17,7 +17,7 @@
             "inputType": "select",
             "id": "nodepool",
             "label": "Node pool",
-            "defaultValue": "nodes-default-amd64",
+            "defaultValue": "addonspool",
             "visible": true,
             "search": "ContainerInsights/Prometheus MetricName=karpenter_nodepools_limit",
             "populateFrom": "nodepool"
@@ -31,14 +31,14 @@
             "x": 7,
             "type": "metric",
             "properties": {
-                "metrics": [
-                    [ { "expression": "100*(m2/m1)", "label": "memory (%)", "id": "e1" } ],
-                    [ { "expression": "100*(m4/m3)", "label": "cpu (%)", "id": "e2" } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "${ClusterName}", { "id": "m2", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_limit", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m3", "visible": false } ],
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "${ClusterName}", { "id": "m4", "visible": false } ]
-                ],
+            "metrics": [
+                [{ "expression": "100*m1/m2", "label": "memory (%)", "id": "e1" }],
+                [{ "expression": "100*m3/m4", "label": "cpu (%)", "id": "e2" }],
+                [{ "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_usage\" nodepool=\"addonspool\" resource_type=\"memory\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m1", "visible": false }],
+                [{ "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_limit\" nodepool=\"addonspool\" resource_type=\"memory\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m2", "visible": false }],
+                [{ "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_usage\" nodepool=\"addonspool\" resource_type=\"cpu\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m3", "visible": false }],
+                [{ "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_limit\" nodepool=\"addonspool\" resource_type=\"cpu\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m4", "visible": false }]
+            ],
                 "sparkline": true,
                 "view": "gauge",
                 "region": "**aws_region**",
@@ -63,7 +63,8 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_pods_startup_duration_seconds", "ClusterName", "${ClusterName}" ]
+
+                    [ { "expression": "SELECT AVG(karpenter_pods_startup_duration_seconds) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
                 ],
                 "region": "**aws_region**",
                 "period": 300,
@@ -85,7 +86,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_created_total", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT SUM(karpenter_nodeclaims_created_total,nodepool,addonspool) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -110,7 +111,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodeclaims_terminated_total", "nodepool", "nodes-default-amd64", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT SUM(karpenter_nodeclaims_terminated_total,nodepool,addonspool) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -135,9 +136,10 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_cluster_state_node_count", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT AVG(karpenter_cluster_state_node_count) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
+                    
                 ],
-                "view": "timeSeries",
+                "view": "singleValue",
                 "stacked": false,
                 "region": "**aws_region**",
                 "period": 300,
@@ -162,8 +164,8 @@
                 "sparkline": true,
                 "view": "singleValue",
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "memory", "ClusterName", "{ClusterName}" ],
-                    [ ".", "karpenter_nodepools_limit", ".", ".", ".", ".", ".", "." ]
+                    [ { "expression": "SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_usage\" nodepool=\"addonspool\" resource_type=\"memory\" ClusterName=\"**default_cluster**\"', 'Average', 300)", "id": "m1", "visible": true } ], 
+                    [ { "expression": "SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_limit\" nodepool=\"addonspool\" resource_type=\"karpenter_nodepools_limit\" ClusterName=\"**default_cluster**\"', 'Average', 300)", "id": "m2", "visible": true } ]
                 ],
                 "region": "**aws_region**",
                 "singleValueFullPrecision": false,
@@ -182,8 +184,8 @@
                 "sparkline": true,
                 "view": "singleValue",
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "karpenter_nodepools_usage", "nodepool", "nodes-default-amd64", "resource_type", "cpu", "ClusterName", "{ClusterName}" ],
-                    [ ".", "karpenter_nodepools_limit", ".", ".", ".", ".", ".", "." ]
+                    [ { "expression": "SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_usage\" nodepool=\"addonspool\" resource_type=\"cpu\" ClusterName=\"**default_cluster**\"', 'Average', 300)", "id": "m1", "visible": true } ], 
+                    [ { "expression": "SEARCH('{ContainerInsights/Prometheus,ClusterName,nodepool,resource_type} MetricName=\"karpenter_nodepools_limit\" nodepool=\"addonspool\" resource_type=\"cpu\" ClusterName=\"**default_cluster**\"', 'Average', 300)", "id": "m2", "visible": true } ] 
                 ],
                 "region": "**aws_region**",
                 "stacked": true,
