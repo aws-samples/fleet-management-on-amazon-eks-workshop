@@ -138,7 +138,7 @@
                 "metrics": [
                     [ { "expression": "SELECT AVG(karpenter_cluster_state_node_count) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'","label": "Cluster nodes" } ]                  
                 ],
-                "view": "singleValue",
+                "view": "timeSeries",
                 "stacked": false,
                 "region": "**aws_region**",
                 "period": 300,
