@@ -111,3 +111,8 @@ function apps_default_kyverno_insights (){
   git -C $GITOPS_DIR/apps push
 
 }
+
+function validation_locust_ui(){
+  nohup kubectl --context fleet-staging-cluster port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
+  echo $IDE_URL/proxy/8089/
+}
