@@ -1,4 +1,2 @@
 # values for the addon
-tolerations:
-- key: "CriticalAddonsOnly"
-  operator: "Exists"
+

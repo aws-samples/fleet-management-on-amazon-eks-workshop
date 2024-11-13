@@ -6,6 +6,7 @@ controller:
   env:
     - name: ARGOCD_SYNC_WAVE_DELAY
       value: '30'
-server:
-  service:
-    type: LoadBalancer
+dex:
+  # -- Enable dex
+  enabled: false
+
