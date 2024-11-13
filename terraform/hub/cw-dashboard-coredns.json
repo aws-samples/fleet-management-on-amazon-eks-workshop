@@ -24,9 +24,9 @@
         "type": "metric",
         "properties": {
             "metrics": [
-                [ { "expression": "100*m1/m2", "label": "eniUtilization", "id": "e1" } ],
-                [ { "expression": "AVG(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniAllocated\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "id": "m1", "visible": false } ],
-                [ { "expression": "AVG(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniMaxAvailable\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "id": "m2", "visible": false } ]
+                [ { "expression": "100*m1/m2", "label": "cache_hit_percentage", "id": "e1" } ],
+                [ { "expression": "AVG(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_dns_requests_total\" ClusterName=\"**default_cluster**\"', 'Average', 300))", "id": "m1", "visible": false } ],
+                [ { "expression": "AVG(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_hits_total\" ClusterName=\"**default_cluster**\"', 'Average', 300))", "id": "m2", "visible": false } ]
             ],
             "view": "gauge",
             "stacked": false,
@@ -50,7 +50,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SELECT SUM(coredns_cache_entries) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
+                    [ { "expression": "SELECT AVG(coredns_cache_entries) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'", "label": "Cache entries" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
@@ -70,7 +70,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
+                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'","label": "Requests (total for last 5 mins)" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
@@ -88,7 +88,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'" } ]
+                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'","label": "CoreDNS requests total" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
