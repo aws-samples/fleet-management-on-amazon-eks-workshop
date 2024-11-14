@@ -11,3 +11,4 @@ GRAFANA_FLEET_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-man
 GRAFANA_KARPENTER_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/karpenter.json'
 GRAFANA_COREDNS_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/coredns.json'
 GRAFANA_VPCCNI_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/vpccni.json'
+GRAFANA_KUBESTATE_DASH_URL: 'https://raw.githubusercontent.com/aws-samples/fleet-management-on-amazon-eks-workshop/riv24/gitops/addons/grafana-charts/kube-state-metrics.json'
