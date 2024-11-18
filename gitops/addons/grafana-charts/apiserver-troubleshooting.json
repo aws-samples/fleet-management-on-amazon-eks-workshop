@@ -1556,7 +1556,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max without(instance)(apiserver_flowcontrol_request_concurrency_limit{job=\"$job\",cluster=\"$cluster\"})",
+          "expr": "max without(instance)(apiserver_flowcontrol_nominal_limit_seats{job=\"$job\",cluster=\"$cluster\"})",
           "instant": true,
           "interval": "",
           "intervalFactor": 1,
