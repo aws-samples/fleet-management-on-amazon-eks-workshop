@@ -15,6 +15,20 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
+  name: kube-state-metrics-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Fleet Workshop"
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: {{ .Values.GRAFANA_KUBESTATE_DASH_URL }}
+  
+---
+
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
   name: kube-apiserver-advanced-grafanadashboard
   namespace: grafana-operator
 spec:
