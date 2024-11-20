@@ -1,20 +1,27 @@
- resource "aws_cloudwatch_dashboard" "cni-helper-cw-dashboard" {
+resource "aws_cloudwatch_dashboard" "cni-helper-cw-dashboard" {
   dashboard_name = "Fleet_Management_Vpc_Cni"
-  dashboard_body = replace( file("cw-dashboard-vpc-cni.json"),"**aws_region**", local.region )
-
+  dashboard_body = replace(
+    replace(file("cw-dashboard-vpc-cni.json"), "**aws_region**", local.region),
+    "**default_cluster**", local.name
+  )
 }
 
- resource "aws_cloudwatch_dashboard" "karpenter-cw-dashboard" {
+resource "aws_cloudwatch_dashboard" "karpenter-cw-dashboard" {
   dashboard_name = "Fleet_Management_Karpenter"
-  dashboard_body = replace( file("cw-dashboard-karpenter.json"),"**aws_region**", local.region )
-
+  dashboard_body = replace(
+    replace(file("cw-dashboard-karpenter.json"), "**aws_region**", local.region),
+    "**default_cluster**", local.name
+  )
 }
 
- resource "aws_cloudwatch_dashboard" "coredns-cw-dashboard" {
+resource "aws_cloudwatch_dashboard" "coredns-cw-dashboard" {
   dashboard_name = "Fleet_Management_CoreDNS"
-  dashboard_body = replace( file("cw-dashboard-coredns.json"),"**aws_region**", local.region )
-
+  dashboard_body = replace(
+    replace(file("cw-dashboard-coredns.json"), "**aws_region**", local.region),
+    "**default_cluster**", local.name
+  )
 }
+
 
 locals{
     scrape_interval = "30s"

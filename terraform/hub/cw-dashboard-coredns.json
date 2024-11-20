@@ -1,3 +1,4 @@
+
 {
     "variables": [
         {
@@ -6,39 +7,41 @@
             "inputType": "select",
             "id": "ClusterName",
             "label": "Cluster name",
-            "defaultValue": "fleet-hub-cluster",
+            "defaultValue": "**default_cluster**",
             "visible": true,
             "search": "{ContainerInsights/Prometheus,ClusterName} MetricName=coredns_dns_requests_total",
             "populateFrom": "ClusterName"
         }
     ],
-    "widgets": [
-        {
-            "height": 6,
-            "width": 7,
-            "y": 0,
-            "x": 7,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ { "expression": "100*m2/m1", "label": "cache_hit_percentage", "id": "e1" } ],
-                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}", { "id": "m1", "visible": false } ],
-                    [ ".", "coredns_cache_hits_total", ".", ".", { "id": "m2", "visible": false } ]
-                ],
-                "view": "gauge",
-                "stacked": false,
-                "region": "**aws_region**",
-                "stat": "Sum",
-                "period": 300,
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 100
-                    }
-                },
-                "title": "Cache hit percentage"
-            }
-        },
+
+   
+"widgets": [
+    {
+        "height": 6,
+        "width": 7,
+        "y": 0,
+        "x": 7,
+        "type": "metric",
+        "properties": {
+            "metrics": [
+                [ { "expression": "100*m2/m1", "label": "cache_hit_percentage", "id": "e1" } ],
+                [ { "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_requests_total\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m1", "visible": false } ],
+                [ { "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_hits_total\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m2", "visible": false } ]
+            ],
+            "view": "gauge",
+            "stacked": false,
+            "region": "**aws_region**",
+            "stat": "Sum",
+            "period": 300,
+            "yAxis": {
+                "left": {
+                    "min": 0,
+                    "max": 100
+                }
+            },
+            "title": "Cache hit percentage"
+        }
+    },
         {
             "height": 3,
             "width": 6,
@@ -47,7 +50,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "coredns_cache_entries", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT AVG(coredns_cache_entries) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'", "label": "Cache entries" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
@@ -67,7 +70,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'","label": "Requests (total for last 5 mins)" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
@@ -85,7 +88,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ContainerInsights/Prometheus", "coredns_dns_requests_total", "ClusterName", "${ClusterName}" ]
+                    [ { "expression": "SELECT SUM(coredns_dns_requests_total) FROM \"ContainerInsights/Prometheus\" WHERE ClusterName = '${ClusterName}'","label": "CoreDNS requests total" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
