@@ -65,9 +65,9 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"assignIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Sum', 300))", "label": "assignIPAddresses", "id": "m1" }],
-                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"totalIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Sum', 300))","label": "totalIPAddresses", "id": "m2" }],
-                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"maxIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Sum', 300))", "label": "maxIPAddresses","id": "m3" }]
+                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"assignIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "label": "assignIPAddresses", "id": "m1" }],
+                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"totalIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))","label": "totalIPAddresses", "id": "m2" }],
+                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"maxIPAddresses\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "label": "maxIPAddresses","id": "m3" }]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -118,8 +118,8 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniAllocated\" CLUSTER_ID=\"**default_cluster**\"', 'Sum', 300))", "label": "eniAllocated", "id": "m1" }],
-                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniMaxAvailable\" CLUSTER_ID=\"**default_cluster**\"', 'Sum', 300))", "label": "eniAllocated","id": "m2" }]
+                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniAllocated\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "label": "eniAllocated", "id": "m1" }],
+                    [{ "expression": "SUM(SEARCH('{Kubernetes,CLUSTER_ID} MetricName=\"eniMaxAvailable\" CLUSTER_ID=\"**default_cluster**\"', 'Average', 300))", "label": "eniAllocated","id": "m2" }]
                 ],
                 "region": "**aws_region**",
                 "title": "ENIs",
