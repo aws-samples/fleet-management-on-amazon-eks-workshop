@@ -24,9 +24,9 @@
         "type": "metric",
         "properties": {
             "metrics": [
-                [ { "expression": "100*m1/m2", "label": "cache_hit_percentage", "id": "e1" } ],
-                [ { "expression": "AVG(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_dns_requests_total\" ClusterName=\"**default_cluster**\"', 'Average', 300))", "id": "m1", "visible": false } ],
-                [ { "expression": "AVG(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_hits_total\" ClusterName=\"**default_cluster**\"', 'Average', 300))", "id": "m2", "visible": false } ]
+                [ { "expression": "100*m2/m1", "label": "cache_hit_percentage", "id": "e1" } ],
+                [ { "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_requests_total\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m1", "visible": false } ],
+                [ { "expression": "SUM(SEARCH('{ContainerInsights/Prometheus,ClusterName} MetricName=\"coredns_cache_hits_total\" ClusterName=\"**default_cluster**\"', 'Sum', 300))", "id": "m2", "visible": false } ]
             ],
             "view": "gauge",
             "stacked": false,
