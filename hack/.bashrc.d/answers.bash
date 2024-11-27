@@ -115,6 +115,7 @@ function apps_default_kyverno_insights (){
 function custom_domain() {
   (
     set -e
+    set -x
 
     # Check if both parameters are provided
     if [ -z "$1" ] || [ -z "$2" ]; then
@@ -140,13 +141,8 @@ function custom_domain() {
         return 1
     fi
 
-    # restore default deployment
-    mkdir -p "$GITOPS_DIR/fleet/members/fleet-spoke-$ENVIRONMENT"
-
-    # Copy deployment files
-    cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/terraform/spokes/custom_domain.tf" "$WORKSHOP_DIR/terraform/spokes/custom_domain.tf"
-    
     echo "Updating EKS Spoke cluster to use domain $DOMAIN_NAME... this can take couple of minutes..."
+    cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/terraform/spokes/custom_domain.tf" "$WORKSHOP_DIR/terraform/spokes/custom_domain.tf"
     export TF_VAR_hosted_zone_name="$DOMAIN_NAME"
     $WORKSHOP_DIR/terraform/spokes/deploy.sh "$ENVIRONMENT"
    
@@ -154,90 +150,42 @@ function custom_domain() {
 
     echo "Configuring External-DNS addons"
 
+    echo "Adding domain name for frontend"
     cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/platform/bootstrap/workloads/web-store-frontend-appset.yaml" "$GITOPS_DIR/platform/bootstrap/workloads/web-store-frontend-appset.yaml"
-    git -C "$GITOPS_DIR/platform" status
-    git -C "$GITOPS_DIR/platform" diff | cat
-    git -C "$GITOPS_DIR/platform" add .
-    git -C "$GITOPS_DIR/platform" commit -m "Adding domain name for frontend"
-    git -C "$GITOPS_DIR/platform" push
+    if [[ -n "$(git -C "$GITOPS_DIR/platform" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/platform" status
+        git -C "$GITOPS_DIR/platform" diff | cat
+        git -C "$GITOPS_DIR/platform" add .
+        git -C "$GITOPS_DIR/platform" commit -m "Adding domain name for frontend"
+        git -C "$GITOPS_DIR/platform" push
+    else
+        echo "No changes to commit in platform repository"
+    fi
 
-    # Git operations
-    git -C "$GITOPS_DIR/apps" status
-    git -C "$GITOPS_DIR/apps" diff | cat
-    git -C "$GITOPS_DIR/apps" add .
-    git -C "$GITOPS_DIR/apps" commit -m "Adding ingress kustomization"
-    git -C "$GITOPS_DIR/apps" push
+    echo "Adding ingress kustomization"
+    cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/apps/frontend/ui/$ENVIRONMENT/ingress.yaml" "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/ingress.yaml"
+    cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml" "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml"
+    if [[ -n "$(git -C "$GITOPS_DIR/apps" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/apps" status
+        git -C "$GITOPS_DIR/apps" diff | cat
+        git -C "$GITOPS_DIR/apps" add .
+        git -C "$GITOPS_DIR/apps" commit -m "Adding ingress & kustomization"
+        git -C "$GITOPS_DIR/apps" push
+    else
+        echo "No changes to commit in apps repository"
+    fi
 
+    echo "Activating External DNS addon patch in ingress"
     cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/addons/clusters/fleet-spoke-$ENVIRONMENT/addons/gitops-bridge/values.yaml" \
        "$GITOPS_DIR/addons/clusters/fleet-spoke-$ENVIRONMENT/addons/gitops-bridge/values.yaml"
-    git -C "$GITOPS_DIR/addons" status
-    git -C "$GITOPS_DIR/addons" diff | cat
-    git -C "$GITOPS_DIR/addons" add .
-    git -C "$GITOPS_DIR/addons" commit -m "Activating External DNS addon patch in ingress"
-    git -C "$GITOPS_DIR/addons" push
+    if [[ -n "$(git -C "$GITOPS_DIR/addons" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/addons" status
+        git -C "$GITOPS_DIR/addons" diff | cat
+        git -C "$GITOPS_DIR/addons" add .
+        git -C "$GITOPS_DIR/addons" commit -m "Activating External DNS addon patch in ingress"
+        git -C "$GITOPS_DIR/addons" push
+    else
+        echo "No changes to commit in addons repository"
+    fi
   )
-}
-
-function custom_domain() {
-  (
-    set -e
-
-    # Check if both parameters are provided
-    if [ -z "$1" ] || [ -z "$2" ]; then
-        echo "Error: Both environment and domain parameters are required"
-        echo "Usage: custom_domain <environment> <domain-name>"
-        echo "Environment must be either 'staging' or 'prod'"
-        return 1
-    }
-
-    DOMAIN_NAME="$1"
-
-    # Check if the hosted zone exists in Route53
-    if ! aws route53 list-hosted-zones-by-name --dns-name "$DOMAIN_NAME." --max-items 1 | grep -q "\"Name\": \"$DOMAIN_NAME.\""; then
-        echo "Error: No Route53 hosted zone found for domain: $DOMAIN_NAME"
-        echo "Please ensure the domain exists as a public hosted zone in Route53"
-        return 1
-    }
-
-    # restore default deployment
-    mkdir -p $GITOPS_DIR/fleet/members/fleet-spoke-prod
-
-    # Copy deployment files
-    cp $WORKSHOP_DIR/gitops/solutions/module-custom-domain/terraform/spokes/custom_domain.tf $WORKSHOP_DIR/module-custom-domain/terraform/spokes/custom_domain.tf
-    
-    echo "Updating EKS Spoke cluster to use domain $DOMAIN_NAME... this can take couple of minutes..."
-    export TF_VAR_hosted_zone_name=$DOMAIN_NAME
-    #echo "hosted_zone_name = $DOMAIN_NAME" >> $WORKSHOP_DIR/terraform/spokes/workspaces/staging.tfvars
-    terraform -chdir=$WORKSHOP_DIR/terraform/fleet-dashboard init >/dev/null
-    terraform -chdir=$WORKSHOP_DIR/terraform/fleet-dashboard apply -auto-approve >/dev/null
-    echo "EKS Spoke cluster successfully deployed..."
-
-    echo "Configuring External-DNS addons"
-
-    cp $WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/platform/bootstrap/workloads/web-store-frontend-appset.yaml $GITOPS_DIR/platform/bootstrap/workloads/web-store-frontend-appset.yaml
-    git -C $GITOPS_DIR/platform status
-    git -C $GITOPS_DIR/platform diff | cat
-    git -C $GITOPS_DIR/platform add .
-    git -C $GITOPS_DIR/platform commit -m "Adding domain name for frontend"
-    git -C $GITOPS_DIR/platform push
-
-    # Git operations
-    git -C $GITOPS_DIR/apps status
-    git -C $GITOPS_DIR/apps diff | cat
-    git -C $GITOPS_DIR/apps add .
-    git -C $GITOPS_DIR/apps commit -m "Adding ingress kustomizationw"
-    git -C $GITOPS_DIR/apps push
-
-    cp $WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/addons/clusters/fleet-spoke-staging/addons/gitops-bridge/values.yaml $GITOPS_DIR/addons/clusters/fleet-spoke-staging/addons/gitops-bridge/values.yaml
-    git -C $GITOPS_DIR/addons status
-    git -C $GITOPS_DIR/addons diff | cat
-    git -C $GITOPS_DIR/addons add .
-    git -C $GITOPS_DIR/addons commit -m "Activating External DNS addon patch in ingress"
-    git -C $GITOPS_DIR/addons push
-
-}
-
-function validation_locust_ui(){
-  nohup kubectl --context fleet-staging-cluster port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
-  echo $IDE_URL/proxy/8089/
 }

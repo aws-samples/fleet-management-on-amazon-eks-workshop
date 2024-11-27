@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - ../base
+- hpa.yaml
 - ingress.yaml
 
 patches:
