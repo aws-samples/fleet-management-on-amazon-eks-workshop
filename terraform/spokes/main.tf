@@ -145,7 +145,8 @@ locals {
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
       adot_collector_serviceaccount = local.adot_collector_serviceaccount
-    }
+    },
+    try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
   )
 
   tags = {
