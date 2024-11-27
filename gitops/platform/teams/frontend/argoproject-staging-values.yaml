@@ -49,3 +49,5 @@ projects:
     kind: Table
   - group: 'autoscaling'
     kind: HorizontalPodAutoscaler
+  - group: 'networking.k8s.io'
+    kind: Ingress
