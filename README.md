@@ -1,6 +1,6 @@
 ## Amazon EKS Fleet Management Workshop
 
-Comming soon in later in 2024
+The Work is actually in the Riv24 branch : https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/tree/riv24
 
 ## Security
 
