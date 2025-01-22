@@ -1168,6 +1168,19 @@ addons:
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
 
+  ack_secretsmanager:
+    enabled: false
+    releaseName: ack-secretsmanager
+    namespace: '{{default "aws-controllers-k8s" (index .metadata.annotations "ack_secretsmanager_namespace")}}'
+    chart: aws-controllers-k8s/secretsmanager-chart
+    repoUrl: public.ecr.aws
+    targetRevision: "1.0.1"
+    selector:
+      matchExpressions:
+        - key: enable_ack_secretsmanager
+          operator: In
+          values: ['true']
+          
   kro:
     enabled: false
     releaseName: kro
