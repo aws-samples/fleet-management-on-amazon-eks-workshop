@@ -1094,7 +1094,7 @@ addons:
     namespace: '{{default "aws-controllers-k8s" (index .metadata.annotations "ack_s3_namespace")}}'
     chart: aws-controllers-k8s/s3-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.0.14"
+    targetRevision: "1.0.20"
     selector:
       matchExpressions:
         - key: enable_ack_s3
@@ -1105,9 +1105,9 @@ addons:
         region: '{{.metadata.annotations.aws_region}}'
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
-        name: '{{.metadata.annotations.ack_s3_service_account}}'
+        name: '{{default "ack-s3-controller" (index .metadata.annotations "ack_s3_service_account")}}'
         annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_s3_iam_role_arn}}'
+          eks.amazonaws.com/role-arn: '{{default "" (index .metadata.annotations "ack_s3_iam_role_arn")}}'
   ack_sfn:
     enabled: false
     releaseName: ack-sfn
