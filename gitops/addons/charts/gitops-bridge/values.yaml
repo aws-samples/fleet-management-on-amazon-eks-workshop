@@ -1167,3 +1167,16 @@ addons:
     path: charts/eks-upgrade-insights-demo
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+
+  kro:
+    enabled: false
+    releaseName: kro
+    namespace: kro
+    chart: kro/kro
+    repoUrl: public.ecr.aws
+    targetRevision: "0.1.0"
+    selector:
+      matchExpressions:
+        - key: enable_kro
+          operator: In
+          values: ['true']

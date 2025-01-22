@@ -32,6 +32,8 @@ addons:
     enabled: true
   eks_upgrade_insights_demo:
     enabled: true
+  kro:
+    enabled: true
   ack_eks:
     enabled: true
 
