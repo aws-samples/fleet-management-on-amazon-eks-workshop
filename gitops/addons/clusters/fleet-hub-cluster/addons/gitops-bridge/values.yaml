@@ -36,4 +36,6 @@ addons:
     enabled: true
   ack_eks:
     enabled: true
+  ack_secretsmanager:
+    enabled: true
 
