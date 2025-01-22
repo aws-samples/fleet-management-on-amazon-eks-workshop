@@ -1128,6 +1128,26 @@ addons:
         name: '{{.metadata.annotations.ack_sfn_service_account}}'
         annotations:
           eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_sfn_iam_role_arn}}'
+  ack_eks:
+    enabled: false
+    releaseName: ack-eks
+    namespace: '{{default "aws-controllers-k8s" (index .metadata.annotations "ack_eks_namespace")}}'
+    chart: aws-controllers-k8s/eks-chart
+    repoUrl: public.ecr.aws
+    targetRevision: "1.5.3"
+    selector:
+      matchExpressions:
+        - key: enable_ack_eks
+          operator: In
+          values: ['true']
+    values:
+      aws:
+        region: '{{.metadata.annotations.aws_region}}'
+      nameOverride: 'aws-controllers-k8s'
+      serviceAccount:
+        name: '{{default "ack-ec2-controller" (index .metadata.annotations "ack_eks_service_account")}}'
+        annotations:
+          eks.amazonaws.com/role-arn: '{{default "" (index .metadata.annotations "ack_eks_iam_role_arn")}}'
   cw_prometheus:
     enabled: false
     namespace: '{{default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'

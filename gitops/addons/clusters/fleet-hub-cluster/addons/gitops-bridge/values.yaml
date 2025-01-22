@@ -34,4 +34,6 @@ addons:
     enabled: true
   kro:
     enabled: true
+  ack_eks:
+    enabled: true
 
