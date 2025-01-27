@@ -1180,7 +1180,10 @@ addons:
         - key: enable_ack_secretsmanager
           operator: In
           values: ['true']
-          
+    values:
+      aws:
+        region: '{{.metadata.annotations.aws_region}}'
+                  
   kro:
     enabled: false
     releaseName: kro
