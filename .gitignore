@@ -7,3 +7,5 @@ cdk
 .venv
 .pytest_cache
 .terraform.lock.hcl
+terraform/fleet-dashboard/terraform.tfstate
+terraform/fleet-dashboard/terraform.tfstate.backup
