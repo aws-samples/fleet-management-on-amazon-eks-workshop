@@ -189,3 +189,9 @@ function custom_domain() {
     fi
   )
 }
+
+
+function validation_locust_ui(){
+  nohup kubectl --context fleet-staging-cluster port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
+  echo $IDE_URL/proxy/8089/
+}
