@@ -866,13 +866,7 @@ addons:
       ui:
         banner: '{{.metadata.annotations.aws_cluster_name}}'
         enabled: true
-        #service:
-          #annotations:
-          #  service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: 'ip'
-          #  service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
-          #  service.beta.kubernetes.io/aws-load-balancer-type: 'external'
-          #type: LoadBalancer
-          #port: 80
+
       target:
         securityHub:
           accountId: '{{.metadata.annotations.aws_account_id}}'
