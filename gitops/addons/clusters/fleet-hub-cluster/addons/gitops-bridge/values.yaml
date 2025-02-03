@@ -38,6 +38,10 @@ addons:
     enabled: true
   ack_s3:
     enabled: true
-  ack_secretsmanager:
+  ack_iam:
     enabled: true
+  ack_ec2:
+    enabled: true
+  ack_secretsmanager:
+    enabled: true 
 
