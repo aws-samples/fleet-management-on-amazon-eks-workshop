@@ -38,7 +38,7 @@ locals {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
   adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"
+  adot_collector_service_account = "adot-collector-kubeprometheus"
 
   external_secrets = {
     namespace             = "external-secrets"
@@ -133,8 +133,8 @@ locals {
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
-      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
-      external_secrets_service_account_fleet = local.external_secrets.service_account
+      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet # is this used ?
+      external_secrets_service_account_fleet = local.external_secrets.service_account # is this used ?
     },
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
@@ -144,7 +144,7 @@ locals {
       # Opensource monitoring
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
-      adot_collector_serviceaccount = local.adot_collector_serviceaccount
+      adot_collector_service_account = local.adot_collector_service_account
     }
   )
 
