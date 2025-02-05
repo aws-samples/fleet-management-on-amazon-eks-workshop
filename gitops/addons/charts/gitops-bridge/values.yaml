@@ -1,3 +1,5 @@
+---
+# yamllint disable rule:line-length
 labels:
   addon: "true"
 syncPolicyAppSet:
@@ -36,11 +38,11 @@ syncPolicy:
     allowEmpty: true
     prune: false
   retry:
-    limit: -1 # number of failed sync attempt retries; unlimited number of attempts if less than 0
+    limit: -1           # number of failed sync attempt retries; unlimited number of attempts if less than 0
     backoff:
-      duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
-      factor: 2 # a factor to multiply the base duration after each failed retry
-      maxDuration: 10m # the maximum amount of time allowed for the backoff strategy
+      duration: 5s      # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+      factor: 2         # a factor to multiply the base duration after each failed retry
+      maxDuration: 10m  # the maximum amount of time allowed for the backoff strategy
   syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true  # Big CRDs.
@@ -90,15 +92,15 @@ addons:
         annotations:
           eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_load_balancer_controller_iam_role_arn}}'
     ignoreDifferences:
-        - kind: Secret
-          name: aws-load-balancer-tls
-          jsonPointers: [/data]
-        - group: admissionregistration.k8s.io
-          kind: MutatingWebhookConfiguration
-          jqPathExpressions: ['.webhooks[].clientConfig.caBundle']
-        - group: admissionregistration.k8s.io
-          kind: ValidatingWebhookConfiguration
-          jqPathExpressions: ['.webhooks[].clientConfig.caBundle']
+      - kind: Secret
+        name: aws-load-balancer-tls
+        jsonPointers: [/data]
+      - group: admissionregistration.k8s.io
+        kind: MutatingWebhookConfiguration
+        jqPathExpressions: ['.webhooks[].clientConfig.caBundle']
+      - group: admissionregistration.k8s.io
+        kind: ValidatingWebhookConfiguration
+        jqPathExpressions: ['.webhooks[].clientConfig.caBundle']
   gatekeeper:
     enabled: false
     releaseName: gatekeeper
@@ -114,7 +116,7 @@ addons:
     # resources:
     #   path: manifests/resources/gatekeeper
     resources:
-      path: {{.metadata.annotations.addons_repo_basepath}}charts/resources/gatekeeper
+      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/gatekeeper'
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
@@ -165,18 +167,18 @@ addons:
           eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "karpenter_iam_role_arn") }}'
 
     resources:
-      path: {{.metadata.annotations.addons_repo_basepath}}charts/resources/karpenter
+      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/karpenter'
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
           clusterName: '{{.metadata.annotations.aws_cluster_name}}'
           IamRole: '{{.metadata.annotations.karpenter_node_iam_role_name}}'
           securityGroupSelectorTerms:
-          - tags:
-              karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
+            - tags:
+                karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
           subnetSelectorTerms:
-          - tags:
-              karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
+            - tags:
+                karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
 
   volcano:
     enabled: false
@@ -191,7 +193,8 @@ addons:
           operator: In
           values: ['true']
     annotationsApp:
-      argocd.argoproj.io/compare-options: "ServerSideDiff=true" # required for volcano https://github.com/argoproj/argo-cd/issues/18548
+      # required for volcano https://github.com/argoproj/argo-cd/issues/18548
+      argocd.argoproj.io/compare-options: "ServerSideDiff=true"
   aws_cloudwatch_metrics:
     enabled: false
     releaseName: aws-cloudwatch-metrics
@@ -233,7 +236,7 @@ addons:
           name: '{{.metadata.annotations.aws_efs_csi_driver_node_service_account}}'
           annotations:
             eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_efs_csi_driver_iam_role_arn}}'
-  
+
   enable_aws_fsx_csi_driver:
     enabled: false
     releaseName: aws-fsx-csi-driver
@@ -257,7 +260,7 @@ addons:
           name: '{{.metadata.annotations.aws_fsx_csi_driver_node_service_account}}'
           annotations:
             eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_fsx_csi_driver_iam_role_arn}}'
- 
+
   aws_for_fluentbit:
     enabled: false
     releaseName: aws-for-fluentbit
@@ -369,7 +372,7 @@ addons:
             - /
           pathType: Prefix
           tls:
-          - hosts: '{{.metadata.annotations.argo_workflows_hosts}}'
+            - hosts: '{{.metadata.annotations.argo_workflows_hosts}}'
   aws_argocd:
     enabled: false
     releaseName: argocd
@@ -391,7 +394,7 @@ addons:
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: '{{.metadata.annotations.argocd_iam_role_arn}}'
-  
+
   aws_argocd_ingress:
     enabled: false
     releaseName: argocd
@@ -509,19 +512,19 @@ addons:
           registry: xpkg.upbound.io/upbound
           version: v1.1.0
       providers:
-      - cloudfront
-      - cloudwatchlogs
-      - dynamodb
-      - ec2
-      - eks
-      - firehose
-      - iam
-      - kms
-      - lambda
-      - rds
-      - s3
-      - sns
-      - sqs
+        - cloudfront
+        - cloudwatchlogs
+        - dynamodb
+        - ec2
+        - eks
+        - firehose
+        - iam
+        - kms
+        - lambda
+        - rds
+        - s3
+        - sns
+        - sqs
   external_dns:
     enabled: false
     releaseName: external-dns
@@ -541,14 +544,7 @@ addons:
       domainFilters: ['{{.metadata.annotations.external_dns_domain_filters}}']
       txtOwnerId: '{{.metadata.annotations.aws_cluster_name}}'
       policy: '{{ default "upsert-only" (index .metadata.annotations "external_dns_policy")}}'
-    #Deactivating this for now, only mgmt cluster has ack capabilities!!
-    # resources:
-    #   path: {{.metadata.annotations.addons_repo_basepath}}charts/resources/external-dns
-    #   helm:
-    #     valuesObject:
-    #       name: '{{.metadata.annotations.external_dns_domain_filters}}'
-    #       environment: '{{.metadata.labels.environment}}'  
-    #       preffix: '{{.metadata.annotations.aws_cluster_name}}'
+
   external_secrets:
     enabled: false
     releaseName: external-secrets
@@ -598,29 +594,29 @@ addons:
     values:
       configuration:
         backupStorageLocation:
-        - name: default
-          provider: aws
-          prefix: '{{.metadata.annotations.velero_backup_s3_bucket_prefix}}'
-          bucket: '{{.metadata.annotations.velero_backup_s3_bucket_name}}'
-          config:
-            region: '{{.metadata.annotations.aws_region}}'
+          - name: default
+            provider: aws
+            prefix: '{{.metadata.annotations.velero_backup_s3_bucket_prefix}}'
+            bucket: '{{.metadata.annotations.velero_backup_s3_bucket_name}}'
+            config:
+              region: '{{.metadata.annotations.aws_region}}'
         volumeSnapshotLocation:
-        - name: default
-          provider: aws
-          config:
-            region: '{{.metadata.annotations.aws_region}}'
+          - name: default
+            provider: aws
+            config:
+              region: '{{.metadata.annotations.aws_region}}'
       serviceAccount:
         server:
           name: '{{.metadata.annotations.velero_service_account}}'
           annotations:
             eks.amazonaws.com/role-arn: '{{.metadata.annotations.velero_iam_role_arn}}'
       initContainers:
-      - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:v1.10.0
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
+        - name: velero-plugin-for-aws
+          image: velero/velero-plugin-for-aws:v1.10.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
   aws_secrets_store_csi_driver_provider:
     enabled: false
     releaseName: secrets-store-csi-driver-provider-aws
@@ -694,11 +690,11 @@ addons:
           operator: In
           values: ['true']
     ignoreDifferences:
-    - kind: Deployment
-      group: apps
-      jqPathExpressions:
-        - .spec.template.spec.containers[].env[].valueFrom.resourceFieldRef.divisor
-        - .spec.template.spec.initContainers[].env[].valueFrom.resourceFieldRef.divisor
+      - kind: Deployment
+        group: apps
+        jqPathExpressions:
+          - .spec.template.spec.containers[].env[].valueFrom.resourceFieldRef.divisor
+          - .spec.template.spec.initContainers[].env[].valueFrom.resourceFieldRef.divisor
   crossplane_helm_provider:
     enabled: false
     releaseName: crossplane-helm
@@ -784,7 +780,7 @@ addons:
           operator: In
           values: ['true']
     resources:
-      path: {{.metadata.annotations.addons_repo_basepath}}charts/resources/grafana-operator
+      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/grafana-operator'
       helm:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
@@ -808,15 +804,15 @@ addons:
   adot_collector:
     enabled: false
     namespace: '{{ default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'
-    path: {{.metadata.annotations.addons_repo_basepath}}charts/adot-collector
+    path: '{{.metadata.annotations.addons_repo_basepath}}charts/adot-collector'
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
     values:
-       ekscluster: '{{.metadata.annotations.aws_cluster_name}}'
-       accountId: '{{.metadata.annotations.aws_account_id}}'
-       region: '{{.metadata.annotations.aws_region}}'
-       ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'
-       serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'
+      ekscluster: '{{.metadata.annotations.aws_cluster_name}}'
+      accountId: '{{.metadata.annotations.aws_account_id}}'
+      region: '{{.metadata.annotations.aws_region}}'
+      ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'
+      serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'
     selector:
       matchExpressions:
         - key: enable_adot_collector
@@ -828,7 +824,6 @@ addons:
     namespace: '{{ default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
     chart: kyverno
     repoUrl: https://kyverno.github.io/kyverno
-    #targetRevision: "3.2.6"
     targetRevision: "3.3.4"
     selector:
       matchExpressions:
@@ -836,7 +831,7 @@ addons:
           operator: In
           values: ['true']
     resources:
-      path: {{.metadata.annotations.addons_repo_basepath}}charts/resources/kyverno
+      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/kyverno'
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
@@ -1159,7 +1154,7 @@ addons:
   cw_prometheus:
     enabled: false
     namespace: '{{ default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'
-    path: {{.metadata.annotations.addons_repo_basepath}}charts/cw-prometheus
+    path: '{{.metadata.annotations.addons_repo_basepath}}charts/cw-prometheus'
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
     selector:
@@ -1172,7 +1167,7 @@ addons:
     enabled: false
     releaseName: eks-upgrade-insights-demo
     namespace: 'argocd'
-    path: {{.metadata.annotations.addons_repo_basepath}}charts/eks-upgrade-insights-demo
+    path: '{{.metadata.annotations.addons_repo_basepath}}charts/eks-upgrade-insights-demo'
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
 
@@ -1191,7 +1186,7 @@ addons:
     values:
       aws:
         region: '{{.metadata.annotations.aws_region}}'
-                  
+
   kro:
     enabled: false
     releaseName: kro
