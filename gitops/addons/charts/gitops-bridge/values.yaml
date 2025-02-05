@@ -114,7 +114,7 @@ addons:
     # resources:
     #   path: manifests/resources/gatekeeper
     resources:
-      path: charts/resources/gatekeeper
+      path: {{metadata.annotations.workload_repo_basepath}}charts/resources/gatekeeper
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
@@ -165,7 +165,7 @@ addons:
           eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "karpenter_iam_role_arn") }}'
 
     resources:
-      path: charts/resources/karpenter
+      path: {{metadata.annotations.workload_repo_basepath}}charts/resources/karpenter
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
@@ -543,7 +543,7 @@ addons:
       policy: '{{ default "upsert-only" (index .metadata.annotations "external_dns_policy")}}'
     #Deactivating this for now, only mgmt cluster has ack capabilities!!
     # resources:
-    #   path: charts/resources/external-dns
+    #   path: {{metadata.annotations.workload_repo_basepath}}charts/resources/external-dns
     #   helm:
     #     valuesObject:
     #       name: '{{.metadata.annotations.external_dns_domain_filters}}'
@@ -784,7 +784,7 @@ addons:
           operator: In
           values: ['true']
     resources:
-      path: charts/resources/grafana-operator
+      path: {{metadata.annotations.workload_repo_basepath}}charts/resources/grafana-operator
       helm:
         valuesObject:
           AMP_ENDPOINT_URL: '{{.metadata.annotations.amp_endpoint_url}}'
@@ -808,7 +808,7 @@ addons:
   adot_collector:
     enabled: false
     namespace: '{{ default "adot-collector-kubeprometheus" (index .metadata.annotations "adot_collector_namespace")}}'
-    path: charts/adot-collector
+    path: {{metadata.annotations.workload_repo_basepath}}charts/adot-collector
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
     values:
@@ -828,15 +828,15 @@ addons:
     namespace: '{{ default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
     chart: kyverno
     repoUrl: https://kyverno.github.io/kyverno
-    targetRevision: "3.2.6"
-    #targetRevision: "3.3.4"
+    #targetRevision: "3.2.6"
+    targetRevision: "3.3.4"
     selector:
       matchExpressions:
         - key: enable_kyverno
           operator: In
           values: ['true']
     resources:
-      path: charts/resources/kyverno
+      path: {{metadata.annotations.workload_repo_basepath}}charts/resources/kyverno
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
@@ -1159,7 +1159,7 @@ addons:
   cw_prometheus:
     enabled: false
     namespace: '{{ default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'
-    path: charts/cw-prometheus
+    path: {{metadata.annotations.workload_repo_basepath}}charts/cw-prometheus
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
     selector:
@@ -1172,7 +1172,7 @@ addons:
     enabled: false
     releaseName: eks-upgrade-insights-demo
     namespace: 'argocd'
-    path: charts/eks-upgrade-insights-demo
+    path: {{metadata.annotations.workload_repo_basepath}}charts/eks-upgrade-insights-demo
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
 
