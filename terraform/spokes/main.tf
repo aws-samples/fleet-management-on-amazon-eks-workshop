@@ -38,7 +38,7 @@ locals {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
   adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"
+  adot_collector_service_account = "adot-collector-kubeprometheus"
 
   external_secrets = {
     namespace             = "external-secrets"
@@ -144,7 +144,7 @@ locals {
       # Opensource monitoring
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
-      adot_collector_serviceaccount = local.adot_collector_serviceaccount
+      adot_collector_service_account = local.adot_collector_service_account
     },
     try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
   )

@@ -812,7 +812,7 @@ addons:
       accountId: '{{.metadata.annotations.aws_account_id}}'
       region: '{{.metadata.annotations.aws_region}}'
       ampurl: '{{.metadata.annotations.amp_endpoint_url}}api/v1/remote_write'
-      serviceAccount: '{{.metadata.annotations.adot_collector_serviceaccount}}'
+      serviceAccount: '{{.metadata.annotations.adot_collector_service_account}}'
     selector:
       matchExpressions:
         - key: enable_adot_collector
