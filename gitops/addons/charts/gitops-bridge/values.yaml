@@ -828,7 +828,8 @@ addons:
     namespace: '{{ default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
     chart: kyverno
     repoUrl: https://kyverno.github.io/kyverno
-    targetRevision: "3.3.4"
+    targetRevision: "3.2.6"
+    #targetRevision: "3.3.4"
     selector:
       matchExpressions:
         - key: enable_kyverno
@@ -917,7 +918,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "cni_metrics_helper_namespace")}}'
     chart: cni-metrics-helper
     repoUrl: https://aws.github.io/eks-charts
-    targetRevision: "1.18.3"
+    targetRevision: "1.19.2"
     values:
       env:
         AWS_CLUSTER_ID: '{{.metadata.annotations.aws_cluster_name}}'
