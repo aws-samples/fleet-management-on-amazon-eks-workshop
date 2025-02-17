@@ -1,13 +1,13 @@
 # values for the addon
 addons:
   aws_load_balancer_controller:
-    enabled: true
+    enabled: false # disabled because using EKS auto-mode
   aws_ebs_csi_resources:
-    enabled: true
+    enabled: false # disabled because using EKS auto-mode
   metrics_server:
     enabled: true
   karpenter:
-    enabled: true
+    enabled: false # disabled because using EKS auto-mode
   kyverno:
     enabled: true
   kyverno_policies:

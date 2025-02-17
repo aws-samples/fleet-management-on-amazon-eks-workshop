@@ -14,7 +14,7 @@ spec:
                 matchExpressions:
                   - key: environment
                     operator: In
-                    values: [staging, prod]
+                    values: [staging, prod, krodev]
               values:
                 team: frontend
           - git:

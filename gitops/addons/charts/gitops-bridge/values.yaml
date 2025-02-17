@@ -1153,6 +1153,66 @@ addons:
         name: '{{ default "ack-eks-controller" (index .metadata.annotations "ack_eks_service_account")}}'
         annotations:
           eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_eks_iam_role_arn")}}'
+  ack_iam:
+    enabled: false
+    releaseName: ack-eks
+    namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_iam_namespace")}}'
+    chart: aws-controllers-k8s/iam-chart
+    repoUrl: public.ecr.aws
+    targetRevision: "1.3.16"
+    selector:
+      matchExpressions:
+        - key: enable_ack_iam
+          operator: In
+          values: ['true']
+    values:
+      aws:
+        region: '{{.metadata.annotations.aws_region}}'
+      nameOverride: 'aws-controllers-k8s'
+      serviceAccount:
+        name: '{{ default "ack-iam-controller" (index .metadata.annotations "ack_iam_service_account")}}'
+        annotations:
+          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_iam_iam_role_arn")}}'
+  ack_ec2:
+    enabled: false
+    releaseName: ack-ec2
+    namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_ec2_namespace")}}'
+    chart: aws-controllers-k8s/ec2-chart
+    repoUrl: public.ecr.aws
+    targetRevision: "1.3.4"
+    selector:
+      matchExpressions:
+        - key: enable_ack_ec2
+          operator: In
+          values: ['true']
+    values:
+      aws:
+        region: '{{.metadata.annotations.aws_region}}'
+      nameOverride: 'aws-controllers-k8s'
+      serviceAccount:
+        name: '{{ default "ack-ec2-controller" (index .metadata.annotations "ack_ec2_service_account")}}'
+        annotations:
+          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_ec2_iam_role_arn")}}'
+  ack_secretsmanager:
+    enabled: false
+    releaseName: ack-secretsmanager
+    namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_secretsmanager_namespace")}}'
+    chart: aws-controllers-k8s/secretsmanager-chart
+    repoUrl: public.ecr.aws
+    targetRevision: "1.0.2"
+    selector:
+      matchExpressions:
+        - key: enable_ack_secretsmanager
+          operator: In
+          values: ['true']
+    values:
+      aws:
+        region: '{{.metadata.annotations.aws_region}}'
+      nameOverride: 'aws-controllers-k8s'
+      serviceAccount:
+        name: '{{ default "ack-secretsmanager-controller" (index .metadata.annotations "ack_secretsmanager_service_account")}}'
+        annotations:
+          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_secretsmanager_iam_role_arn")}}'
   cw_prometheus:
     enabled: false
     namespace: '{{ default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'
