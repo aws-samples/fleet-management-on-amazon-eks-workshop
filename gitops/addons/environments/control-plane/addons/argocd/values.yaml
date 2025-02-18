@@ -2,5 +2,4 @@
 configs:
   cm:
     ui.bannercontent: "Management Environment"
-  params:
-    server.basehref: /proxy/8081/
+

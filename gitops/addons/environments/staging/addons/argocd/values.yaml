@@ -2,5 +2,4 @@
 configs:
   cm:
     ui.bannercontent: "Staging Environment"
-  params:
-    server.basehref: /proxy/8082/
+
