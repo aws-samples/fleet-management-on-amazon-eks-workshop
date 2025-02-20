@@ -1,0 +1,4 @@
+# values for the addon
+configs:
+  cm:
+    ui.bannercontent: "Kro Staging Environment"
