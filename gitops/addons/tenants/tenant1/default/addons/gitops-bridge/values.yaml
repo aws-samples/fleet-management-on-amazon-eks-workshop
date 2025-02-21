@@ -1,4 +1,5 @@
 # values for the addon
+useSelector: true
 addons:
   aws_load_balancer_controller:
     enabled: false # disabled because using EKS auto-mode
