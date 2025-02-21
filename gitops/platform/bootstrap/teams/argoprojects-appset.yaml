@@ -12,7 +12,8 @@ spec:
       - clusters:
           selector:
             matchLabels:
-              workloads: 'true'
+              #workloads: 'true'
+              fleet_member: control-plane
           values:
             addonChart: argocd-apps
             addonChartVersion: '1.4.1'
