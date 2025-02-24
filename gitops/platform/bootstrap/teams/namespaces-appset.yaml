@@ -43,8 +43,8 @@ spec:
           ignoreMissingValueFiles: true
           valueFiles:
             #- '../../teams/{{path.basename}}/namespaces-{{metadata.labels.environment}}-values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/{{metadata.labels.environment}}/namespaces/values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/{{metadata.labels.environment}}/namespaces/values.yaml'               
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'               
       destination:
         name: '{{name}}'
       syncPolicy:
