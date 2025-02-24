@@ -1,6 +1,6 @@
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
 projects:
-- name: backend
+- name: frontend
   sourceRepos:
   - 'tobereplace'
   namespace: argocd
@@ -8,16 +8,10 @@ projects:
   additionalAnnotations: {}
   description: Team Project
   destinations:
-  - namespace: carts
-    name: fleet-spoke-staging
-  - namespace: catalog
-    name: fleet-spoke-staging
-  - namespace: checkout
-    name: fleet-spoke-staging
-  - namespace: orders
-    name: fleet-spoke-staging
-  - namespace: rabbitmq
-    name: fleet-spoke-staging
+  - namespace: ui
+    name: cluster3
+  - namespace: assets
+    name: cluster3
   - namespace: "*"
     server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above
@@ -55,3 +49,5 @@ projects:
     kind: Table
   - group: 'autoscaling'
     kind: HorizontalPodAutoscaler
+  - group: 'networking.k8s.io'
+    kind: Ingress

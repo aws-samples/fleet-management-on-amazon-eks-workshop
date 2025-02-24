@@ -9,15 +9,15 @@ projects:
   description: Team Project
   destinations:
   - namespace: carts
-    name: fleet-spoke-staging
+    name: cluster3
   - namespace: catalog
-    name: fleet-spoke-staging
+    name: cluster3
   - namespace: checkout
-    name: fleet-spoke-staging
+    name: cluster3
   - namespace: orders
-    name: fleet-spoke-staging
+    name: cluster3
   - namespace: rabbitmq
-    name: fleet-spoke-staging
+    name: cluster3
   - namespace: "*"
     server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above
