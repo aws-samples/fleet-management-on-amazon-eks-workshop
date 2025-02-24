@@ -272,12 +272,12 @@ module "gitops_bridge_bootstrap" {
 
   apps = local.argocd_apps
   argocd = {
-    name = "argocd"
-    namespace        = local.argocd_namespace
-    chart_version    = "7.5.2"
-    values = [file("${path.module}/argocd-initial-values.yaml")]
-    timeout          = 600
-    create_namespace = false
+    name              = "argocd"
+    namespace         = local.argocd_namespace
+    chart_version     = "7.5.2"
+    values            = [file("${path.module}/argocd-initial-values.yaml")]
+    timeout           = 600
+    create_namespace  = false
   }
   depends_on = [kubernetes_secret.git_secrets]
 }
