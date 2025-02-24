@@ -1267,3 +1267,13 @@ addons:
         - key: enable_kro
           operator: In
           values: ['true']
+
+  kro-resources:
+    enabled: false
+    path: 'charts/kro-resources'
+    chartName: kro-resources
+    # defaultVersion: "1.0.0"
+    # localChartBasePath: 'charts'
+    # namespace: "acm-certificates"
+    # valuesObject:
+    #     region: '{{.metadata.annotations.aws_region}}'          
