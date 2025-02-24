@@ -52,6 +52,9 @@ valueFiles:
   - default/addons
   - environments/{{.metadata.labels.environment}}/addons
   - clusters/{{.nameNormalized}}/addons
+  - tenants/{{.metadata.labels.tenant}}/default/addons
+  - tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons
+  - tenants/{{.metadata.labels.tenant}}/clusters/{{.nameNormalized}}/addons
 valueFilesResources:
   - environments/{{.metadata.labels.environment}}/addons
   - clusters/{{.nameNormalized}}/addons
