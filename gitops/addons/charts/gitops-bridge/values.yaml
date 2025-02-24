@@ -49,12 +49,12 @@ syncPolicy:
     - CreateNamespace=true
     - ServerSideApply=true  # Big CRDs.
 valueFiles:
-  #- {{.metadata.annotations.addons_repo_basepath}}default/addons
-  #- {{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons
-  #- {{.metadata.annotations.addons_repo_basepath}}clusters/{{.nameNormalized}}/addons
-  #- {{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons
-  #- {{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons
-  - {{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.nameNormalized}}/addons
+  - '{{.metadata.annotations.addons_repo_basepath}}default/addons'
+  - '{{.metadata.annotations.addons_repo_basepath}}{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons'
+  - '{{.metadata.annotations.addons_repo_basepath}}clusters/{{.nameNormalized}}/addons'
+  - '{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons'
+  - '{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons'
+  - '{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.nameNormalized}}/addons'
 valueFilesResources:
   - environments/{{.metadata.labels.environment}}/addons
   - clusters/{{.nameNormalized}}/addons
