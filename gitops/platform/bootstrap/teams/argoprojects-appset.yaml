@@ -42,7 +42,8 @@ spec:
             releaseName: 'argoprojects-{{path.basename}}'
             ignoreMissingValueFiles: true
             valueFiles:
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/argoproject-{{metadata.labels.environment}}-values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/{{metadata.labels.environment}}/argoprojects/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/{{metadata.labels.environment}}/argoprojects/values.yaml'            
             parameters:
               - name: "projects[0].sourceRepos[0]"
                 value: '{{metadata.annotations.workload_repo_url}}'
