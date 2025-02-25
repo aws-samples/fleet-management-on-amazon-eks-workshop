@@ -1245,18 +1245,20 @@ addons:
     # valuesObject:
     #     region: '{{.metadata.annotations.aws_region}}'          
 
-  # kro-eks-rgs:
-  #   enabled: false
-  #   type: manifest
-  #   namespace: kro
-  #   defaultVersion: "0.1.0"
-  #   path: charts/kro/resource-groups/eks
-  #   selector:
-  #     matchExpressions:
-  #       - key: enable_kro_eks_rgs
-  #         operator: In
-  #         values: ['true']
-  
+  kro-eks-rgs:
+    enabled: false
+    type: manifest
+    namespace: kro
+    targetRevision: "0.1.0"
+
+
+    path: charts/kro/resource-groups/eks
+    selector:
+      matchExpressions:
+        - key: enable_kro_eks_rgs
+          operator: In
+          values: ['true']
+
   multi-acct:
     enabled: false
     namespace: kro
