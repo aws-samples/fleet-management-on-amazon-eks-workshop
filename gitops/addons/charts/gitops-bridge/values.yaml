@@ -1249,10 +1249,8 @@ addons:
     enabled: false
     type: manifest
     namespace: kro
-    #targetRevision: ""
-
-
-    path: charts/kro/resource-groups/eks
+    path: '{{.metadata.annotations.addons_repo_basepath}}charts/kro/resource-groups/eks'
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     selector:
       matchExpressions:
         - key: enable_kro_eks_rgs
