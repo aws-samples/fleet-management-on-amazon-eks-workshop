@@ -155,6 +155,7 @@ spec:
         path: '{{ $addon.path }}'
         {{- end }}
       {{- end }}
+        {{- if ne (default "" $addon.type) "manifest" }}
         helm:
           releaseName: '{{ $addon.releaseName }}'
           ignoreMissingValueFiles: true
@@ -175,6 +176,7 @@ spec:
           valuesObject:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- end }}
       {{- if $addon.resources }}
       - repoURL: {{ $repoURLValues }}
         targetRevision: {{ $repoURLValuesRevision }}

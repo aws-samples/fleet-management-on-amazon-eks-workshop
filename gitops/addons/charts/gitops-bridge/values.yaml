@@ -70,7 +70,7 @@ addons:
     namespace: argocd
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "7.5.2"
+    targetRevision: "7.7.8"
     selector:
       matchExpressions:
         - key: enable_argocd
@@ -237,13 +237,9 @@ addons:
       controller:
         serviceAccount:
           name: '{{.metadata.annotations.aws_efs_csi_driver_controller_service_account}}'
-          annotations:
-            eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_efs_csi_driver_iam_role_arn}}'
       node:
         serviceAccount:
           name: '{{.metadata.annotations.aws_efs_csi_driver_node_service_account}}'
-          annotations:
-            eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_efs_csi_driver_iam_role_arn}}'
 
   enable_aws_fsx_csi_driver:
     enabled: false
@@ -559,7 +555,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "external_secrets_namespace") }}'
     chart: external-secrets
     repoUrl: https://charts.external-secrets.io
-    targetRevision: "0.10.0"
+    targetRevision: "0.10.3"
     selector:
       matchExpressions:
         - key: enable_external_secrets
@@ -567,9 +563,8 @@ addons:
           values: ['true']
     values:
       serviceAccount:
-        name: '{{.metadata.annotations.external_secrets_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.external_secrets_iam_role_arn}}'
+        name: '{{ default "external-secrets-sa" (index .metadata.annotations "external_secrets_service_account") }}'
+
   aws_privateca_issuer:
     enabled: false
     releaseName: privateca-issuer
@@ -997,8 +992,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_apigatewayv2_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_apigatewayv2_iam_role_arn}}'
   ack_dynamodb:
     enabled: false
     releaseName: ack-dynamodb
@@ -1017,8 +1010,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_dynamodb_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_dynamodb_iam_role_arn}}'
   ack_prometheusservice:
     enabled: false
     releaseName: ack-prometheusservice
@@ -1037,8 +1028,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_prometheusservice_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_prometheusservice_iam_role_arn}}'
   ack_emrcontainers:
     enabled: false
     releaseName: ack-emrcontainers
@@ -1057,8 +1046,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_emrcontainers_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_emrcontainers_iam_role_arn}}'
   ack_eventbridge:
     enabled: false
     releaseName: ack-eventbridge
@@ -1077,8 +1064,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_eventbridge_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_eventbridge_iam_role_arn}}'
   ack_rds:
     enabled: false
     releaseName: ack-rds
@@ -1097,8 +1082,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_rds_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_rds_iam_role_arn}}'
   ack_s3:
     enabled: false
     releaseName: ack-s3
@@ -1117,8 +1100,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{default "ack-s3-controller" (index .metadata.annotations "ack_s3_service_account")}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{default "" (index .metadata.annotations "ack_s3_iam_role_arn")}}'
   ack_sfn:
     enabled: false
     releaseName: ack-sfn
@@ -1137,8 +1118,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{.metadata.annotations.ack_sfn_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.ack_sfn_iam_role_arn}}'
   ack_eks:
     enabled: false
     releaseName: ack-eks
@@ -1155,13 +1134,9 @@ addons:
       aws:
         region: '{{.metadata.annotations.aws_region}}'
       nameOverride: 'aws-controllers-k8s'
-      serviceAccount:
-        name: '{{ default "ack-eks-controller" (index .metadata.annotations "ack_eks_service_account")}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_eks_iam_role_arn")}}'
   ack_iam:
     enabled: false
-    releaseName: ack-eks
+    releaseName: ack-iam
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_iam_namespace")}}'
     chart: aws-controllers-k8s/iam-chart
     repoUrl: public.ecr.aws
@@ -1177,8 +1152,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{ default "ack-iam-controller" (index .metadata.annotations "ack_iam_service_account")}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_iam_iam_role_arn")}}'
   ack_ec2:
     enabled: false
     releaseName: ack-ec2
@@ -1197,8 +1170,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{ default "ack-ec2-controller" (index .metadata.annotations "ack_ec2_service_account")}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_ec2_iam_role_arn")}}'
   ack_secretsmanager:
     enabled: false
     releaseName: ack-secretsmanager
@@ -1217,8 +1188,6 @@ addons:
       nameOverride: 'aws-controllers-k8s'
       serviceAccount:
         name: '{{ default "ack-secretsmanager-controller" (index .metadata.annotations "ack_secretsmanager_service_account")}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{ default "" (index .metadata.annotations "ack_secretsmanager_iam_role_arn")}}'
   cw_prometheus:
     enabled: false
     namespace: '{{ default "amazon-cloudwatch" (index .metadata.annotations "cw_prometheus_namespace")}}'
@@ -1275,3 +1244,32 @@ addons:
     # namespace: "acm-certificates"
     # valuesObject:
     #     region: '{{.metadata.annotations.aws_region}}'          
+
+  # kro-eks-rgs:
+  #   enabled: false
+  #   type: manifest
+  #   namespace: kro
+  #   defaultVersion: "0.1.0"
+  #   path: charts/kro/resource-groups/eks
+  #   selector:
+  #     matchExpressions:
+  #       - key: enable_kro_eks_rgs
+  #         operator: In
+  #         values: ['true']
+  multi-acct:
+    enabled: false
+    namespace: kro
+    releaseName: multi-acct
+    #chart: kro-run/multi-acct/multi-acct
+    #repoUrl: ghcr.io
+    #targetRevision: "0.1.0"
+    path: '{{.metadata.annotations.addons_repo_basepath}}charts/multi-acct'
+    repoUrl: '{{.metadata.annotations.addons_repo_url}}'
+    targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
+    defaultVersion: "0.1.0"
+
+    selector:
+      matchExpressions:
+        - key: enable_mutli_acct
+          operator: In
+          values: ['true']   

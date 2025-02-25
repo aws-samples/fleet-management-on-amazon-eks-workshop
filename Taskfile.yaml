@@ -1,0 +1,30 @@
+version: '3'
+
+vars:
+  CHART_PATH: gitops/addons/charts/gitops-bridge
+  NAMESPACE: argocd
+  KUBE_VERSION: "1.32"
+  RELEASE_NAME: cluster-addons
+
+tasks:
+  validate-helm:
+    desc: Validate Helm template for gitops-bridge
+    cmds:
+      - |
+        helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
+          --namespace {{.NAMESPACE}} \
+          --kube-version {{.KUBE_VERSION}} \
+          --values gitops/addons/default/addons/gitops-bridge/values.yaml \
+          --values gitops/addons/environments/control-plane/addons/gitops-bridge/values.yaml \
+          --values gitops/addons/tenants/auto1/default/addons/gitops-bridge/values.yaml \
+          --values gitops/addons/tenants/auto1/environments/control-plane/addons/gitops-bridge/values.yaml \
+          --include-crds
+
+  lint:
+    desc: Lint the Helm chart
+    cmds:
+      - helm lint {{.CHART_PATH}}
+
+  validate-all:
+    desc: Run both template validation and linting
+    deps: [validate-helm, lint]
