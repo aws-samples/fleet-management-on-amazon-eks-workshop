@@ -1249,7 +1249,7 @@ addons:
     enabled: false
     type: manifest
     namespace: kro
-    targetRevision: "0.1.0"
+    #targetRevision: ""
 
 
     path: charts/kro/resource-groups/eks

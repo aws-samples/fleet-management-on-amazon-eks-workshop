@@ -31,7 +31,8 @@
 {{- with $addon -}}
 {{- $nameNormalize := printf "%s" $name | replace "_" "-" | trunc 63 | trimSuffix "-"  -}}
 {{- $addonhasapplyNestedSelectors := hasKey $addon "applyNestedSelectors" -}}
-{{- $version := $addon.targetRevision -}}
+#{{- $version := $addon.targetRevision -}}
+{{- $version := default $repoURLGitRevision $addon.targetRevision -}}
 {{- $versionWithoutV := regexReplaceAll "^v" $version "" -}}
 {{- $majorMinor := regexReplaceAll "\\.\\d+$" $versionWithoutV "" }}
 apiVersion: argoproj.io/v1alpha1
