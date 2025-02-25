@@ -1,26 +1,73 @@
 apiVersion: kro.run/v1alpha1
-kind: ResourceGroup
+kind: ResourceGraphDefinition
 metadata:
   name: eksclusterwithvpc.kro.run
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   schema:
     apiVersion: v1alpha1
     kind: EksclusterWithVpc
     spec:
       name: string
-      region: string
+      tenant: string | default="auto1"
+      environment: string | default="staging"
+      region: string | default="us-west-2"
+      k8sVersion: string | default="1.32"
+      accountId: string
+      managementAccountId: string
+      adminRoleName: string | default="Admin"
+      #nodesCount: integer
+      fleetSecretManagerSecretNameSuffix: string | default="argocd-secret"
+      domainName: string
       cidr:
         vpcCidr: string | default="10.0.0.0/16"
         publicSubnet1Cidr: string | default="10.0.1.0/24"
         publicSubnet2Cidr: string | default="10.0.2.0/24"
         privateSubnet1Cidr: string | default="10.0.11.0/24"
         privateSubnet2Cidr: string | default="10.0.12.0/24"
-      accountId: string
-      k8sVersion: string
-      nodesCount: integer
+      gitops:
+        addonsRepoBasePath: string | default="gitops/addons/"
+        addonsRepoPath: string | default="bootstrap"
+        addonsRepoRevision: string | default="HEAD"
+        addonsRepoSecretKey: string | default="eks-fleet-workshop-gitops-addons"
+        addonsRepoUrl: string | default="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+        fleetRepoBasePath: string | default="gitops/fleet/"
+        fleetRepoPath: string | default="bootstrap"
+        fleetRepoRevision: string | default="HEAD"
+        fleetRepoSecretKey: string | default="eks-fleet-workshop-gitops-fleet"
+        fleetRepoUrl: string | default="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop" 
+        platformRepoBasePath: string | default="gitops/platform/"
+        platformRepoPath: string | default="bootstrap"
+        platformRepoRevision: string | default="HEAD"
+        platformRepoSecretKey: string | default="eks-fleet-workshop-gitops-platform"
+        platformRepoUrl: string | default="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+        workloadRepoBasePath: string | default="gitops/apps/"
+        workloadRepoPath: string | default=""
+        workloadRepoRevision: string | default="HEAD"
+        workloadRepoSecretKey: string | default="eks-fleet-workshop-gitops-workloads"
+        workloadRepoUrl: string | default="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+      addons:
+        adot_collector_namespace: string | default="adot-collector-kubeprometheus"
+        adot_collector_service_account: string | default="adot-collector-kubeprometheus"
+
+        external_dns_namespace: string | default="external-dns"
+        external_dns_service_account: string | default="external-dns-sa"
+        external_dns_policy: string | default="sync"
+
+        external_secrets_namespace: string | default="external-secrets"
+        external_secrets_service_account: string | default="external-secrets-sa"
+
+        # aws_load_balancer_controller_namespace: string | default="kube-system"
+        # aws_load_balancer_controller_service_account: string | default="aws-load-balancer-controller-sa"
+
+        amp_endpoint_url: string | default=""
+
+        # karpenter_namespace: string | default="karpenter"
+        # karpenter_service_account: string | default="karpenter-sa"
+        # karpenter_sqs_queue_name: string | default=""
+
   resources:
   - id: vpc
     template:
@@ -28,6 +75,9 @@ spec:
       kind: Vpc
       metadata:
         name: ${schema.spec.name}
+        namespace: ${schema.spec.name}
+        annotations:
+          argocd.argoproj.io/tracking-id: clusters:kro.run/Vpc:${schema.spec.name}/${schema.spec.name}
       spec:
         name: ${schema.spec.name}
         region: ${schema.spec.region}
@@ -43,16 +93,62 @@ spec:
       kind: EksCluster
       metadata:
         name: ${schema.spec.name}
+        namespace: ${schema.spec.name}
+        annotations:
+          argocd.argoproj.io/tracking-id: clusters:kro.run/EksCluster:${schema.spec.name}/${schema.spec.name}                     
       spec:
           name: ${schema.spec.name}
+          tenant: ${schema.spec.tenant}
+          environment: ${schema.spec.environment}
           region: ${schema.spec.region}
-          subnets:
-            controlplane:
-              subnet1ID: ${vpc.status.privateSubnet1ID}
-              subnet2ID: ${vpc.status.privateSubnet2ID}
-            workers:
-              subnet1ID: ${vpc.status.privateSubnet1ID}
-              subnet2ID: ${vpc.status.privateSubnet2ID}
           accountId: ${schema.spec.accountId}
+          managementAccountId: ${schema.spec.managementAccountId}
           k8sVersion: ${schema.spec.k8sVersion}
-          nodesCount: ${schema.spec.nodesCount}
+          adminRoleName: ${schema.spec.adminRoleName}
+          #nodesCount: ${schema.spec.nodesCount}
+          fleetSecretManagerSecretNameSuffix: ${schema.spec.fleetSecretManagerSecretNameSuffix}
+          domainName: ${schema.spec.domainName}
+          network:
+            vpcID: ${vpc.status.vpcID}
+            subnets:
+              controlplane:
+                subnet1ID: ${vpc.status.privateSubnet1ID}
+                subnet2ID: ${vpc.status.privateSubnet2ID}
+              workers:
+                subnet1ID: ${vpc.status.privateSubnet1ID}
+                subnet2ID: ${vpc.status.privateSubnet2ID}
+          gitops:
+            addonsRepoBasePath: ${schema.spec.gitops.addonsRepoBasePath}
+            addonsRepoPath: ${schema.spec.gitops.addonsRepoPath}
+            addonsRepoRevision: ${schema.spec.gitops.addonsRepoRevision}
+            addonsRepoSecretKey: ${schema.spec.gitops.addonsRepoSecretKey}
+            addonsRepoUrl: ${schema.spec.gitops.addonsRepoUrl}
+            fleetRepoBasePath: ${schema.spec.gitops.fleetRepoBasePath}
+            fleetRepoPath: ${schema.spec.gitops.fleetRepoPath}
+            fleetRepoRevision: ${schema.spec.gitops.fleetRepoRevision}
+            fleetRepoSecretKey: ${schema.spec.gitops.fleetRepoSecretKey}
+            fleetRepoUrl: ${schema.spec.gitops.fleetRepoUrl}
+            platformRepoBasePath: ${schema.spec.gitops.platformRepoBasePath}
+            platformRepoPath: ${schema.spec.gitops.platformRepoPath}
+            platformRepoRevision: ${schema.spec.gitops.platformRepoRevision}
+            platformRepoSecretKey: ${schema.spec.gitops.platformRepoSecretKey}
+            platformRepoUrl: ${schema.spec.gitops.platformRepoUrl}
+            workloadRepoBasePath: ${schema.spec.gitops.workloadRepoBasePath}
+            workloadRepoPath: ${schema.spec.gitops.workloadRepoPath}
+            workloadRepoRevision: ${schema.spec.gitops.workloadRepoRevision}
+            workloadRepoSecretKey: ${schema.spec.gitops.workloadRepoSecretKey}
+            workloadRepoUrl: ${schema.spec.gitops.workloadRepoUrl}
+          addons:
+            adot_collector_namespace: ${schema.spec.addons.adot_collector_namespace}
+            adot_collector_service_account: ${schema.spec.addons.adot_collector_service_account}
+            external_dns_namespace: ${schema.spec.addons.external_dns_namespace}
+            external_dns_service_account: ${schema.spec.addons.external_dns_service_account}
+            external_dns_policy: ${schema.spec.addons.external_dns_policy}
+            external_secrets_namespace: ${schema.spec.addons.external_secrets_namespace}
+            external_secrets_service_account: ${schema.spec.addons.external_secrets_service_account}
+            # aws_load_balancer_controller_namespace: ${schema.spec.addons.aws_load_balancer_controller_namespace}
+            # aws_load_balancer_controller_service_account: ${schema.spec.addons.aws_load_balancer_controller_service_account}
+            amp_endpoint_url: ${schema.spec.addons.amp_endpoint_url}
+            # karpenter_namespace: ${schema.spec.addons.karpenter_namespace}
+            # karpenter_service_account: ${schema.spec.addons.karpenter_service_account}
+
