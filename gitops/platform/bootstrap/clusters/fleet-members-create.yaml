@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fleet-members-create
+  namespace: argocd
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          fleet_member: control-plane
+      values:
+        bootstrap: clusters/
+  template:
+    metadata:
+      name: fleet-members-create
+    spec:
+      project: default
+      sources:
+      - repoURL: '{{.metadata.annotations.platform_repo_url}}'
+        path: '{{.metadata.annotations.platform_repo_basepath}}{{.values.bootstrap}}'
+        targetRevision: '{{.metadata.annotations.platform_repo_revision}}'
+      destination:
+        namespace: argocd
+        name: '{{.name}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          allowEmpty: true
+          prune: false
+        retry:
+          limit: 100
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true  # Big CRDs.
