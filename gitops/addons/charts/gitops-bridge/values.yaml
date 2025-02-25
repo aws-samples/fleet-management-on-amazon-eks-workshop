@@ -49,9 +49,9 @@ syncPolicy:
     - CreateNamespace=true
     - ServerSideApply=true  # Big CRDs.
 valueFiles:
-  - 'default/addons'
-  #- 'environments/{{.metadata.labels.environment}}/addons'
-  #- 'clusters/{{.nameNormalized}}/addons'
+  - default/addons
+  - environments/{{.metadata.labels.environment}}/addons
+  - clusters/{{.nameNormalized}}/addons
   - '{{.metadata.annotations.addons_repo_basepath}}default/addons'
   - '{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons'
   - '{{.metadata.annotations.addons_repo_basepath}}clusters/{{.nameNormalized}}/addons'
@@ -1267,11 +1267,9 @@ addons:
         - key: enable_kro
           operator: In
           values: ['true']
-
-  kro-resources:
-    enabled: false
-    path: 'charts/kro-resources'
-    chartName: kro-resources
+    resources:
+      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/kro-resources'
+      chartName: kro-resources
     # defaultVersion: "1.0.0"
     # localChartBasePath: 'charts'
     # namespace: "acm-certificates"
