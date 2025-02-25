@@ -1,0 +1,199 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGroup
+metadata:
+  name: ekscluster.kro.run
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: EksCluster
+    spec:
+      name: string
+      region: string
+      subnets:
+        controlplane:
+          subnet1ID: string
+          subnet2ID: string
+        workers:
+          subnet1ID: string
+          subnet2ID: string
+      accountId: string
+      k8sVersion: string
+      nodesCount: integer
+  resources:
+  - id: clusterRole
+    template:
+      apiVersion: iam.services.k8s.aws/v1alpha1
+      kind: Role
+      metadata:
+        namespace: ${schema.spec.name}
+        name: ${schema.spec.name}-cluster-role
+      spec:
+        name: ${schema.spec.name}-cluster-role
+        policies:
+        - arn:aws:iam::aws:policy/AmazonEKSComputePolicy
+        - arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy
+        - arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        assumeRolePolicyDocument: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "eks.amazonaws.com"
+                },
+                "Action": [
+                  "sts:AssumeRole",
+                  "sts:TagSession"
+                ]
+              }
+            ]
+          }
+  - id: nodeRole
+    template:
+      apiVersion: iam.services.k8s.aws/v1alpha1
+      kind: Role
+      metadata:
+        namespace: ${schema.spec.name}
+        name: ${schema.spec.name}-cluster-node-role
+      spec:
+        name: ${schema.spec.name}-cluster-node-role
+        policies:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly
+        assumeRolePolicyDocument: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "ec2.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+  - id: ekscluster
+    template:
+      apiVersion: eks.services.k8s.aws/v1alpha1
+      kind: Cluster
+      metadata:
+        namespace: ${schema.spec.name}
+        name: ${schema.spec.name}
+      spec:
+        name: ${schema.spec.name}
+        roleARN: ${clusterRole.status.ackResourceMetadata.arn}
+        accessConfig:
+          authenticationMode: "API_AND_CONFIG_MAP"
+        computeConfig:
+          enabled: true
+          nodeRoleARN: ${nodeRole.status.ackResourceMetadata.arn}
+          nodePools:
+            - system
+            - general-purpose
+        kubernetesNetworkConfig:
+          ipFamily: ipv4
+          elasticLoadBalancing:
+            enabled: true
+        storageConfig:
+          blockStorage:
+            enabled: true
+        resourcesVPCConfig:
+          endpointPrivateAccess: false
+          endpointPublicAccess: true
+          subnetIDs:
+            - ${schema.spec.subnets.controlplane.subnet1ID}
+            - ${schema.spec.subnets.controlplane.subnet2ID}
+        #version: ${schema.spec.k8sVersion} a bug needs to be fixed for this to work
+  - id: argocdRole
+    template:
+      apiVersion: iam.services.k8s.aws/v1alpha1
+      kind: Role
+      metadata:
+        name: ${schema.spec.name}-argocd-role
+      spec:
+        name: ${schema.spec.name}-argocd-role
+        assumeRolePolicyDocument: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "arn:aws:iam::656220021423:role/argocd-20250208105218737900000004"
+                },
+                "Action": [
+                  "sts:TagSession",
+                  "sts:AssumeRole"
+                ]
+              }
+            ]
+          }
+  - id: argocdSecret
+    template:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: ${schema.spec.name}
+        namespace: argocd
+        labels:
+          argocd.argoproj.io/secret-type: cluster
+          enable_metrics_server: "true"
+          tenant: "spoke"
+        annotations:
+          accountId: ${schema.spec.accountId}
+          region: ${schema.spec.region}
+          oidcProvider: ${ekscluster.status.identity.oidc.issuer}
+          addons_repo_basepath: addons/
+          addons_repo_path: bootstrap
+          addons_repo_revision: main
+          addons_repo_url: https://github.com/iamahgoub/gitops-fleet-management.git
+      type: Opaque
+      stringData:
+        name: ${schema.spec.name}
+        server: "${ekscluster.status.endpoint}"
+        config: |
+          {
+            "awsAuthConfig": {
+              "clusterName": "${schema.spec.name}",
+              "roleARN": "${argocdRole.status.ackResourceMetadata.arn}"
+            },
+            "tlsClientConfig": {
+              "insecure": false,
+              "caData": "${ekscluster.status.certificateAuthority.data}"
+            }
+          }
+  - id: accessEntry
+    template:
+      apiVersion: eks.services.k8s.aws/v1alpha1
+      kind: AccessEntry
+      metadata:
+        namespace: ${schema.spec.name}
+        name: ${schema.spec.name}-accessentry
+      spec:
+        clusterName: ${schema.spec.name}
+        accessPolicies:
+        - accessScope:
+            type: "cluster"
+          policyARN: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        principalARN: "${argocdRole.status.ackResourceMetadata.arn}"
+  - id: oidcProvider
+    template:
+      apiVersion: iam.services.k8s.aws/v1alpha1
+      kind: OpenIDConnectProvider
+      metadata:
+        namespace: ${schema.spec.name}
+        name: ${schema.spec.name}-odic
+      spec:
+        url: ${ekscluster.status.identity.oidc.issuer}
+        clientIDs:
+          - sts.amazonaws.com
+        thumbprints:
+          - '9e99a48a9960b14926bb7f3b02e22da2b0ab7280'
+

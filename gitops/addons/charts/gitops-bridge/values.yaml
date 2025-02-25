@@ -1256,6 +1256,7 @@ addons:
   #       - key: enable_kro_eks_rgs
   #         operator: In
   #         values: ['true']
+  
   multi-acct:
     enabled: false
     namespace: kro
