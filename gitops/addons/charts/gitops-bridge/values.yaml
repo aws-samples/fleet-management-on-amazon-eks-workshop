@@ -1236,6 +1236,10 @@ addons:
         - key: enable_kro
           operator: In
           values: ['true']
+    values:
+      image:
+        repository: public.ecr.aws/seb-demo/kro/controller-9ef43f9a25dce381a8ff6218d45fdc24
+        tag: latest
     # resources:
     #   path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/kro-resources'
     #   chartName: kro-resources     
