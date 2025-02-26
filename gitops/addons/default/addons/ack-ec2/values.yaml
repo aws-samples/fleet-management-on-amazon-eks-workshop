@@ -2,3 +2,10 @@
 tolerations:
   - key: CriticalAddonsOnly
     operator: Exists
+
+featureGates:
+  ServiceLevelCARM: true 
+  TeamLevelCARM: true 
+  
+log:
+  level: info
