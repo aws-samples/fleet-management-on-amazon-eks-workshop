@@ -57,7 +57,47 @@ tasks:
           --values gitops/platform/teams/frontend/tenants/auto1/defaults/argoprojects/values.yaml \
           --values gitops/platform/teams/frontend/tenants/auto1/environments/control-plane/argoprojects/values.yaml \
           --values gitops/platform/teams/frontend/tenants/auto1/clusters/cluster5/argoprojects/values.yaml \
-          --include-crds  --debug        
+          --include-crds  --debug
+
+  validate-helm-argocd-apps-frontend:
+    desc: Validate Helm template for gitops-bridge
+    vars:
+      CHART_PATH: argo/argocd-apps
+      CHART_VERSION: 2.0.2
+      RELEASE_NAME: argocd-apps-frontend
+    cmds:
+      - |
+        helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
+          --version {{.CHART_VERSION}} \
+          --namespace {{.NAMESPACE}} \
+          --kube-version {{.KUBE_VERSION}} \
+          --values gitops/platform/teams/frontend/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/clusters/cluster5/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/clusters/cluster5/argoprojects/values.yaml \
+          --include-crds  --debug     
+
+  validate-helm-argocd-apps-backend:
+    desc: Validate Helm template for gitops-bridge
+    vars:
+      CHART_PATH: argo/argocd-apps
+      CHART_VERSION: 2.0.2
+      RELEASE_NAME: argocd-apps-backend
+    cmds:
+      - |
+        helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
+          --version {{.CHART_VERSION}} \
+          --namespace {{.NAMESPACE}} \
+          --kube-version {{.KUBE_VERSION}} \
+          --values gitops/platform/teams/backend/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/clusters/cluster5/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/clusters/cluster5/argoprojects/values.yaml \
+          --include-crds  --debug  
 
   lint:
     desc: Lint the Helm chart
