@@ -23,7 +23,7 @@ spec:
 
   template:
     metadata:
-      name: 'namespaces-{{metadata.labels.environment}}-{{path.basename}}'
+      name: 'namespaces-{{name}}-{{path.basename}}'
       labels:
         environment: '{{metadata.labels.environment}}'
         team: '{{path.basename}}'
