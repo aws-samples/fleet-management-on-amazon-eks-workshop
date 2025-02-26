@@ -1,0 +1,11 @@
+# values for the addon
+configs:
+  cm:
+    ui.bannercontent: "Kro Staging Environment"
+
+server:
+  service:
+   type: LoadBalancer
+   annotations:
+     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing

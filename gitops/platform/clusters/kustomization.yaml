@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 #- cluster2.yaml
 - cluster5.yaml
+- cluster6.yaml

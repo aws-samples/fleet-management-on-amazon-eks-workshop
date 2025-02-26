@@ -1,0 +1,24 @@
+apiVersion: kro.run/v1alpha1
+kind: EksclusterWithVpc
+metadata:
+  name: cluster6
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"  
+spec:
+    name: cluster6
+    tenant: seb1
+    #environment: staging    
+    #region: us-west-2
+    k8sVersion: '1.30'
+    accountId: '798082067117'
+    managementAccountId: '382076407153'
+    domainName: cluster6.rosa.allamand.com
+    cidr: {}
+    gitops:
+      addonsRepoRevision: "centralized-argocd"
+      fleetRepoRevision: "centralized-argocd"
+      platformRepoRevision: "centralized-argocd"
+      workloadRepoRevision: "centralized-argocd"
+    addons: {}
+   
