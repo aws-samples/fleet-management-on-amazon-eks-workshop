@@ -32,6 +32,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-vpc
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         cidrBlocks: 
         - ${schema.spec.cidr.vpcCidr}
@@ -47,6 +49,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-igw
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         vpc: ${vpc.status.vpcID}
         tags:
@@ -59,6 +63,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-nat-gateway1
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         subnetID: ${publicSubnet1.status.subnetID}
         allocationID: ${eip1.status.allocationID}
@@ -72,6 +78,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-nat-gateway2
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         subnetID: ${publicSubnet2.status.subnetID}
         allocationID: ${eip2.status.allocationID}
@@ -85,6 +93,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-eip1
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         tags:
           - key: "Name"
@@ -96,6 +106,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-eip2
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         tags:
           - key: "Name"
@@ -107,6 +119,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-public-routetable
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         vpcID: ${vpc.status.vpcID}
         routes:
@@ -122,6 +136,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-private-routetable1
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         vpcID: ${vpc.status.vpcID}
         routes:
@@ -137,6 +153,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-private-routetable2
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         vpcID: ${vpc.status.vpcID}
         routes:
@@ -152,6 +170,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-public-subnet1
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         availabilityZone: ${schema.spec.region}a
         cidrBlock: ${schema.spec.cidr.publicSubnet1Cidr}
@@ -171,6 +191,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-public-subnet2
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         availabilityZone: ${schema.spec.region}b
         cidrBlock: ${schema.spec.cidr.publicSubnet2Cidr}
@@ -190,6 +212,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-private-subnet1
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         availabilityZone: ${schema.spec.region}a
         cidrBlock: ${schema.spec.cidr.privateSubnet1Cidr}
@@ -208,6 +232,8 @@ spec:
       metadata:
         namespace: ${schema.spec.name}
         name: ${schema.spec.name}-private-subnet2
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         availabilityZone: ${schema.spec.region}b
         cidrBlock: ${schema.spec.cidr.privateSubnet2Cidr}

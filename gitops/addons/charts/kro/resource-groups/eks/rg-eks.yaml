@@ -81,6 +81,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-cluster-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-cluster-role"
           policies:
@@ -112,6 +114,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-cluster-node-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-cluster-node-role"
           policies:
@@ -142,6 +146,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
           # implicit dependencies with roles
           annotations:
             clusterRoleArn: "${clusterRole.status.ackResourceMetadata.arn}"
@@ -188,19 +194,20 @@ spec:
             tenant: ${schema.spec.tenant}
             environment: ${schema.spec.environment}
 
-    # - id: podIdentityAddon
-    #   template:
-    #     apiVersion: eks.services.k8s.aws/v1alpha1
-    #     kind: Addon
-    #     metadata:
-    #       name: eks-pod-identity-agent
-    #       namespace: "${schema.spec.name}"
-    #       annotations:
-    #         clusterArn: "${ekscluster.status.ackResourceMetadata.arn}"
-    #     spec:
-    #       name: eks-pod-identity-agent
-    #       addonVersion: v1.3.4-eksbuild.1
-    #       clusterName: "${schema.spec.name}"
+    - id: podIdentityAddon
+      template:
+        apiVersion: eks.services.k8s.aws/v1alpha1
+        kind: Addon
+        metadata:
+          name: eks-pod-identity-agent
+          namespace: "${schema.spec.name}"
+          annotations:
+            clusterArn: "${ekscluster.status.ackResourceMetadata.arn}"
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          name: eks-pod-identity-agent
+          addonVersion: v1.3.4-eksbuild.1
+          clusterName: "${schema.spec.name}"
 
     ###########################################################
     # ArgoCD Integration
@@ -211,6 +218,8 @@ spec:
         kind: Role
         metadata:
           name: "${schema.spec.name}-argocd-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-argocd-role"
           assumeRolePolicyDocument: |
@@ -340,6 +349,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-access-entry"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           accessPolicies:
@@ -356,6 +367,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-access-entry-admin"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           accessPolicies:
@@ -376,6 +389,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-external-secrets-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-external-secrets-role"
           policies:
@@ -403,6 +418,8 @@ spec:
         metadata:
           name: "${schema.spec.name}-external-secrets"
           namespace: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: argocd
@@ -423,6 +440,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-external-dns-policy"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-external-dns-policy"
           policyDocument: |
@@ -460,6 +479,7 @@ spec:
           name: "${schema.spec.name}-external-dns-role"
           annotations:
             policy: "${externalDnsPolicy.status.ackResourceMetadata.arn}"
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-external-dns-role"
           policyRefs:
@@ -489,6 +509,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-external-dns"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: external-dns
@@ -506,6 +528,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-adot-collector-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-adot-collector-role"
           policies:
@@ -534,6 +558,8 @@ spec:
         metadata:
           name: "${schema.spec.name}-adot-collector"
           namespace: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: "${schema.spec.addons.adot_collector_namespace}"
@@ -555,6 +581,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-kyverno-policy-reporter-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-kyverno-policy-reporter-role"
           policies:
@@ -583,6 +611,8 @@ spec:
         metadata:
           name: "${schema.spec.name}-kyverno-policy-reporter"
           namespace: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: kyverno
@@ -603,6 +633,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-cni-metrics-helper-policy"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-cni-metrics-helper-policy"
           description: "Policy to allow cni metrics helper put metrics to CloudWatch"
@@ -627,6 +659,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-cni-metrics-helper-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-cni-metrics-helper-role"
           policies:
@@ -655,6 +689,8 @@ spec:
         metadata:
           name: "${schema.spec.name}-cni-metrics-helper"
           namespace: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: kube-system
@@ -675,6 +711,8 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}-cloudwatch-observability-role"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}-cloudwatch-observability-role"
           policies:
@@ -703,6 +741,8 @@ spec:
         metadata:
           name: "${schema.spec.name}-cloudwatch-observability"
           namespace: "${schema.spec.name}"
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           clusterName: "${schema.spec.name}"
           namespace: amazon-cloudwatch
