@@ -42,9 +42,12 @@ spec:
           releaseName: '{{path.basename}}'
           ignoreMissingValueFiles: true
           valueFiles:
-            #- '../../teams/{{path.basename}}/namespaces-{{metadata.labels.environment}}-values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'               
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/defaults/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/clusters/{{.nameNormalized}}/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/defaults/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/clusters/{{.nameNormalized}}/namespaces/values.yaml'
       destination:
         name: '{{name}}'
       syncPolicy:
