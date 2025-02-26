@@ -4,8 +4,8 @@ tolerations:
     operator: Exists
 
 featureGates:
-  ServiceLevelCARM: true 
-  TeamLevelCARM: true 
+  ServiceLevelCARM: false 
+  TeamLevelCARM: false
   
 log:
   level: info
