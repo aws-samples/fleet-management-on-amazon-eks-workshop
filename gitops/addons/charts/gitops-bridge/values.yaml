@@ -1236,14 +1236,9 @@ addons:
         - key: enable_kro
           operator: In
           values: ['true']
-    resources:
-      path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/kro-resources'
-      chartName: kro-resources
-    # defaultVersion: "1.0.0"
-    # localChartBasePath: 'charts'
-    # namespace: "acm-certificates"
-    # valuesObject:
-    #     region: '{{.metadata.annotations.aws_region}}'          
+    # resources:
+    #   path: '{{.metadata.annotations.addons_repo_basepath}}charts/resources/kro-resources'
+    #   chartName: kro-resources     
 
   kro-eks-rgs:
     enabled: false
