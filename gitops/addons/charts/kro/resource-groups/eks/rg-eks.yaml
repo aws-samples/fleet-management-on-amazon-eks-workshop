@@ -146,12 +146,11 @@ spec:
         metadata:
           namespace: "${schema.spec.name}"
           name: "${schema.spec.name}"
-          annotations:
-            services.k8s.aws/region: ${schema.spec.region}
           # implicit dependencies with roles
           annotations:
             clusterRoleArn: "${clusterRole.status.ackResourceMetadata.arn}"
             nodeRoleArn: "${nodeRole.status.ackResourceMetadata.arn}"
+            services.k8s.aws/region: ${schema.spec.region}
         spec:
           name: "${schema.spec.name}"
           roleARN: "${clusterRole.status.ackResourceMetadata.arn}"
