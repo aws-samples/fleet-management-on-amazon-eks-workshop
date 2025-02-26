@@ -1,14 +1,15 @@
 version: '3'
 
 vars:
-  CHART_PATH: gitops/addons/charts/gitops-bridge
   NAMESPACE: argocd
   KUBE_VERSION: "1.32"
-  RELEASE_NAME: cluster-addons
 
 tasks:
-  validate-helm:
+  validate-helm-gitops-bridge:
     desc: Validate Helm template for gitops-bridge
+    vars:
+      CHART_PATH: gitops/addons/charts/gitops-bridge
+      RELEASE_NAME: cluster-addons    
     cmds:
       - |
         helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
@@ -18,7 +19,45 @@ tasks:
           --values gitops/addons/environments/control-plane/addons/gitops-bridge/values.yaml \
           --values gitops/addons/tenants/auto1/default/addons/gitops-bridge/values.yaml \
           --values gitops/addons/tenants/auto1/environments/control-plane/addons/gitops-bridge/values.yaml \
-          --include-crds
+          --include-crds --debug
+
+
+
+  validate-helm-teams-backend:
+    desc: Validate Helm template for gitops-bridge
+    vars:
+      CHART_PATH: gitops/platform/charts/teams
+      RELEASE_NAME: argoprojects-backend    
+    cmds:
+      - |
+        helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
+          --namespace {{.NAMESPACE}} \
+          --kube-version {{.KUBE_VERSION}} \
+          --values gitops/platform/teams/backend/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/clusters/cluster5/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/backend/tenants/auto1/clusters/cluster5/argoprojects/values.yaml \
+          --include-crds --debug
+
+  validate-helm-teams-frontend:
+    desc: Validate Helm template for gitops-bridge
+    vars:
+      CHART_PATH: gitops/platform/charts/teams
+      RELEASE_NAME: argoprojects-frontend    
+    cmds:
+      - |
+        helm template {{.RELEASE_NAME}} {{.CHART_PATH}} \
+          --namespace {{.NAMESPACE}} \
+          --kube-version {{.KUBE_VERSION}} \
+          --values gitops/platform/teams/frontend/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/clusters/cluster5/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/defaults/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/environments/control-plane/argoprojects/values.yaml \
+          --values gitops/platform/teams/frontend/tenants/auto1/clusters/cluster5/argoprojects/values.yaml \
+          --include-crds  --debug        
 
   lint:
     desc: Lint the Helm chart

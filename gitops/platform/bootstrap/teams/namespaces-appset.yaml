@@ -44,10 +44,10 @@ spec:
           valueFiles:
             - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/defaults/namespaces/values.yaml'
             - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/clusters/{{.nameNormalized}}/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/clusters/{{metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
             - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/defaults/namespaces/values.yaml'
             - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/clusters/{{.nameNormalized}}/namespaces/values.yaml'
+            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/clusters/{{metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
       destination:
         name: '{{name}}'
       syncPolicy:
