@@ -10,9 +10,9 @@ projects:
   description: Team Project
   destinations:
   - namespace: ui
-    name: cluster5
+    name: fleet-spoke-staging
   - namespace: assets
-    name: cluster5
+    name: fleet-spoke-staging
   - namespace: "*"
     server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above
