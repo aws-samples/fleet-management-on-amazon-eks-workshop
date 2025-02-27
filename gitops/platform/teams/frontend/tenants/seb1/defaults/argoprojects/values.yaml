@@ -14,22 +14,32 @@ projects:
     name: cluster1
   - namespace: assets
     name: cluster1
+
   - namespace: ui
     name: cluster2
   - namespace: assets
     name: cluster2
+
   - namespace: ui
     name: cluster3
   - namespace: assets
     name: cluster3
+
   - namespace: ui
     name: cluster4
   - namespace: assets
     name: cluster4
+
   - namespace: ui
     name: cluster5
   - namespace: assets
     name: cluster5
+
+  - namespace: ui
+    name: cluster6
+  - namespace: assets
+    name: cluster6
+
   - namespace: "*"
     server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above

@@ -63,6 +63,17 @@ projects:
   - namespace: rabbitmq
     name: cluster5
 
+    - namespace: carts
+    name: cluster6
+  - namespace: catalog
+    name: cluster6
+  - namespace: checkout
+    name: cluster6
+  - namespace: orders
+    name: cluster6
+  - namespace: rabbitmq
+    name: cluster6
+
   - namespace: "*"
     server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above
