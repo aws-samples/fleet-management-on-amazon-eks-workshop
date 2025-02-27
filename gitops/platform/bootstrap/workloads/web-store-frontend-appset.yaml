@@ -11,10 +11,12 @@ spec:
         generators:
           - clusters:
               selector:
-                matchExpressions:
-                  - key: environment
-                    operator: In
-                    values: [staging, prod]
+                matchLabels:
+                  workloads: 'true'              
+                # matchExpressions:
+                #   - key: environment
+                #     operator: In
+                #     values: [cluster1, cluster2, cluster3, cluster4, cluster5, cluster6, staging, prod]
               values:
                 team: frontend
           - git:
@@ -25,7 +27,7 @@ spec:
 
   template:
     metadata:
-      name: 'web-store-{{metadata.labels.environment}}-{{path.basename}}'
+      name: 'web-store-{{name}}-{{path.basename}}'
       labels:
         environment: '{{metadata.labels.environment}}'
         team: '{{values.team}}'
