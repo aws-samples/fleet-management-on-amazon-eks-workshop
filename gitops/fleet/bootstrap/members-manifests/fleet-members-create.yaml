@@ -15,16 +15,16 @@ spec:
         matchLabels:
           fleet_member: control-plane
       values:
-        bootstrap: clusters/
+        bootstrap: kro-clusters/
   template:
     metadata:
       name: fleet-members-create
     spec:
       project: default
       sources:
-      - repoURL: '{{.metadata.annotations.platform_repo_url}}'
-        path: '{{.metadata.annotations.platform_repo_basepath}}{{.values.bootstrap}}'
-        targetRevision: '{{.metadata.annotations.platform_repo_revision}}'
+      - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
+        path: '{{.metadata.annotations.fleet_repo_basepath}}{{.values.bootstrap}}'
+        targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
       destination:
         namespace: argocd
         name: '{{.name}}'
