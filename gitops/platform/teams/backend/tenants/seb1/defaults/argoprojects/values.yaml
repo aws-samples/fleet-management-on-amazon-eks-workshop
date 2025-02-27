@@ -63,7 +63,7 @@ projects:
   - namespace: rabbitmq
     name: cluster5
 
-    - namespace: carts
+  - namespace: carts
     name: cluster6
   - namespace: catalog
     name: cluster6
