@@ -74,9 +74,10 @@ projects:
   - namespace: rabbitmq
     name: cluster6
 
-  - namespace: "*"
-    server: 'https://kubernetes.default.svc'
+  #- namespace: "*"
+  #  server: 'https://kubernetes.default.svc'
   # TODO temporary allowing local deployments above
+  
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
   - group: ''
