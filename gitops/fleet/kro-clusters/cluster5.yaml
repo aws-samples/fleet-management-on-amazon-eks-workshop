@@ -8,7 +8,6 @@ metadata:
 spec:
     name: cluster5
     tenant: seb1
-    #tenant: tenant1
     #environment: staging    
     #region: us-west-2
     k8sVersion: '1.30'
