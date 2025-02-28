@@ -1,0 +1,27 @@
+apiVersion: kro.run/v1alpha1
+kind: EksclusterWithVpc
+metadata:
+  name: cluster1 # ramesh
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"  
+spec:
+    name: cluster1
+    tenant: seb1
+    #environment: staging    
+    #region: us-west-2
+    k8sVersion: '1.30'
+    accountId: '908546734614'
+    managementAccountId: '326864266654'
+    #domainName: cluster2.rosa.allamand.com
+    #subHostedZone:
+    #  create: true
+    #  domainNameRef: sallaman.people.aws.dev
+    cidr: {}
+    gitops:
+      addonsRepoRevision: "centralized-argocd"
+      fleetRepoRevision: "centralized-argocd"
+      platformRepoRevision: "centralized-argocd"
+      workloadRepoRevision: "centralized-argocd"
+    addons: {}
+   
