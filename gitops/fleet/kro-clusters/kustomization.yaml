@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
 - cluster1.yaml # ramesh -> ok
 - cluster5.yaml # seb -> fail
-- cluster6.yaml # seb -> fail
+#- cluster6.yaml # seb -> fail

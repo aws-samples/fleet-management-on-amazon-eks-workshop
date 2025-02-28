@@ -10,3 +10,4 @@ cdk
 terraform/fleet-dashboard/terraform.tfstate
 terraform/fleet-dashboard/terraform.tfstate.backup
 .vscode
+local
