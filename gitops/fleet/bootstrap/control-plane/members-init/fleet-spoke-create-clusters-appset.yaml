@@ -26,6 +26,9 @@ spec:
       project: default
       sources:
       - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
+        targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
+        ref: values
+      - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
         path: '{{.metadata.annotations.fleet_repo_basepath}}{{.values.bootstrap}}'
         targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
         helm:
