@@ -13,7 +13,7 @@ spec:
     k8sVersion: '1.30'
     accountId: '908546734614'
     managementAccountId: '326864266654'
-    #domainName: cluster2.rosa.allamand.com
+    domainName: cluster2.mydomain.com
     #subHostedZone:
     #  create: true
     #  domainNameRef: sallaman.people.aws.dev
