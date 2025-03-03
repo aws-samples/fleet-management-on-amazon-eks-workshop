@@ -38,9 +38,9 @@ spec:
         - repoURL: '{{.metadata.annotations.platform_repo_url}}'
           targetRevision: '{{.metadata.annotations.platform_repo_revision}}'
           ref: values
-        - chart: '{{values.addonChart}}'
-          repoURL: '{{values.addonChartRepository}}'
-          targetRevision: '{{values.addonChartVersion}}'
+        - chart: '{{.values.addonChart}}'
+          repoURL: '{{.values.addonChartRepository}}'
+          targetRevision: '{{.values.addonChartVersion}}'
           helm:
             releaseName: 'argoprojects-{{.path.basename}}'
             ignoreMissingValueFiles: true
