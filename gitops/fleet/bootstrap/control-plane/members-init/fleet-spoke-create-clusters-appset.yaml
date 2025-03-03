@@ -15,16 +15,25 @@ spec:
         matchLabels:
           fleet_member: control-plane
       values:
-        bootstrap: kro-clusters/
+        bootstrap: charts/kro-clusters/
   template:
     metadata:
       name: fleet-members-create
+      labels:      
+        environment: '{{metadata.labels.environment}}'
+        tenant: '{{metadata.labels.tenant}}'
     spec:
       project: default
       sources:
       - repoURL: '{{.metadata.annotations.fleet_repo_url}}'
         path: '{{.metadata.annotations.fleet_repo_basepath}}{{.values.bootstrap}}'
         targetRevision: '{{.metadata.annotations.fleet_repo_revision}}'
+        helm:
+          releaseName: 'kro-clusters'
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - '$values/{{metadata.annotations.fleet_repo_basepath}}kro-values/{{path.basename}}/defaults/kro-clusters/values.yaml'
+            - '$values/{{metadata.annotations.fleet_repo_basepath}}kro-values/{{path.basename}}/tenants/{{metadata.labels.tenant}}/kro-clusters/values.yaml'
       destination:
         namespace: argocd
         name: '{{.name}}'

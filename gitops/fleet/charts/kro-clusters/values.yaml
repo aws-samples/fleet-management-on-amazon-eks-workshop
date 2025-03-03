@@ -1,0 +1,69 @@
+# Default values for eks-fleet-clusters
+# clusters:
+#   # Example cluster configuration with all available options and their default values
+#   example-cluster:
+#     # Required fields
+#     accountId: "123456789012"  # AWS account ID where the cluster will be created
+#     managementAccountId: "098765432109"  # AWS management account ID
+    
+#     # Optional fields with defaults
+#     tenant: "auto1"  # Default tenant name
+#     environment: "staging"  # Environment name
+#     region: "us-west-2"  # AWS region
+#     k8sVersion: "1.32"  # Kubernetes version
+#     adminRoleName: "Admin"  # Admin role name
+#     fleetSecretManagerSecretNameSuffix: "argocd-secret"  # Secret name suffix
+#     domainName: ""  # Domain name for the cluster
+    
+#     # Optional subHostedZone configuration
+#     # subHostedZone:
+#     #   create: true
+#     #   domainNameRef: "example.domain.com"
+    
+#     # CIDR configuration with defaults
+#     cidr:
+#       vpcCidr: "10.0.0.0/16"
+#       publicSubnet1Cidr: "10.0.1.0/24"
+#       publicSubnet2Cidr: "10.0.2.0/24"
+#       privateSubnet1Cidr: "10.0.11.0/24"
+#       privateSubnet2Cidr: "10.0.12.0/24"
+    
+#     # GitOps configuration with defaults
+#     gitops:
+#       addonsRepoBasePath: "gitops/addons/"
+#       addonsRepoPath: "bootstrap"
+#       addonsRepoRevision: "HEAD"
+#       addonsRepoSecretKey: "eks-fleet-workshop-gitops-addons"
+#       addonsRepoUrl: "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+      
+#       fleetRepoBasePath: "gitops/fleet/"
+#       fleetRepoPath: "bootstrap"
+#       fleetRepoRevision: "HEAD"
+#       fleetRepoSecretKey: "eks-fleet-workshop-gitops-fleet"
+#       fleetRepoUrl: "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+      
+#       platformRepoBasePath: "gitops/platform/"
+#       platformRepoPath: "bootstrap"
+#       platformRepoRevision: "HEAD"
+#       platformRepoSecretKey: "eks-fleet-workshop-gitops-platform"
+#       platformRepoUrl: "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+      
+#       workloadRepoBasePath: "gitops/apps/"
+#       workloadRepoPath: ""
+#       workloadRepoRevision: "HEAD"
+#       workloadRepoSecretKey: "eks-fleet-workshop-gitops-workloads"
+#       workloadRepoUrl: "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop"
+    
+#     # Addons configuration with defaults
+#     addons:
+#       adot_collector_namespace: "adot-collector-kubeprometheus"
+#       adot_collector_service_account: "adot-collector-kubeprometheus"
+#       external_dns_namespace: "external-dns"
+#       external_dns_service_account: "external-dns-sa"
+#       external_dns_policy: "sync"
+#       external_secrets_namespace: "external-secrets"
+#       external_secrets_service_account: "external-secrets-sa"
+#       amp_endpoint_url: ""
+
+
+

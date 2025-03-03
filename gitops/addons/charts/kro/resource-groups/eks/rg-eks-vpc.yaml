@@ -20,7 +20,7 @@ spec:
       adminRoleName: string | default="Admin"
       #nodesCount: integer
       fleetSecretManagerSecretNameSuffix: string | default="argocd-secret"
-      domainName: string
+      domainName: string | default=""
       cidr:
         vpcCidr: string | default="10.0.0.0/16"
         publicSubnet1Cidr: string | default="10.0.1.0/24"
