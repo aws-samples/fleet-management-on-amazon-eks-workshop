@@ -22,40 +22,22 @@ spec:
   subHostedZone:
     {{- toYaml $cluster.subHostedZone | nindent 4 }}
   {{- end }}
+  {{- if $cluster.cidr }}
   cidr:
-    vpcCidr: {{ $cluster.cidr.vpcCidr | default "10.0.0.0/16" }}
-    publicSubnet1Cidr: {{ $cluster.cidr.publicSubnet1Cidr | default "10.0.1.0/24" }}
-    publicSubnet2Cidr: {{ $cluster.cidr.publicSubnet2Cidr | default "10.0.2.0/24" }}
-    privateSubnet1Cidr: {{ $cluster.cidr.privateSubnet1Cidr | default "10.0.11.0/24" }}
-    privateSubnet2Cidr: {{ $cluster.cidr.privateSubnet2Cidr | default "10.0.12.0/24" }}
+    {{- toYaml $cluster.cidr | nindent 4 }}
+  {{- else }}
+  cidr: {}
+  {{- end }}
+  {{- if $cluster.gitops }}
   gitops:
-    addonsRepoBasePath: {{ $cluster.gitops.addonsRepoBasePath | default "gitops/addons/" }}
-    addonsRepoPath: {{ $cluster.gitops.addonsRepoPath | default "bootstrap" }}
-    addonsRepoRevision: {{ $cluster.gitops.addonsRepoRevision | default "HEAD" }}
-    addonsRepoSecretKey: {{ $cluster.gitops.addonsRepoSecretKey | default "eks-fleet-workshop-gitops-addons" }}
-    addonsRepoUrl: {{ $cluster.gitops.addonsRepoUrl | default "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop" }}
-    fleetRepoBasePath: {{ $cluster.gitops.fleetRepoBasePath | default "gitops/fleet/" }}
-    fleetRepoPath: {{ $cluster.gitops.fleetRepoPath | default "bootstrap" }}
-    fleetRepoRevision: {{ $cluster.gitops.fleetRepoRevision | default "HEAD" }}
-    fleetRepoSecretKey: {{ $cluster.gitops.fleetRepoSecretKey | default "eks-fleet-workshop-gitops-fleet" }}
-    fleetRepoUrl: {{ $cluster.gitops.fleetRepoUrl | default "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop" }}
-    platformRepoBasePath: {{ $cluster.gitops.platformRepoBasePath | default "gitops/platform/" }}
-    platformRepoPath: {{ $cluster.gitops.platformRepoPath | default "bootstrap" }}
-    platformRepoRevision: {{ $cluster.gitops.platformRepoRevision | default "HEAD" }}
-    platformRepoSecretKey: {{ $cluster.gitops.platformRepoSecretKey | default "eks-fleet-workshop-gitops-platform" }}
-    platformRepoUrl: {{ $cluster.gitops.platformRepoUrl | default "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop" }}
-    workloadRepoBasePath: {{ $cluster.gitops.workloadRepoBasePath | default "gitops/apps/" }}
-    workloadRepoPath: {{ $cluster.gitops.workloadRepoPath | default "" }}
-    workloadRepoRevision: {{ $cluster.gitops.workloadRepoRevision | default "HEAD" }}
-    workloadRepoSecretKey: {{ $cluster.gitops.workloadRepoSecretKey | default "eks-fleet-workshop-gitops-workloads" }}
-    workloadRepoUrl: {{ $cluster.gitops.workloadRepoUrl | default "https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop" }}
+    {{- toYaml $cluster.gitops | nindent 4 }}
+  {{- else }}
+  gitops: {}
+  {{- end }}
+  {{- if $cluster.addons }}
   addons:
-    adot_collector_namespace: {{ $cluster.addons.adot_collector_namespace | default "adot-collector-kubeprometheus" }}
-    adot_collector_service_account: {{ $cluster.addons.adot_collector_service_account | default "adot-collector-kubeprometheus" }}
-    external_dns_namespace: {{ $cluster.addons.external_dns_namespace | default "external-dns" }}
-    external_dns_service_account: {{ $cluster.addons.external_dns_service_account | default "external-dns-sa" }}
-    external_dns_policy: {{ $cluster.addons.external_dns_policy | default "sync" }}
-    external_secrets_namespace: {{ $cluster.addons.external_secrets_namespace | default "external-secrets" }}
-    external_secrets_service_account: {{ $cluster.addons.external_secrets_service_account | default "external-secrets-sa" }}
-    amp_endpoint_url: {{ $cluster.addons.amp_endpoint_url | default "" }}
+    {{- toYaml $cluster.addons | nindent 4 }}
+  {{- else }}
+  addons: {}
+  {{- end }}
 {{- end }}
