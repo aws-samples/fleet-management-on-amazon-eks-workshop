@@ -1,6 +1,0 @@
-logging:
-  encoding: console  # possible encodings are console and json
-  logLevel: 7        # default info
-  development: true # more human readable structure, enables stacktraces and removes log sampling
-api:
-  logging: true  

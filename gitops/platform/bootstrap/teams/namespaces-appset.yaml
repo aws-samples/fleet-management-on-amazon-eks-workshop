@@ -6,6 +6,9 @@ metadata:
 spec:
   syncPolicy:
     preserveResourcesOnDeletion: true
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error    
   generators:
   - matrix:
       generators:
@@ -16,17 +19,17 @@ spec:
           values:
             chart: teams
       - git:
-          repoURL: '{{metadata.annotations.platform_repo_url}}'
-          revision: '{{metadata.annotations.platform_repo_revision}}'
+          repoURL: '{{.metadata.annotations.platform_repo_url}}'
+          revision: '{{.metadata.annotations.platform_repo_revision}}'
           directories:
-            - path: '{{metadata.annotations.platform_repo_basepath}}teams/*'
+            - path: '{{.metadata.annotations.platform_repo_basepath}}teams/*'
 
   template:
     metadata:
-      name: 'namespaces-{{name}}-{{path.basename}}'
+      name: 'namespaces-{{.name}}-{{.path.basename}}'
       labels:
-        environment: '{{metadata.labels.environment}}'
-        team: '{{path.basename}}'
+        environment: '{{.metadata.labels.environment}}'
+        team: '{{.path.basename}}'
         workloads: 'true'
         namespaces: 'true'
       finalizers:
@@ -35,21 +38,21 @@ spec:
     spec:
       project: default
       source:
-        repoURL: '{{metadata.annotations.platform_repo_url}}'
-        path: '{{metadata.annotations.platform_repo_basepath}}charts/{{values.chart}}'
-        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+        repoURL: '{{.metadata.annotations.platform_repo_url}}'
+        path: '{{.metadata.annotations.platform_repo_basepath}}charts/{{values.chart}}'
+        targetRevision: '{{.metadata.annotations.platform_repo_revision}}'
         helm:
-          releaseName: '{{path.basename}}'
+          releaseName: '{{.path.basename}}'
           ignoreMissingValueFiles: true
           valueFiles:
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/defaults/namespaces/values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/clusters/{{metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/defaults/namespaces/values.yaml'
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/environments/{{metadata.labels.environment}}/namespaces/values.yaml'            
-            - '$values/{{metadata.annotations.platform_repo_basepath}}teams/{{path.basename}}/tenants/{{metadata.labels.tenant}}/clusters/{{metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/defaults/namespaces/values.yaml'
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/environments/{{.metadata.labels.environment}}/namespaces/values.yaml'            
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/clusters/{{.metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/tenants/{{.metadata.labels.tenant}}/defaults/namespaces/values.yaml'
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/namespaces/values.yaml'            
+            - '$values/{{.metadata.annotations.platform_repo_basepath}}teams/{{.path.basename}}/tenants/{{.metadata.labels.tenant}}/clusters/{{.metadata.labels.aws_cluster_name}}/namespaces/values.yaml'
       destination:
-        name: '{{name}}'
+        name: '{{.name}}'
       syncPolicy:
         automated:
           allowEmpty: true

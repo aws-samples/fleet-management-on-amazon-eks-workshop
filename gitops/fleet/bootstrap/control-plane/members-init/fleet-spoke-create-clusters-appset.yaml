@@ -20,8 +20,8 @@ spec:
     metadata:
       name: fleet-members-create
       labels:      
-        environment: '{{metadata.labels.environment}}'
-        tenant: '{{metadata.labels.tenant}}'
+        environment: '{{.metadata.labels.environment}}'
+        tenant: '{{.metadata.labels.tenant}}'
     spec:
       project: default
       sources:
@@ -32,8 +32,8 @@ spec:
           releaseName: 'kro-clusters'
           ignoreMissingValueFiles: true
           valueFiles:
-            - '$values/{{metadata.annotations.fleet_repo_basepath}}kro-values/{{path.basename}}/defaults/kro-clusters/values.yaml'
-            - '$values/{{metadata.annotations.fleet_repo_basepath}}kro-values/{{path.basename}}/tenants/{{metadata.labels.tenant}}/kro-clusters/values.yaml'
+            - '$values/{{.metadata.annotations.fleet_repo_basepath}}kro-values/{{.path.basename}}/defaults/kro-clusters/values.yaml'
+            - '$values/{{.metadata.annotations.fleet_repo_basepath}}kro-values/{{.path.basename}}/tenants/{{.metadata.labels.tenant}}/kro-clusters/values.yaml'
       destination:
         namespace: argocd
         name: '{{.name}}'
