@@ -1,16 +1,16 @@
 clusters:
 
-  cluster1:
-    accountId: "908546734614"
-    managementAccountId: "326864266654"
-    tenant: "seb1"
-    k8sVersion: "1.30"
-    domainName: "cluster2.mydomain.com"
-    gitops:
-      addonsRepoRevision: "centralized-argocd"
-      fleetRepoRevision: "centralized-argocd"
-      platformRepoRevision: "centralized-argocd"
-      workloadRepoRevision: "centralized-argocd"
+  # cluster1:
+  #   accountId: "908546734614"
+  #   managementAccountId: "326864266654"
+  #   tenant: "seb1"
+  #   k8sVersion: "1.30"
+  #   domainName: "cluster2.mydomain.com"
+  #   gitops:
+  #     addonsRepoRevision: "centralized-argocd"
+  #     fleetRepoRevision: "centralized-argocd"
+  #     platformRepoRevision: "centralized-argocd"
+  #     workloadRepoRevision: "centralized-argocd"
 
   cluster5:
     accountId: "418272784034"
