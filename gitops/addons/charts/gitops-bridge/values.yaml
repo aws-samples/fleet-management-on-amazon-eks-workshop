@@ -828,7 +828,6 @@ addons:
     namespace: '{{ default "kyverno" (index .metadata.annotations "kyverno_namespace")}}'
     chart: kyverno
     repoUrl: https://kyverno.github.io/kyverno
-    #targetRevision: "3.2.6"
     targetRevision: "3.3.4"
     selector:
       matchExpressions:

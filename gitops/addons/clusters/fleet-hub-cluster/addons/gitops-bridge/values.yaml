@@ -43,5 +43,5 @@ addons:
   ack_ec2:
     enabled: true
   ack_secretsmanager:
-    enabled: true 
+    enabled: true
 
