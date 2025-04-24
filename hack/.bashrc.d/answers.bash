@@ -115,7 +115,7 @@ function apps_default_kyverno_insights (){
 function custom_domain() {
   (
     set -e
-    set -x
+    #set -x
 
     # Check if both parameters are provided
     if [ -z "$1" ] || [ -z "$2" ]; then

@@ -13,8 +13,7 @@ spec:
     - clusters:
         selector:
           matchLabels:
-            #fleet_member: spoke
-            fleet_member: control-plane # SEB TODO: hub-spoke centralized vs distributed
+            fleet_member: spoke # control-plane # SEB TODO: hub-spoke centralized vs distributed
         values:
           bootstrap: bootstrap/members-manifests
   template:

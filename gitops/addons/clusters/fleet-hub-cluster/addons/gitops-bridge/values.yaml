@@ -1,47 +1,51 @@
-# values for the addon
 addons:
-  aws_load_balancer_controller:
+  ack_ec2:
+    enabled: false
+  ack_eks:
+    enabled: false
+  ack_iam:
+    enabled: false
+  ack_s3:
+    enabled: false
+  ack_secretsmanager:
+    enabled: false
+  adot_collector:
     enabled: true
+  argocd:
+    enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
   aws_ebs_csi_resources:
     enabled: true
-  metrics_server:
+  aws_load_balancer_controller:
     enabled: true
-  karpenter:
-    enabled: true
-  kyverno:
-    enabled: true
-  external_secrets:
+  cert_manager:
     enabled: true
   cni_metrics_helper:
     enabled: true
   cw_prometheus:
     enabled: true
+  eks_upgrade_insights_demo:
+    enabled: true
+  external_dns:
+    enabled: false
+  external_secrets:
+    enabled: true
   grafana_operator:
     enabled: true
-  argocd:
-    enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
-  prometheus_node_exporter:
+  karpenter:
     enabled: true
   kube_state_metrics:
     enabled: true
-  adot_collector:
+  kro:
+    enabled: false
+  kyverno:
+    enabled: true
+  kyverno_policies:
+    enabled: true
+  kyverno_policy_reporter:
+    enabled: true
+  metrics_server:
     enabled: true
   opentelemetry_operator:
     enabled: true
-  cert_manager:
+  prometheus_node_exporter:
     enabled: true
-  eks_upgrade_insights_demo:
-    enabled: true
-  kro:
-    enabled: true
-  ack_eks:
-    enabled: true
-  ack_s3:
-    enabled: true
-  ack_iam:
-    enabled: true
-  ack_ec2:
-    enabled: true
-  ack_secretsmanager:
-    enabled: true
-
