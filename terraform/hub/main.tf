@@ -127,6 +127,7 @@ locals {
     #local.oss_addons,
     { tenant = local.tenant },
     { fleet_member = local.fleet_member },
+    { install_argocd = "true" },
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
   )

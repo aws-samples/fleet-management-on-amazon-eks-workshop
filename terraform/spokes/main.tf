@@ -146,7 +146,8 @@ locals {
       adot_collector_namespace = local.adot_collector_namespace
       adot_collector_service_account = local.adot_collector_service_account
     },
-    try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
+    #try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
+    can(local.external_dns_addons_metadata) ? local.external_dns_addons_metadata : {}  # Will default to empty map if not defined
   )
 
   tags = {
