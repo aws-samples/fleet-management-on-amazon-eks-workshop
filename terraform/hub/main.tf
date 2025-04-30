@@ -287,7 +287,7 @@ module "gitops_bridge_bootstrap" {
 ################################################################################
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.16.3"
+  version = "~> 1.21.0"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
