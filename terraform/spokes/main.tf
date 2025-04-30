@@ -134,8 +134,8 @@ locals {
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
-      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
-      external_secrets_service_account_fleet = local.external_secrets.service_account
+      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet # is this used ?
+      external_secrets_service_account_fleet = local.external_secrets.service_account # is this used ?
     },
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
