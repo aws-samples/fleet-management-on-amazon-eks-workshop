@@ -148,10 +148,12 @@ function custom_domain() {
    
     echo "EKS Spoke cluster successfully deployed..."
 
-    echo "Configuring External-DNS addons"
+    echo "Configuring External-DNS addon"
 
-    echo "Adding domain name for frontend"
+    echo "Creating platform ApplicationSet for ArgoCD Ingress and Configure Domain Name in frontend ingress"
+    cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/platform/bootstrap/workloads/platform-apps.yaml" "$GITOPS_DIR/platform/bootstrap/workloads/platform-apps.yaml"
     cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/platform/bootstrap/workloads/web-store-frontend-appset.yaml" "$GITOPS_DIR/platform/bootstrap/workloads/web-store-frontend-appset.yaml"
+
     if [[ -n "$(git -C "$GITOPS_DIR/platform" status --porcelain)" ]]; then
         git -C "$GITOPS_DIR/platform" status
         git -C "$GITOPS_DIR/platform" diff | cat
@@ -165,6 +167,7 @@ function custom_domain() {
     echo "Adding ingress kustomization"
     cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/apps/frontend/ui/$ENVIRONMENT/ingress.yaml" "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/ingress.yaml"
     cp "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml" "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml"
+    cp -r "$WORKSHOP_DIR/gitops/solutions/module-custom-domain/gitops/apps/platform" "$GITOPS_DIR/apps/"
     if [[ -n "$(git -C "$GITOPS_DIR/apps" status --porcelain)" ]]; then
         git -C "$GITOPS_DIR/apps" status
         git -C "$GITOPS_DIR/apps" diff | cat
@@ -187,6 +190,19 @@ function custom_domain() {
     else
         echo "No changes to commit in addons repository"
     fi
+
+    echo "Removing Argocd Proxy configuration"
+    sed -i '/^[[:space:]]*params:/,+1 s/^/#/' code $GITOPS_DIR/addons/environments/staging/addons/argocd/values.yaml
+    if [[ -n "$(git -C "$GITOPS_DIR/addons" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/addons" status
+        git -C "$GITOPS_DIR/addons" diff | cat
+        git -C "$GITOPS_DIR/addons" add .
+        git -C "$GITOPS_DIR/addons" commit -m "Remove Argo CD proxy configuration"
+        git -C "$GITOPS_DIR/addons" push
+    else
+        echo "No changes to commit in addons repository"
+    fi
+
   )
 }
 

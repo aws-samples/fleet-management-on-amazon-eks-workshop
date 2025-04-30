@@ -12,7 +12,7 @@ addons:
   adot_collector:
     enabled: true
   argocd:
-    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-argocd ApplicationSet from the Hub Cluster https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/gitops/fleet/bootstrap/control-plane/members-init/addons-argo-cd-appset.yaml
+    enabled: false
   aws_ebs_csi_resources:
     enabled: true
   aws_load_balancer_controller:
@@ -26,9 +26,9 @@ addons:
   eks_upgrade_insights_demo:
     enabled: true
   external_dns:
-    enabled: tru
+    enabled: true # Activate external-dns for custom domain name
   external_secrets:
-    enabled: false # Disabled because is not deployed by the gitops-bridge helm chart and instead is deployed by the fleet-spoke-external-secrets ApplicationSet the Hub Cluster https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/blob/riv24/gitops/fleet/bootstrap/control-plane/members-init/addons-aws-oss-external-secrets-appset.yaml
+    enabled: false
   grafana_operator:
     enabled: true
   karpenter:

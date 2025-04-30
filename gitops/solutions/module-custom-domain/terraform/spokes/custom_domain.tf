@@ -8,7 +8,6 @@ locals {
   external_dns = {
     namespace             = "external-dns"
     service_account       = "external-dns-sa"
-    namespace_fleet       = "argocd"
     hosted_zone_name      = var.hosted_zone_name
     policy                = "sync"
   }
@@ -77,11 +76,6 @@ module "external_dns_pod_identity" {
     addon = {
       cluster_name    = module.eks.cluster_name
       namespace       = local.external_dns.namespace
-      service_account = local.external_dns.service_account
-    },
-    fleet = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = local.external_dns.namespace_fleet
       service_account = local.external_dns.service_account
     }
   }
