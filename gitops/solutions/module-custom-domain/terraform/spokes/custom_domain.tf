@@ -64,7 +64,7 @@ module "acm" {
 ################################################################################
 module "external_dns_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 1.11.0"
 
   name = "external-dns"
 

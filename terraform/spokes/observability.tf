@@ -57,7 +57,7 @@ resource "aws_prometheus_scraper" "fleet-scraper" {
 
 module "adot_collector_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 1.11.0"
 
   name = "adot-collector"
 

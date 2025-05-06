@@ -3,7 +3,7 @@
 ################################################################################
 module "external_secrets_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
 
   name = "external-secrets"
 
@@ -35,7 +35,7 @@ module "external_secrets_pod_identity" {
 ################################################################################
 module "aws_cloudwatch_observability_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
 
   name = "aws-cloudwatch-observability"
 
@@ -58,7 +58,7 @@ module "aws_cloudwatch_observability_pod_identity" {
 ################################################################################
 module "kyverno_policy_reporter_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
 
   name = "kyverno-policy-reporter"
 
@@ -83,7 +83,7 @@ module "kyverno_policy_reporter_pod_identity" {
 ################################################################################
 module "aws_ebs_csi_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
 
   name = "aws-ebs-csi"
 
@@ -107,7 +107,7 @@ module "aws_ebs_csi_pod_identity" {
 ################################################################################
 module "aws_lb_controller_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
 
   name = "aws-lbc"
 
@@ -178,7 +178,7 @@ resource "aws_iam_policy" "cni_metrics_helper_pod_identity_policy" {
 
 module "cni_metrics_helper_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.10.0"
+  version = "~> 1.11.0"
   name = "cni-metrics-helper-${terraform.workspace}"
 
   additional_policy_arns = {
