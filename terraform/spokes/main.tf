@@ -113,7 +113,8 @@ locals {
     #local.aws_addons,
     #local.oss_addons,
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name }
+    { aws_cluster_name = module.eks.cluster_name },
+    { install_argocd = "true" },
   )
 
   addons_metadata = merge(
@@ -145,7 +146,9 @@ locals {
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
       adot_collector_service_account = local.adot_collector_service_account
-    }
+    },
+    #try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
+    #can(local.external_dns_addons_metadata) ? local.external_dns_addons_metadata : {}  # Will default to empty map if not defined
   )
 
   tags = {
@@ -244,7 +247,7 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.23.0"
+  version = "~> 20.36.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version

@@ -1,0 +1,51 @@
+addons:
+  ack_ec2:
+    enabled: false
+  ack_eks:
+    enabled: false
+  ack_iam:
+    enabled: false
+  ack_s3:
+    enabled: false
+  ack_secretsmanager:
+    enabled: false
+  adot_collector:
+    enabled: true
+  argocd:
+    enabled: false
+  aws_ebs_csi_resources:
+    enabled: true
+  aws_load_balancer_controller:
+    enabled: true
+  cert_manager:
+    enabled: true
+  cni_metrics_helper:
+    enabled: true
+  cw_prometheus:
+    enabled: true
+  eks_upgrade_insights_demo:
+    enabled: true
+  external_dns:
+    enabled: true # Activate external-dns for custom domain name
+  external_secrets:
+    enabled: false
+  grafana_operator:
+    enabled: true
+  karpenter:
+    enabled: true
+  kube_state_metrics:
+    enabled: true
+  kro:
+    enabled: false
+  kyverno:
+    enabled: true
+  kyverno_policies:
+    enabled: true
+  kyverno_policy_reporter:
+    enabled: true
+  metrics_server:
+    enabled: true
+  opentelemetry_operator:
+    enabled: true
+  prometheus_node_exporter:
+    enabled: true
