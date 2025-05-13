@@ -99,11 +99,20 @@ def generate_eks_clusters_details(cluster_details):
     with open(
         cluster_details_filename, "w", newline="", encoding="utf-8"
     ) as detailsFile:
-        fieldnames = list(cluster_addon_data)
+        # Get all possible fields from all clusters to ensure we capture all addon fields
+        all_fields = set()
+        for cluster in cluster_details:
+            all_fields.update(cluster.keys())
+        
+        # Convert the set to a sorted list for consistent column ordering
+        fieldnames = sorted(list(all_fields))
+            
         writer = csv.DictWriter(detailsFile, fieldnames=fieldnames)
         writer.writeheader()
         for cluster in cluster_details:
-            writer.writerow(cluster)
+            # Ensure all fields exist in each row, with empty values for missing fields
+            row = {field: cluster.get(field, '') for field in fieldnames}
+            writer.writerow(row)
 
     s3_client.upload_file(
         cluster_details_filename,
