@@ -288,7 +288,7 @@ module "gitops_bridge_bootstrap" {
 ################################################################################
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.16.3"
+  version = "~> 1.21.0"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -327,7 +327,7 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.23.0"
+  version = "~> 20.36.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
