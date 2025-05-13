@@ -96,7 +96,7 @@ resource "aws_sns_topic_subscription" "fleet_alerts_sqs_target" {
 
 module "adot_collector_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 1.11.0"
 
   name = "adot-collector"
 
