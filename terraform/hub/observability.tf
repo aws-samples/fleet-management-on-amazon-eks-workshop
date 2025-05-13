@@ -110,7 +110,7 @@ module "adot_collector_pod_identity" {
     addon = {
       cluster_name = module.eks.cluster_name
       namespace       = local.adot_collector_namespace
-      service_account = local.adot_collector_serviceaccount
+      service_account = local.adot_collector_service_account
     }
   }
   tags = local.tags

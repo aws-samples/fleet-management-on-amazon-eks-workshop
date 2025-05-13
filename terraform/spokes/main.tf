@@ -38,7 +38,7 @@ locals {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
   adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"
+  adot_collector_service_account = "adot-collector-kubeprometheus"
 
   external_secrets = {
     namespace             = "external-secrets"
@@ -113,7 +113,8 @@ locals {
     #local.aws_addons,
     #local.oss_addons,
     { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name }
+    { aws_cluster_name = module.eks.cluster_name },
+    { install_argocd = "true" },
   )
 
   addons_metadata = merge(
@@ -133,8 +134,8 @@ locals {
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
-      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet
-      external_secrets_service_account_fleet = local.external_secrets.service_account
+      external_secrets_namespace_fleet = local.external_secrets.namespace_fleet # is this used ?
+      external_secrets_service_account_fleet = local.external_secrets.service_account # is this used ?
     },
     {
       aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
@@ -144,8 +145,10 @@ locals {
       # Opensource monitoring
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
-      adot_collector_serviceaccount = local.adot_collector_serviceaccount
-    }
+      adot_collector_service_account = local.adot_collector_service_account
+    },
+    #try(local.external_dns_addons_metadata, {})  # Will default to empty map if not defined
+    #can(local.external_dns_addons_metadata) ? local.external_dns_addons_metadata : {}  # Will default to empty map if not defined
   )
 
   tags = {
@@ -244,7 +247,7 @@ module "eks_blueprints_addons" {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.23.0"
+  version = "~> 20.36.0"
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version

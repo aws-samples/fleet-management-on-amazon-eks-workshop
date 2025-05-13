@@ -54,7 +54,7 @@ locals {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   argocd_namespace    = "argocd"
   adot_collector_namespace = "adot-collector-kubeprometheus"
-  adot_collector_serviceaccount = "adot-collector-kubeprometheus"
+  adot_collector_service_account = "adot-collector-kubeprometheus"
 
   external_secrets = {
     namespace       = "external-secrets"
@@ -127,6 +127,7 @@ locals {
     #local.oss_addons,
     { tenant = local.tenant },
     { fleet_member = local.fleet_member },
+    { install_argocd = "true" },
     { kubernetes_version = local.cluster_version },
     { aws_cluster_name = module.eks.cluster_name },
   )
@@ -190,7 +191,7 @@ locals {
       # Opensource monitoring
       amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
       adot_collector_namespace = local.adot_collector_namespace
-      adot_collector_serviceaccount = local.adot_collector_serviceaccount
+      adot_collector_service_account = local.adot_collector_service_account
     }
   )
 
