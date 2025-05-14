@@ -43,7 +43,7 @@ resource "aws_route53_record" "ns" {
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   domain_name = "${local.name}.${local.external_dns.hosted_zone_name}"
   zone_id     = aws_route53_zone.sub.zone_id
@@ -64,7 +64,7 @@ module "acm" {
 ################################################################################
 module "external_dns_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 1.11.0"
 
   name = "external-dns"
 
