@@ -192,7 +192,7 @@ function custom_domain() {
     fi
 
     echo "Removing Argocd Proxy configuration"
-    sed -i '/^[[:space:]]*params:/,+1 s/^/#/' code $GITOPS_DIR/addons/environments/staging/addons/argocd/values.yaml
+    sed -i '/^[[:space:]]*params:/,+1 s/^/#/' $GITOPS_DIR/addons/environments/staging/addons/argocd/values.yaml
     if [[ -n "$(git -C "$GITOPS_DIR/addons" status --porcelain)" ]]; then
         git -C "$GITOPS_DIR/addons" status
         git -C "$GITOPS_DIR/addons" diff | cat
@@ -206,6 +206,97 @@ function custom_domain() {
   )
 }
 
+function custom_domain_delete() {
+  (
+    set -e
+    #set -x
+
+    # Check if both parameters are provided
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Error: Both environment and domain parameters are required"
+        echo "Usage: custom_domain <environment> <domain-name>"
+        echo "Environment must be either 'staging' or 'prod'"
+        return 1
+    fi
+
+    local ENVIRONMENT="$1"
+    local DOMAIN_NAME="$2"
+
+    # Validate environment parameter
+    if [[ "$ENVIRONMENT" != "staging" && "$ENVIRONMENT" != "prod" ]]; then
+        echo "Error: Environment must be either 'staging' or 'prod'"
+        return 1
+    fi
+
+    # Check if the hosted zone exists in Route53
+    if ! aws route53 list-hosted-zones-by-name --dns-name "$DOMAIN_NAME." --max-items 1 | grep -q "\"Name\": \"$DOMAIN_NAME.\""; then
+        echo "Error: No Route53 hosted zone found for domain: $DOMAIN_NAME"
+        echo "Please ensure the domain exists as a public hosted zone in Route53"
+        return 1
+    fi
+
+    echo "Removing External-DNS addon configuration"
+
+    echo "Restore initial configuration removing platform ApplicationSet for ArgoCD Ingress and Configure Domain Name in frontend ingress"
+    rm "$GITOPS_DIR/platform/bootstrap/workloads/platform-apps.yaml" || true
+    cp "$WORKSHOP_DIR/gitops/platform/bootstrap/workloads/web-store-frontend-appset.yaml" "$GITOPS_DIR/platform/bootstrap/workloads/web-store-frontend-appset.yaml"
+
+    if [[ -n "$(git -C "$GITOPS_DIR/platform" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/platform" status
+        git -C "$GITOPS_DIR/platform" diff | cat
+        git -C "$GITOPS_DIR/platform" add .
+        git -C "$GITOPS_DIR/platform" commit -m "Deleting domain name for frontend"
+        git -C "$GITOPS_DIR/platform" push
+    else
+        echo "No changes to commit in platform repository"
+    fi
+
+    echo "Cleanup ingress kustomization"
+    rm "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/ingress.yaml" || true
+    cp "$WORKSHOP_DIR/gitops/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml" "$GITOPS_DIR/apps/frontend/ui/$ENVIRONMENT/kustomization.yaml"
+    rm -rf "$GITOPS_DIR/apps/platform" || true
+    if [[ -n "$(git -C "$GITOPS_DIR/apps" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/apps" status
+        git -C "$GITOPS_DIR/apps" diff | cat
+        git -C "$GITOPS_DIR/apps" add .
+        git -C "$GITOPS_DIR/apps" commit -m "Deleting ingress & kustomization"
+        git -C "$GITOPS_DIR/apps" push
+    else
+        echo "No changes to commit in apps repository"
+    fi
+
+    echo "Removing External DNS addon patch in ingress"
+    sed -i 's/external_dns:\n    enabled: true # Activate external-dns for custom domain name/external_dns:\n    enabled: false # Activate external-dns for custom domain name/' "$GITOPS_DIR/addons/clusters/fleet-spoke-$ENVIRONMENT/addons/gitops-bridge/values.yaml"
+    if [[ -n "$(git -C "$GITOPS_DIR/addons" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/addons" status
+        git -C "$GITOPS_DIR/addons" diff | cat
+        git -C "$GITOPS_DIR/addons" add .
+        git -C "$GITOPS_DIR/addons" commit -m "Removing External DNS addon patch in ingress"
+        git -C "$GITOPS_DIR/addons" push
+    else
+        echo "No changes to commit in addons repository"
+    fi
+
+    echo "Removing Argocd Proxy configuration"
+    sed -i '/^[[:space:]]*#[[:space:]]*params:/,+1 s/^[[:space:]]*#//' $GITOPS_DIR/addons/environments/staging/addons/argocd/values.yaml
+    if [[ -n "$(git -C "$GITOPS_DIR/addons" status --porcelain)" ]]; then
+        git -C "$GITOPS_DIR/addons" status
+        git -C "$GITOPS_DIR/addons" diff | cat
+        git -C "$GITOPS_DIR/addons" add .
+        git -C "$GITOPS_DIR/addons" commit -m "Remove Argo CD proxy configuration"
+        git -C "$GITOPS_DIR/addons" push
+    else
+        echo "No changes to commit in addons repository"
+    fi
+
+    echo "Removing the ability for EKS Spoke cluster to use domain $DOMAIN_NAME... this can take couple of minutes..."
+    rm "$WORKSHOP_DIR/terraform/spokes/custom_domain.tf" || true
+    export TF_VAR_hosted_zone_name="$DOMAIN_NAME"
+    $WORKSHOP_DIR/terraform/spokes/deploy.sh "$ENVIRONMENT"
+    echo "EKS Spoke cluster custom domain successfully removed..."
+
+  )
+}
 
 function validation_locust_ui(){
   nohup kubectl --context fleet-staging-cluster port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
