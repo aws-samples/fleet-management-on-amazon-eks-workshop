@@ -12,6 +12,7 @@
         "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "helm",
+      "registryUrlTemplate": "{{#if registryUrl}}{{registryUrl}}{{/if}}",
       "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ],
@@ -33,7 +34,7 @@
     },
     {
       "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-load-balancer-controller$", "^aws-cloudwatch-metrics$", "^aws-for-fluent-bit$", "^cni-metrics-helper$"],
+      "matchPackagePatterns": ["^aws-load-balancer-controller$", "^aws-cloudwatch-metrics$", "^aws-for-fluent-bit$", "^cni-metrics-helper$", "^aws-node-termination-handler$"],
       "registryUrls": ["https://aws.github.io/eks-charts"]
     },
     {
@@ -54,12 +55,12 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^karpenter$", "^karpenter/karpenter$"],
-      "registryUrls": ["https://charts.karpenter.sh"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-gateway-controller-chart$"],
-      "registryUrls": ["https://aws.github.io/aws-application-networking-k8s"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
@@ -75,11 +76,6 @@
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-fsx-csi-driver$"],
       "registryUrls": ["https://kubernetes-sigs.github.io/aws-fsx-csi-driver"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-node-termination-handler$"],
-      "registryUrls": ["https://aws.github.io/eks-charts"]
     },
     {
       "matchDatasources": ["helm"],
@@ -119,7 +115,7 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^crossplane$"],
-      "registryUrls": ["https://crossplane.github.io/charts"]
+      "registryUrls": ["https://charts.crossplane.io/stable"]
     },
     {
       "matchDatasources": ["helm"],
@@ -169,17 +165,17 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-controllers-k8s/.*$"],
-      "registryUrls": ["https://aws-controllers-k8s.github.io/charts"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^grafana/helm-charts/grafana-operator$"],
-      "registryUrls": ["https://grafana.github.io/helm-charts"]
+      "registryUrls": ["oci://ghcr.io"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^kro-run/kro/kro$"],
-      "registryUrls": ["https://kro-run.github.io/helm-charts"]
+      "registryUrls": ["oci://ghcr.io"]
     },
     {
       "matchDatasources": ["helm"],
