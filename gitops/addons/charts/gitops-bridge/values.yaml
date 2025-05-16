@@ -624,7 +624,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "aws_secrets_store_csi_driver_provider_namespace")}}'
     chart: secrets-store-csi-driver-provider-aws
     repoUrl: https://aws.github.io/secrets-store-csi-driver-provider-aws
-    targetRevision: "0.3.9"
+    targetRevision: "1.0.1"
     selector:
       matchExpressions:
         - key: enable_aws_secrets_store_csi_driver_provider
