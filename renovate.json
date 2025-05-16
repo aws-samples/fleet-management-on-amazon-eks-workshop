@@ -9,10 +9,18 @@
       "customType": "regex",
       "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
       "matchStrings": [
-        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: https://(?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "helm",
-      "registryUrlTemplate": "{{#if registryUrl}}{{registryUrl}}{{/if}}",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
+      "matchStrings": [
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>ghcr\\.io|public\\.ecr\\.aws)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
       "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ],
@@ -51,16 +59,6 @@
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-ebs-csi-classes$", "^aws-fargate-fluentbit$", "^crossplane-aws$", "^crossplane-aws-upbound$", "^crossplane-helm$", "^crossplane-kubernetes$"],
       "registryUrls": ["https://gitops-bridge-dev.github.io/gitops-bridge-helm-charts"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^karpenter$", "^karpenter/karpenter$"],
-      "registryUrls": ["oci://public.ecr.aws"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-gateway-controller-chart$"],
-      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
@@ -161,21 +159,6 @@
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^vpa$"],
       "registryUrls": ["https://charts.fairwinds.com/stable"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-controllers-k8s/.*$"],
-      "registryUrls": ["oci://public.ecr.aws"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^grafana/helm-charts/grafana-operator$"],
-      "registryUrls": ["oci://ghcr.io"]
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^kro-run/kro/kro$"],
-      "registryUrls": ["oci://ghcr.io"]
     },
     {
       "matchDatasources": ["helm"],
