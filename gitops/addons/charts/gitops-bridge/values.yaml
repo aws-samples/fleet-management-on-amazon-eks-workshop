@@ -738,7 +738,7 @@ addons:
     namespace: '{{ default "ingress-nginx" (index .metadata.annotations "ingress_nginx_namespace")}}'
     chart: ingress-nginx
     repoUrl: https://kubernetes.github.io/ingress-nginx
-    targetRevision: "4.11.1"
+    targetRevision: "4.12.2"
     selector:
       matchExpressions:
         - key: enable_ingress_nginx
