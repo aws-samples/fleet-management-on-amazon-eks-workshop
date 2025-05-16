@@ -552,7 +552,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "external_secrets_namespace") }}'
     chart: external-secrets
     repoUrl: https://charts.external-secrets.io
-    targetRevision: "0.10.0"
+    targetRevision: "0.17.0"
     selector:
       matchExpressions:
         - key: enable_external_secrets
