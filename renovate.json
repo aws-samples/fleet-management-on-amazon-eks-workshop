@@ -18,9 +18,20 @@
       "customType": "regex",
       "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
       "matchStrings": [
-        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>ghcr\\.io|public\\.ecr\\.aws)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>ghcr\\.io)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "docker",
+      "registryUrlTemplate": "https://ghcr.io",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
+      "matchStrings": [
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>public\\.ecr\\.aws)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "registryUrlTemplate": "https://public.ecr.aws",
       "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ],
