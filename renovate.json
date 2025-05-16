@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "enabledManagers": ["regex", "github-actions"],
+  "enabledManagers": ["custom.regex", "github-actions"],
   "customManagers": [
     {
       "customType": "regex",
@@ -12,8 +12,17 @@
         "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "helm",
-      "registryUrlTemplate": "{{#if registryUrl}}{{registryUrl}}{{/if}}",
       "extractVersionTemplate": "^v?(?<version>.*)$"
+    }
+  ],
+  "hostRules": [
+    {
+      "matchHost": "public.ecr.aws",
+      "hostType": "docker"
+    },
+    {
+      "matchHost": "ghcr.io",
+      "hostType": "docker"
     }
   ],
   "packageRules": [
@@ -44,8 +53,13 @@
     },
     {
       "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^karpenter/karpenter$", "^aws-gateway-controller-chart$"],
-      "registryUrls": ["oci://public.ecr.aws"]
+      "matchPackagePatterns": ["^karpenter$", "^karpenter/karpenter$"],
+      "registryUrls": ["https://charts.karpenter.sh"]
+    },
+    {
+      "matchDatasources": ["helm"],
+      "matchPackagePatterns": ["^aws-gateway-controller-chart$"],
+      "registryUrls": ["https://aws.github.io/aws-application-networking-k8s"]
     },
     {
       "matchDatasources": ["helm"],
@@ -155,17 +169,17 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-controllers-k8s/.*$"],
-      "registryUrls": ["oci://public.ecr.aws"]
+      "registryUrls": ["https://aws-controllers-k8s.github.io/charts"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^grafana/helm-charts/grafana-operator$"],
-      "registryUrls": ["oci://ghcr.io"]
+      "registryUrls": ["https://grafana.github.io/helm-charts"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^kro-run/kro/kro$"],
-      "registryUrls": ["oci://ghcr.io"]
+      "registryUrls": ["https://kro-run.github.io/helm-charts"]
     },
     {
       "matchDatasources": ["helm"],
