@@ -1078,7 +1078,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_rds_namespace")}}'
     chart: aws-controllers-k8s/rds-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.4.9"
+    targetRevision: "1.4.18"
     selector:
       matchExpressions:
         - key: enable_ack_rds
