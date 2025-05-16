@@ -75,7 +75,7 @@ addons:
     aws_load_balancer_controller:
     chart: aws-load-balancer-controller
     repoUrl: https://aws.github.io/eks-charts
-    targetRevision: "1.11.0"
+    targetRevision: "1.13.2"
     namespace: '{{ default "kube-system" (index .metadata.annotations "aws_load_balancer_controller_namespace") }}'
     annotationsAppSet:
       argocd.argoproj.io/sync-wave: '-1'
