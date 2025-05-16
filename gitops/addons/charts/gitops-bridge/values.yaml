@@ -348,7 +348,7 @@ addons:
     namespace: '{{ default "argo-worflows" (index .metadata.annotations "argo_workflows_namespace") }}'
     chart: argo-workflows
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "0.41.14"
+    targetRevision: "0.45.15"
     selector:
       matchExpressions:
         - key: enable_aws_argo_workflows_ingress
@@ -660,7 +660,7 @@ addons:
     namespace: '{{ default "argo-workflows" (index .metadata.annotations "argo_workflows_namespace")}}'
     chart: argo-workflows
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "0.41.14"
+    targetRevision: "0.45.15"
     selector:
       matchExpressions:
         - key: enable_argo_workflows
