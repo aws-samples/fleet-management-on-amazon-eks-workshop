@@ -9,7 +9,7 @@
       "customType": "regex",
       "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
       "matchStrings": [
-        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?:[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "{{#if registryUrl}}{{registryUrl}}{{/if}}",
