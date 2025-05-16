@@ -268,7 +268,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "aws_for_fluentbit_namespace") }}'
     chart: aws-for-fluent-bit
     repoUrl: https://aws.github.io/eks-charts
-    targetRevision: "0.1.34"
+    targetRevision: "0.1.35"
     selector:
       matchExpressions:
         - key: enable_aws_for_fluentbit
