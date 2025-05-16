@@ -648,7 +648,7 @@ addons:
     namespace: '{{ default "argo-rollouts" (index .metadata.annotations "argo_rollouts_namespace")}}'
     chart: argo-rollouts
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "2.37.3"
+    targetRevision: "2.39.5"
     selector:
       matchExpressions:
         - key: enable_argo_rollouts
