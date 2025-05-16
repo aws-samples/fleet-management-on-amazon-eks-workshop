@@ -9,7 +9,7 @@
       "customType": "regex",
       "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
       "matchStrings": [
-        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?:[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
+        "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "{{#if registryUrl}}{{registryUrl}}{{/if}}",
@@ -55,12 +55,12 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^karpenter$", "^karpenter/karpenter$"],
-      "registryUrls": ["https://charts.karpenter.sh"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-gateway-controller-chart$"],
-      "registryUrls": ["https://aws.github.io/aws-application-networking-k8s"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
@@ -165,17 +165,17 @@
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^aws-controllers-k8s/.*$"],
-      "registryUrls": ["https://aws-controllers-k8s.github.io/charts"]
+      "registryUrls": ["oci://public.ecr.aws"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^grafana/helm-charts/grafana-operator$"],
-      "enabled": false
+      "registryUrls": ["oci://ghcr.io"]
     },
     {
       "matchDatasources": ["helm"],
       "matchPackagePatterns": ["^kro-run/kro/kro$"],
-      "enabled": false
+      "registryUrls": ["oci://ghcr.io"]
     },
     {
       "matchDatasources": ["helm"],
