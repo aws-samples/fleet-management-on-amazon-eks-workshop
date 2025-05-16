@@ -902,7 +902,7 @@ addons:
     namespace: '{{ default "prometheus-adapter" (index .metadata.annotations "prometheus_adapter_namespace")}}'
     chart: prometheus-adapter
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "4.10.0"
+    targetRevision: "4.14.1"
     selector:
       matchExpressions:
         - key: enable_prometheus_adapter
