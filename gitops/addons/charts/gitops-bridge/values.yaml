@@ -455,7 +455,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "cluster_autoscaler_namespace") }}'
     chart: cluster-autoscaler
     repoUrl: https://kubernetes.github.io/autoscaler
-    targetRevision: "9.37.0"
+    targetRevision: "9.46.6"
     selector:
       matchExpressions:
         - key: enable_cluster_autoscaler
