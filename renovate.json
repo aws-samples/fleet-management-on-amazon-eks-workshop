@@ -4,10 +4,10 @@
     "config:recommended"
   ],
   "helm-values": {
-    "fileMatch": [
-      "gitops/addons/charts/resources/kyverno/values\\.yaml$",
-      "validation-frameworks/helm/locust/values\\.yaml$",
-      "gitops/addons/charts/gitops-bridge/values\\.yaml$"
+    "managerFilePatterns": [
+      "/gitops/addons/charts/resources/kyverno/values\\.yaml$/",
+      "/validation-frameworks/helm/locust/values\\.yaml$/",
+      "/gitops/addons/charts/gitops-bridge/values\\.yaml$/"
     ]
   }
 }
