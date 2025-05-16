@@ -750,7 +750,7 @@ addons:
     namespace: '{{ default "keda" (index .metadata.annotations "keda_namespace")}}'
     chart: keda
     repoUrl: https://kedacore.github.io/charts
-    targetRevision: "2.15.0"
+    targetRevision: "2.17.1"
     selector:
       matchExpressions:
         - key: enable_keda
