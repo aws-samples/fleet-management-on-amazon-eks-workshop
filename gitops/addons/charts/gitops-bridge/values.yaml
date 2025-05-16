@@ -108,7 +108,7 @@ addons:
     namespace: gatekeeper-system
     chart: gatekeeper
     repoUrl: https://open-policy-agent.github.io/gatekeeper/charts
-    targetRevision: "3.16.3"
+    targetRevision: "3.19.1"
     selector:
       matchExpressions:
         - key: enable_gatekeeper
