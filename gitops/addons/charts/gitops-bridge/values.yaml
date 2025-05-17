@@ -586,7 +586,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "velero_namespace") }}'
     chart: velero
     repoUrl: https://vmware-tanzu.github.io/helm-charts
-    targetRevision: "7.1.4"
+    targetRevision: "9.1.2"
     selector:
       matchExpressions:
         - key: enable_velero
