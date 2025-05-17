@@ -1138,7 +1138,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_eks_namespace")}}'
     chart: aws-controllers-k8s/eks-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.6.0"
+    targetRevision: "1.7.2"
     selector:
       matchExpressions:
         - key: enable_ack_eks
