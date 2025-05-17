@@ -128,7 +128,7 @@ addons:
     metrics_server:
     chart: metrics-server
     repoUrl: https://kubernetes-sigs.github.io/metrics-server
-    targetRevision: "3.12.1"
+    targetRevision: "3.12.2"
     selector:
       matchExpressions:
         - key: enable_metrics_server
