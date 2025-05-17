@@ -966,7 +966,7 @@ addons:
     namespace: '{{ default "vpa" (index .metadata.annotations "vpa_namespace")}}'
     chart: vpa
     repoUrl: https://charts.fairwinds.com/stable
-    targetRevision: "4.5.0"
+    targetRevision: "4.7.2"
     selector:
       matchExpressions:
         - key: enable_vpa
