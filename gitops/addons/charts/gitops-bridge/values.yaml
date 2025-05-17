@@ -187,7 +187,7 @@ addons:
     namespace: volcano-system
     chart: volcano
     repoUrl: https://volcano-sh.github.io/helm-charts
-    targetRevision: "1.9.0"
+    targetRevision: "1.11.2"
     selector:
       matchExpressions:
         - key: enable_volcano
