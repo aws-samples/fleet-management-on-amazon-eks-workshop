@@ -1018,7 +1018,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_prometheusservice_namespace")}}'
     chart: aws-controllers-k8s/prometheusservice-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.2.18"
+    targetRevision: "1.2.23"
     selector:
       matchExpressions:
         - key: enable_ack_prometheusservice
