@@ -914,7 +914,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "cni_metrics_helper_namespace")}}'
     chart: cni-metrics-helper
     repoUrl: https://aws.github.io/eks-charts
-    targetRevision: "1.19.2"
+    targetRevision: "1.19.5"
     values:
       env:
         AWS_CLUSTER_ID: '{{.metadata.annotations.aws_cluster_name}}'
