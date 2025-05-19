@@ -381,7 +381,7 @@ addons:
     namespace: '{{ default "argocd" (index .metadata.annotations "aws_argocd_namespace") }}'
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.3"
+    targetRevision: "8.0.4"
     selector:
       matchExpressions:
         - key: enable_aws_argocd
@@ -403,7 +403,7 @@ addons:
     namespace: '{{ default "argocd" (index .metadata.annotations "aws_argocd_ingress_namespace") }}'
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.3"
+    targetRevision: "8.0.4"
     selector:
       matchExpressions:
         - key: enable_aws_argocd_ingress
