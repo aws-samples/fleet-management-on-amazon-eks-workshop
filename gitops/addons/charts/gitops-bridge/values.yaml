@@ -63,7 +63,7 @@ addons:
     namespace: argocd
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.3"
+    targetRevision: "8.0.4"
     selector:
       matchExpressions:
         - key: enable_argocd
@@ -751,7 +751,7 @@ addons:
     namespace: '{{ default "ingress-nginx" (index .metadata.annotations "ingress_nginx_namespace")}}'
     chart: ingress-nginx
     repoUrl: https://kubernetes.github.io/ingress-nginx
-    targetRevision: "4.11.1"
+    targetRevision: "4.12.2"
     selector:
       matchExpressions:
         - key: enable_ingress_nginx
@@ -764,7 +764,7 @@ addons:
     namespace: '{{ default "keda" (index .metadata.annotations "keda_namespace")}}'
     chart: keda
     repoUrl: https://kedacore.github.io/charts
-    targetRevision: "2.15.0"
+    targetRevision: "2.17.1"
     selector:
       matchExpressions:
         - key: enable_keda
@@ -777,7 +777,7 @@ addons:
     namespace: '{{ default "kube-prometheus-stack" (index .metadata.annotations "kube_prometheus_stack_namespace")}}'
     chart: kube-prometheus-stack
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "72.4.0"
+    targetRevision: "72.5.0"
     selector:
       matchExpressions:
         - key: enable_kube_prometheus_stack
@@ -946,7 +946,7 @@ addons:
     namespace: '{{ default "kube-prometheus-stack" (index .metadata.annotations "kube_state_metrics_namespace")}}'
     chart: kube-state-metrics
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "5.25.1"
+    targetRevision: "5.33.1"
     selector:
       matchExpressions:
         - key: enable_kube_state_metrics
@@ -1246,7 +1246,7 @@ addons:
     namespace: kro
     chart: kro-run/kro/kro
     repoUrl: ghcr.io
-    targetRevision: "0.2.0"
+    targetRevision: "0.2.3"
     selector:
       matchExpressions:
         - key: enable_kro
