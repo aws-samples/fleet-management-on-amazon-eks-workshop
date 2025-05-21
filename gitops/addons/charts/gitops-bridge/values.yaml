@@ -809,7 +809,7 @@ addons:
     namespace: "opentelemetry-operator-system"
     chart: opentelemetry-operator
     repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
-    targetRevision: "0.88.6"
+    targetRevision: "0.88.7"
     values:
       manager:
         collectorImage:
