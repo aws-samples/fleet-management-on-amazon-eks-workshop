@@ -693,7 +693,7 @@ addons:
     namespace: '{{ default "crossplane-system" (index .metadata.annotations "crossplane_namespace")}}'
     chart: crossplane
     repoUrl: https://crossplane.github.io/charts
-    targetRevision: "1.19.1"
+    targetRevision: "1.20.0"
     selector:
       matchExpressions:
         - key: enable_crossplane
