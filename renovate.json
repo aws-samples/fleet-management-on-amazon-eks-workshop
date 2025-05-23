@@ -3,11 +3,16 @@
   "extends": [
     "config:recommended"
   ],
-  "enabledManagers": ["custom.regex", "github-actions"],
+  "enabledManagers": [
+    "custom.regex",
+    "github-actions"
+  ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
+      "managerFilePatterns": [
+        "/gitops/addons/charts/gitops-bridge/values\\.yaml$/"
+      ],
       "matchStrings": [
         "chart: (?<depName>[^\\s]+)\\s+repoUrl: https://(?<registryUrl>[^\\s]+)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
@@ -16,7 +21,9 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
+      "managerFilePatterns": [
+        "/gitops/addons/charts/gitops-bridge/values\\.yaml$/"
+      ],
       "matchStrings": [
         "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>ghcr\\.io)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
@@ -26,7 +33,9 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["gitops/addons/charts/gitops-bridge/values\\.yaml$"],
+      "managerFilePatterns": [
+        "/gitops/addons/charts/gitops-bridge/values\\.yaml$/"
+      ],
       "matchStrings": [
         "chart: (?<depName>[^\\s]+)\\s+repoUrl: (?<registryUrl>public\\.ecr\\.aws)\\s+targetRevision: \"?(?<currentValue>[0-9][0-9\\.]+)\"?"
       ],
@@ -47,139 +56,316 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^argo-cd$"],
-      "registryUrls": ["https://argoproj.github.io/argo-helm"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://argoproj.github.io/argo-helm"
+      ],
+      "matchPackageNames": [
+        "/^argo-cd$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-load-balancer-controller$", "^aws-cloudwatch-metrics$", "^aws-for-fluent-bit$", "^cni-metrics-helper$", "^aws-node-termination-handler$"],
-      "registryUrls": ["https://aws.github.io/eks-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://aws.github.io/eks-charts"
+      ],
+      "matchPackageNames": [
+        "/^aws-load-balancer-controller$/",
+        "/^aws-cloudwatch-metrics$/",
+        "/^aws-for-fluent-bit$/",
+        "/^cni-metrics-helper$/",
+        "/^aws-node-termination-handler$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^gatekeeper$"],
-      "registryUrls": ["https://open-policy-agent.github.io/gatekeeper/charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://open-policy-agent.github.io/gatekeeper/charts"
+      ],
+      "matchPackageNames": [
+        "/^gatekeeper$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^metrics-server$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/metrics-server"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/metrics-server"
+      ],
+      "matchPackageNames": [
+        "/^metrics-server$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-ebs-csi-classes$", "^aws-fargate-fluentbit$", "^crossplane-aws$", "^crossplane-aws-upbound$", "^crossplane-helm$", "^crossplane-kubernetes$"],
-      "registryUrls": ["https://gitops-bridge-dev.github.io/gitops-bridge-helm-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://gitops-bridge-dev.github.io/gitops-bridge-helm-charts"
+      ],
+      "matchPackageNames": [
+        "/^aws-ebs-csi-classes$/",
+        "/^aws-fargate-fluentbit$/",
+        "/^crossplane-aws$/",
+        "/^crossplane-aws-upbound$/",
+        "/^crossplane-helm$/",
+        "/^crossplane-kubernetes$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^volcano$"],
-      "registryUrls": ["https://volcano-sh.github.io/helm-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://volcano-sh.github.io/helm-charts"
+      ],
+      "matchPackageNames": [
+        "/^volcano$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-efs-csi-driver$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/aws-efs-csi-driver"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/aws-efs-csi-driver"
+      ],
+      "matchPackageNames": [
+        "/^aws-efs-csi-driver$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-fsx-csi-driver$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/aws-fsx-csi-driver"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/aws-fsx-csi-driver"
+      ],
+      "matchPackageNames": [
+        "/^aws-fsx-csi-driver$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^argo-workflows$", "^argo-events$", "^argo-rollouts$"],
-      "registryUrls": ["https://argoproj.github.io/argo-helm"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://argoproj.github.io/argo-helm"
+      ],
+      "matchPackageNames": [
+        "/^argo-workflows$/",
+        "/^argo-events$/",
+        "/^argo-rollouts$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^cluster-autoscaler$"],
-      "registryUrls": ["https://kubernetes.github.io/autoscaler"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes.github.io/autoscaler"
+      ],
+      "matchPackageNames": [
+        "/^cluster-autoscaler$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^external-dns$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/external-dns"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/external-dns"
+      ],
+      "matchPackageNames": [
+        "/^external-dns$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^external-secrets$"],
-      "registryUrls": ["https://charts.external-secrets.io"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://charts.external-secrets.io"
+      ],
+      "matchPackageNames": [
+        "/^external-secrets$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^velero$"],
-      "registryUrls": ["https://vmware-tanzu.github.io/helm-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://vmware-tanzu.github.io/helm-charts"
+      ],
+      "matchPackageNames": [
+        "/^velero$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^secrets-store-csi-driver-provider-aws$"],
-      "registryUrls": ["https://aws.github.io/secrets-store-csi-driver-provider-aws"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://aws.github.io/secrets-store-csi-driver-provider-aws"
+      ],
+      "matchPackageNames": [
+        "/^secrets-store-csi-driver-provider-aws$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^cluster-proportional-autoscaler$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/cluster-proportional-autoscaler"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/cluster-proportional-autoscaler"
+      ],
+      "matchPackageNames": [
+        "/^cluster-proportional-autoscaler$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^crossplane$"],
-      "registryUrls": ["https://charts.crossplane.io/stable"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://charts.crossplane.io/stable"
+      ],
+      "matchPackageNames": [
+        "/^crossplane$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^gpu-operator$"],
-      "registryUrls": ["https://nvidia.github.io/gpu-operator"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://nvidia.github.io/gpu-operator"
+      ],
+      "matchPackageNames": [
+        "/^gpu-operator$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^ingress-nginx$"],
-      "registryUrls": ["https://kubernetes.github.io/ingress-nginx"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes.github.io/ingress-nginx"
+      ],
+      "matchPackageNames": [
+        "/^ingress-nginx$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^keda$"],
-      "registryUrls": ["https://kedacore.github.io/charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kedacore.github.io/charts"
+      ],
+      "matchPackageNames": [
+        "/^keda$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^kube-prometheus-stack$", "^prometheus-adapter$", "^kube-state-metrics$", "^prometheus-node-exporter$"],
-      "registryUrls": ["https://prometheus-community.github.io/helm-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://prometheus-community.github.io/helm-charts"
+      ],
+      "matchPackageNames": [
+        "/^kube-prometheus-stack$/",
+        "/^prometheus-adapter$/",
+        "/^kube-state-metrics$/",
+        "/^prometheus-node-exporter$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^opentelemetry-operator$"],
-      "registryUrls": ["https://open-telemetry.github.io/opentelemetry-helm-charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://open-telemetry.github.io/opentelemetry-helm-charts"
+      ],
+      "matchPackageNames": [
+        "/^opentelemetry-operator$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^kyverno$", "^kyverno-policies$"],
-      "registryUrls": ["https://kyverno.github.io/kyverno"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kyverno.github.io/kyverno"
+      ],
+      "matchPackageNames": [
+        "/^kyverno$/",
+        "/^kyverno-policies$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^policy-reporter$"],
-      "registryUrls": ["https://kyverno.github.io/policy-reporter"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kyverno.github.io/policy-reporter"
+      ],
+      "matchPackageNames": [
+        "/^policy-reporter$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^secrets-store-csi-driver$"],
-      "registryUrls": ["https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+      ],
+      "matchPackageNames": [
+        "/^secrets-store-csi-driver$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^vpa$"],
-      "registryUrls": ["https://charts.fairwinds.com/stable"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://charts.fairwinds.com/stable"
+      ],
+      "matchPackageNames": [
+        "/^vpa$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^cert-manager$"],
-      "registryUrls": ["https://charts.jetstack.io"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://charts.jetstack.io"
+      ],
+      "matchPackageNames": [
+        "/^cert-manager$/"
+      ]
     },
     {
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["^aws-privateca-issuer$"],
-      "registryUrls": ["https://cert-manager.github.io/aws-privateca-issuer"]
+      "matchDatasources": [
+        "helm"
+      ],
+      "registryUrls": [
+        "https://cert-manager.github.io/aws-privateca-issuer"
+      ],
+      "matchPackageNames": [
+        "/^aws-privateca-issuer$/"
+      ]
     }
   ]
 }
