@@ -1246,7 +1246,7 @@ addons:
     namespace: kro
     chart: kro-run/kro/kro
     repoUrl: ghcr.io
-    targetRevision: "0.2.3"
+    targetRevision: "0.3.0"
     selector:
       matchExpressions:
         - key: enable_kro
