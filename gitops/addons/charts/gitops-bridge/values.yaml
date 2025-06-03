@@ -959,7 +959,7 @@ addons:
     namespace: '{{ default "kube-prometheus-stack" (index .metadata.annotations "prometheus_node_exporter_namespace")}}'
     chart: prometheus-node-exporter
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "4.46.0"
+    targetRevision: "4.47.0"
     selector:
       matchExpressions:
         - key: enable_prometheus_node_exporter
