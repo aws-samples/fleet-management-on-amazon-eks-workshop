@@ -1,0 +1,7 @@
+clusters:
+  # cluster-test: "MANAGEMENT_ACCOUNT_ID"
+  # cluster-pre-prod: "MANAGEMENT_ACCOUNT_ID"
+  # cluster-prod-eu: "MANAGEMENT_ACCOUNT_ID"
+  # cluster-prod-us: "MANAGEMENT_ACCOUNT_ID"
+  # workload-cluster1: "012345678910" # AWS account for workload cluster 1
+  # workload-cluster2: "123456789101" # AWS account for workload cluster 2
