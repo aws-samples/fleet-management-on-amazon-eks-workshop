@@ -29,7 +29,7 @@
 #   - Access to the EKS clusters (run eks-cluster-access-setup.sh first)
 #
 # OUTPUT:
-#   - HTML dashboard file at /home/ec2-user/environment/eks-cluster-mgmt/scripts/dashboard.html
+#   - HTML dashboard file at /home/ec2-user/environment/dashboard.html
 #
 #############################################################################
 
@@ -54,7 +54,7 @@ if [ "$MANUAL_MODE" = true ]; then
 fi
 
 # Path to output HTML file
-OUTPUT_HTML="/home/ec2-user/environment/eks-cluster-mgmt/scripts/dashboard.html"
+OUTPUT_HTML="$WORKSPACE_PATH/dashboard.html"
 
 # Temporary file to store cluster information
 TEMP_FILE="/tmp/cluster_info.json"

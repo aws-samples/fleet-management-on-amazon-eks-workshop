@@ -49,7 +49,7 @@ print_step "Generating multi-cluster dashboard..."
 "$SCRIPT_DIR/multi-cluster-dashboard-generator.sh"
 
 # The dashboard is generated in the original location
-DASHBOARD_PATH="/home/ec2-user/environment/eks-cluster-mgmt/scripts/dashboard.html"
+DASHBOARD_PATH="$WORKSPACE_PATH/dashboard.html"
 
 print_success "EKS cluster access configuration completed."
 print_info "You can now access all clusters using kubectl."

@@ -8,7 +8,7 @@
 #   This script performs the initial setup for the EKS cluster management
 #   environment. It:
 #   1. Creates a local Git repository for EKS cluster management
-#   2. Copies example files from the KRO repository
+#   2. Copies example files from the pattern repository
 #   3. Updates configuration with the management account ID
 #   4. Creates the management cluster using Terraform
 #
@@ -17,8 +17,7 @@
 #
 # PREREQUISITES:
 #   - Environment variables must be set:
-#     - KRO_REPO_URL: URL of the KRO repository
-#     - KRO_REPO_BRANCH: Branch to use from the KRO repository
+#     - PATTERN_FULL_PATH: path of the pattern folder
 #     - WORKSPACE_PATH: Path to the workspace directory
 #     - WORKING_REPO: Name of the working repository
 #     - GIT_USERNAME: Git username for commits
@@ -47,8 +46,8 @@ git config --global user.name "$GIT_USERNAME"
 
 git init -b main
 
-print_info "Copying example files from KRO repository"
-cp -r $WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/* $WORKSPACE_PATH/$WORKING_REPO/
+print_info "Copying example files from pattern repository"
+cp -r $PATTERN_FULL_PATH/* $WORKSPACE_PATH/$WORKING_REPO/
 
 git add .
 git commit -q -m "initial commit" || true
