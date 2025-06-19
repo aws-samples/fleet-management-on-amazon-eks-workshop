@@ -41,8 +41,8 @@ aws cloudformation describe-stacks --stack-name ide-stack --query "Stacks[0].Out
 
 ```sh
 cat << EOF > ~/environment/.envrc
-export PATTERN_REPO_URL="https://github.com/ybezsonov/fleet-management-on-amazon-eks-workshop.git"
-export PATTERN_REPO_BRANCH="ci"
+export PATTERN_REPO_URL="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop.git"
+# export PATTERN_REPO_BRANCH="riv24"
 export WORKSPACE_PATH="$HOME/environment" # the directory where repos will be cloned e.g. ~/environment
 export PATTERN_REPO_NAME="pattern_repo"
 export PATTERN_PATH="patterns/kro-eks-cluster-mgmt"
@@ -61,7 +61,7 @@ direnv allow
 
 ```sh
 git clone $PATTERN_REPO_URL $WORKSPACE_PATH/$PATTERN_REPO_NAME
-git -C $WORKSPACE_PATH/$PATTERN_REPO_NAME checkout $PATTERN_REPO_BRANCH
+# git -C $WORKSPACE_PATH/$PATTERN_REPO_NAME checkout $PATTERN_REPO_BRANCH
 ```
 
 ### Creating the Management cluster
