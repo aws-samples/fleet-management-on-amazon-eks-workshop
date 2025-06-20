@@ -41,7 +41,7 @@ print_step "Configuring spoke cluster accounts in Argo CD application for ACK co
 sed -i 's/MANAGEMENT_ACCOUNT_ID/'"$MGMT_ACCOUNT_ID"'/g' "$WORKSPACE_PATH/$WORKING_REPO/addons/tenants/tenant1/default/addons/multi-acct/values.yaml"
 
 print_step "Activating the account numbers"
-sed -i 's/# \(cluster-test: "[0-9]*"\)/\1/g; s/# \(cluster-pre-prod: "[0-9]*"\)/\1/g; s/# \(cluster-prod-eu: "[0-9]*"\)/\1/g; s/# \(cluster-prod-us: "[0-9]*"\)/\1/g' /home/ec2-user/environment/eks-cluster-mgmt/addons/tenants/tenant1/default/addons/multi-acct/values.yaml
+sed -i 's/# \(cluster-test: "[0-9]*"\)/\1/g; s/# \(cluster-pre-prod: "[0-9]*"\)/\1/g; s/# \(cluster-prod-eu: "[0-9]*"\)/\1/g; s/# \(cluster-prod-us: "[0-9]*"\)/\1/g' $WORKSPACE_PATH/$WORKING_REPO/addons/tenants/tenant1/default/addons/multi-acct/values.yaml
 
 print_info "Opening multi-acct values.yaml file for review"
 /usr/lib/code-server/bin/code-server $WORKSPACE_PATH/$WORKING_REPO/addons/tenants/tenant1/default/addons/multi-acct/values.yaml
@@ -85,7 +85,7 @@ s/^  # cluster-prod-eu:/  cluster-prod-eu:/g
 }
 /^  cluster-prod-eu:/,/^  # workload-cluster1:/ {
   /^  # workload-cluster1:/!s/^  #/  /g
-}' /home/ec2-user/environment/eks-cluster-mgmt/fleet/kro-values/tenants/tenant1/kro-clusters/values.yaml
+}' $WORKSPACE_PATH/$WORKING_REPO/fleet/kro-values/tenants/tenant1/kro-clusters/values.yaml
 
 print_info "Opening cluster values.yaml file for review"
 /usr/lib/code-server/bin/code-server $WORKSPACE_PATH/$WORKING_REPO/fleet/kro-values/tenants/tenant1/kro-clusters/values.yaml

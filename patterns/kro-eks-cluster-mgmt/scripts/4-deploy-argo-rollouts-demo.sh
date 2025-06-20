@@ -106,7 +106,7 @@ print_step "Cloning application source repository and building initial image"
 cd $WORKSPACE_PATH
 git clone https://github.com/argoproj/rollouts-demo.git
 cd rollouts-demo
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/build-rollouts-demo.sh
+$SCRIPTS/build-rollouts-demo.sh
 
 print_step "Checking the EKS Pod Identity association for kargo addon"
 aws eks list-pod-identity-associations --cluster-name hub-cluster | grep -A 3 "kargo-controller"

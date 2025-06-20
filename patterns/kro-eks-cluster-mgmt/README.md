@@ -41,29 +41,33 @@ aws cloudformation describe-stacks --stack-name ide-stack --query "Stacks[0].Out
 
 ```sh
 cat << EOF > ~/environment/.envrc
-export KRO_REPO_URL="https://github.com/ybezsonov/kro.git"
-export KRO_REPO_BRANCH="app-promo"
-export WORKING_REPO="eks-cluster-mgmt" # If you can avoid changing this, as you'll need to update in both terraform and gitops configurations
+export PATTERN_REPO_URL="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop.git"
+# export PATTERN_REPO_BRANCH="riv24"
+export WORKSPACE_PATH="$HOME/environment" # the directory where repos will be cloned e.g. ~/environment
+export PATTERN_REPO_NAME="pattern_repo"
+export PATTERN_PATH="patterns/kro-eks-cluster-mgmt"
+export PATTERN_FULL_PATH="$WORKSPACE_PATH/$PATTERN_REPO_NAME/$PATTERN_PATH"
+export SCRIPTS="$PATTERN_FULL_PATH/scripts"
+export WORKING_REPO="eks-cluster-mgmt" # Contains terraform and gitops configurations
 export TF_VAR_FILE="terraform.tfvars" # the name of terraform configuration file to use
 export MGMT_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account) # Or update to the AWS account to use for your management cluster
-export WORKSPACE_PATH="$HOME/environment" # the directory where repos will be cloned e.g. ~/environment
 export GIT_USERNAME=user1
 EOF
 #load env
 direnv allow
 ```
 
-2. Clone `kro` repository:
+2. Clone `pattern` repository:
 
 ```sh
-git clone $KRO_REPO_URL $WORKSPACE_PATH/kro
-git -C $WORKSPACE_PATH/kro checkout $KRO_REPO_BRANCH
+git clone $PATTERN_REPO_URL $WORKSPACE_PATH/$PATTERN_REPO_NAME
+# git -C $WORKSPACE_PATH/$PATTERN_REPO_NAME checkout $PATTERN_REPO_BRANCH
 ```
 
 ### Creating the Management cluster
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/0-initial-setup.sh
+$SCRIPTS/0-initial-setup.sh
 ```
 
 Review the terraform changes and accept to deploy.
@@ -75,7 +79,7 @@ Review the terraform changes and accept to deploy.
 We are using GitLab in our cluster, as source for our GitOps workflow, and are using Argo CD as GitOps tool.
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/1-argocd-gitlab-setup.sh
+$SCRIPTS/1-argocd-gitlab-setup.sh
 direnv allow
 ```
 
@@ -113,7 +117,7 @@ In order for the management cluster to execute actions in the spoke AWS accounts
 - `eks-cluster-mgmt-iam`
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/2-bootstrap-accounts.sh
+$SCRIPTS/2-bootstrap-accounts.sh
 ```
 
 This script bootstraps the management and spoke AWS accounts for EKS
@@ -158,7 +162,7 @@ We use management account ID to deploy `test`, `pre-prod`, `prod-eu` and `prod-u
 This is automated by this script: 
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/3-create-spoke-clusters.sh
+$SCRIPTS/3-create-spoke-clusters.sh
 ```
 
 This script creates the spoke EKS clusters in different regions. It:
@@ -238,7 +242,7 @@ multi-acct-hub-cluster               Synced        Healthy
 ### Deploy Argo Rollouts Demo Application
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/4-deploy-argo-rollouts-demo.sh
+$SCRIPTS/4-deploy-argo-rollouts-demo.sh
 ```
 
 This script deploys the Argo Rollouts demo application to the EKS clusters. It performs the following steps:
@@ -249,10 +253,14 @@ This script deploys the Argo Rollouts demo application to the EKS clusters. It p
 5. Configures ArgoCD and Kargo for the application deployment
 6. Sets up access for Kargo to the Git repository
 
+```sh
+$SCRIPTS/6-tools-urls.sh
+```
+
 ### Configure EKS Cluster Access to all spoke clusters
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/5-cluster-access.sh
+$SCRIPTS/5-cluster-access.sh
 ```
 
 This script configures access to the EKS clusters created in the previous steps. It:
@@ -264,10 +272,10 @@ After that, you can use kubectl to connect to any of the EKS clusters.
 
 > use kubectx or k9s to check all clusters
 
-This script also create an html file that will be use as a dashboard for our demo application progressive rollout, the dashboard is available at: `/home/ec2-user/environment/kro/examples/aws/eks-cluster-mgmt/scripts/dashboard.html`
+This script also create an html file that will be use as a dashboard for our demo application progressive rollout, the dashboard is available at:
 
 ```bash
-code /home/ec2-user/environment/eks-cluster-mgmt/scripts/dashboard.html
+code $WORKSPACE_PATH/dashboard.html
 ```
 
 > Download the dashboard, and open it in your browser
@@ -280,13 +288,11 @@ In order to see this in action, we can create a new version of the application:
 
 ### Creating a container image for demo application.
 
-
 4. Build a new container images and observe deployment, continuous promotion from `test` to `prep-prod` and rollouts:
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/build-rollouts-demo.sh orange
+$SCRIPTS/build-rollouts-demo.sh orange
 ```
-
 
 ### Promote the application to pre-prod
 
@@ -301,7 +307,7 @@ $WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/build-rollouts-demo.sh
 3. Build a new container image and test complete continuous promotion process:
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/build-rollouts-demo.sh green
+$SCRIPTS/build-rollouts-demo.sh green
 ```
 
 ![Kargo continuous promotion](docs/kargo-promotion.png)
@@ -309,7 +315,7 @@ $WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/build-rollouts-demo.sh
 When you play with creating other color builds and promoting them to different environments, you can execute following script, to have a dachboard, with all 4 clusters application deployment:
 
 ```bash
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/multi-cluster-dashboard-generator.sh
+$SCRIPTS/multi-cluster-dashboard-generator.sh
 ```
 
 > Note: If you use more than one accounts for spoke, the script won't work as is as it don't know the aws account mapping for clusters. You'll need to manually connect to each accounts and update the kube config file like
@@ -320,20 +326,19 @@ $WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/multi-cluster-dashboar
 >
 > In this case you can use the script with manual flag meaning you have manually configure kubectl to work with all 4 clusters
 > ```bash
->$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/multi-cluster-dashboard-generator.sh --manual
+>$SCRIPTS/multi-cluster-dashboard-generator.sh --manual
 >```
 
 then download the generated Dashboard html, and open it in your browser
 
 ![Promotion dashboard](docs/argo-rollout-promotion-dashboard.png)
 
-
 ## Other tools
 
 We have deployed other tools in our environment, you can get the list of them by running the following script
 
 ```sh
-$WORKSPACE_PATH/kro/examples/aws/eks-cluster-mgmt/scripts/6-tools-urls.sh
+$SCRIPTS/6-tools-urls.sh
 ```
 
 - *Keycloack* is used for authentication.
@@ -452,38 +457,4 @@ kubectl rollout restart deployment -n kro-system kro
 kubectl get resourcegraphdefinitions.kro.run
 kubectl rollout restart deployment -n kro-system kro
 kubectl get resourcegraphdefinitions.kro.run
-```
-
-## Available applications in the hub cluster, links and usernames/passwords.
-
-> The same password is used for all applications except Kargo.
-
-```sh
-DOMAIN_NAME=$(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Origins.Items[0].Id, 'http-origin')].DomainName | [0]" --output text)
-echo "ArgoCD URL: https://$DOMAIN_NAME/argocd
-   Login: admin
-   Password: $IDE_PASSWORD
-   or using Keycloak SSO. Login user1, password $IDE_PASSWORD"
-
-echo "Keycloak: https://$DOMAIN_NAME/keycloak
-   Login: admin
-   Password: $IDE_PASSWORD"
-
-echo "Backstage: https://$DOMAIN_NAME
-   SSO Login: user1
-   Password: $IDE_PASSWORD"
-
-echo "Argo-Workflows: https://$DOMAIN_NAME/argo-workflows
-   SSO Login: user1
-   Password: $IDE_PASSWORD"
-
-echo "Gitlab: $GITLAB_URL
-   Login: root
-   Password: $IDE_PASSWORD
-   Login: user1
-   Password: $IDE_PASSWORD"
-
-export KARGO_URL=http://$(kubectl get svc kargo-api -n kargo -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-echo "Kargo url: $KARGO_URL"
-echo "Kargo password: $IDE_PASSWORD"
 ```
