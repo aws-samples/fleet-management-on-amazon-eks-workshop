@@ -1,6 +1,6 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000/backstage
+  baseUrl: ${INGRESS_URL}/backstage
 
 organization:
   name: Internal Developer Platform
@@ -13,8 +13,8 @@ backend:
   #   keys:
   #     - secret: ${BACKEND_SECRET}
   baseUrl: http://localhost:7007
-  listen:
-    port: 7007
+  # listen:
+  #   port: 7007
     # Uncomment the following host directive to bind to specific interfaces
     # host: 127.0.0.1
   csp:
@@ -22,7 +22,7 @@ backend:
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
   cors:
-    origin: http://localhost:3000
+    origin: ${INGRESS_URL}
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
   # This is for local development only, it is not recommended to use this in production
@@ -35,9 +35,9 @@ backend:
 integrations:
   gitlab:
     - token: ${GIT_PASSWORD}
-      apiBaseUrl: https://${GIT_HOST}/api/v4
-      baseUrl: https://${GIT_HOST}
-      host: ${GIT_HOST}
+      apiBaseUrl: https://${GIT_HOSTNAME}/api/v4
+      baseUrl: https://${GIT_HOSTNAME}
+      host: ${GIT_HOSTNAME}
   github:
     - host: github.com
       # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
@@ -85,7 +85,7 @@ catalog:
   locations:
     # Templates from Gitlab.
     - type: url
-      target: ${GIT_URL}/${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
+      target: https://${GIT_HOSTNAME}/${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
       rules:
         - allow: [ Component, System, API, Resource, Location, Template, User, Group ]
   # import:

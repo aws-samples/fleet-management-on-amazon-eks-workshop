@@ -35,38 +35,38 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const useLogoStyles = makeStyles(theme => ({
-  container: {
-    margin: theme.spacing(5, 0),
-  },
-  svg: {
-    width: 'auto',
-    height: 100,
-  },
-  path: {
-    fill: '#00568c',
-  },
-  customLogo: {
-    width: '120px',
-    height: 'auto',
-    maxWidth: '100%',
-    display: 'block',
-    margin: '0 auto',
-  },
-  subtitle: {
-    textAlign: 'center',
-    marginTop: theme.spacing(2),
-    color: '#ffffff',
-    fontWeight: 500,
-    fontSize: '3rem',
-    fontFamily: theme.typography.fontFamily,
-    letterSpacing: theme.typography.h4.letterSpacing,
-  },
-}));
+// const useLogoStyles = makeStyles(theme => ({
+//   container: {
+//     margin: theme.spacing(5, 0),
+//   },
+//   svg: {
+//     width: 'auto',
+//     height: 100,
+//   },
+//   path: {
+//     fill: '#00568c',
+//   },
+//   customLogo: {
+//     width: '120px',
+//     height: 'auto',
+//     maxWidth: '100%',
+//     display: 'block',
+//     margin: '0 auto',
+//   },
+//   subtitle: {
+//     textAlign: 'center',
+//     marginTop: theme.spacing(2),
+//     color: '#ffffff',
+//     fontWeight: 500,
+//     fontSize: '3rem',
+//     fontFamily: theme.typography.fontFamily,
+//     letterSpacing: theme.typography.h4.letterSpacing,
+//   },
+// }));
 
 export const CustomHomepage = () => {
   const classes = useStyles();
-  const { container, customLogo, subtitle } = useLogoStyles();
+  // const { container, customLogo, subtitle } = useLogoStyles();
   const config = useApi(configApiRef);
 
   // Get GitLab URL from Backstage configuration using the correct path
