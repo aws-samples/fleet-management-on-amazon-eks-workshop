@@ -14,7 +14,12 @@ backend.add(import('@backstage/plugin-app-backend'));
 backend.add(import('@backstage/plugin-proxy-backend'));
 backend.add(import('@backstage/plugin-scaffolder-backend'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
+backend.add(import('@backstage/plugin-scaffolder-backend-module-gitlab'));
 backend.add(import('@backstage/plugin-techdocs-backend'));
+
+// roadiehq plugins
+backend.add(import('@roadiehq/scaffolder-backend-module-utils'));
+backend.add(import('@roadiehq/scaffolder-backend-module-http-request'));
 
 // auth plugin
 backend.add(import('@backstage/plugin-auth-backend'));

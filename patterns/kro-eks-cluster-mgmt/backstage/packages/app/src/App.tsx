@@ -38,7 +38,9 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 import LightIcon from '@material-ui/icons/WbSunny';
 import DarkIcon from '@material-ui/icons/Brightness2';
 import { UnifiedThemeProvider, themes } from '@backstage/theme';
-import { customTheme } from './themes/customTheme';
+import { customTheme } from './customPlatform/customTheme';
+import { HomepageCompositionRoot } from '@backstage/plugin-home';
+import { CustomHomepage } from './customPlatform/CustomHomepage';
 
 const app = createApp({
   apis,
@@ -71,7 +73,6 @@ const app = createApp({
       ),
     },
   ],
-  defaultTheme: 'custom-theme',
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
       createComponent: scaffolderPlugin.routes.root,
@@ -96,7 +97,12 @@ const app = createApp({
 
 const routes = (
   <FlatRoutes>
-    <Route path="/" element={<Navigate to="catalog" />} />
+    <Route
+      path="/"
+      element={<HomepageCompositionRoot />}
+    >
+      <CustomHomepage />
+    </Route>
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"

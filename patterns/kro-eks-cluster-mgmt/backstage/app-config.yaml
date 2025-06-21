@@ -1,6 +1,6 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000
+  baseUrl: http://localhost:3000/backstage
 
 organization:
   name: Internal Developer Platform
@@ -33,6 +33,11 @@ backend:
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
+  gitlab:
+    - token: ${GIT_PASSWORD}
+      apiBaseUrl: https://${GIT_HOST}/api/v4
+      baseUrl: https://${GIT_HOST}
+      host: ${GIT_HOST}
   github:
     - host: github.com
       # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
@@ -76,23 +81,34 @@ catalog:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, System, API, Resource, Location, Template]
   locations:
-    # Local example data, file locations are relative to the backend process, typically `packages/backend`
-    - type: file
-      target: ../../examples/entities.yaml
-
-    # Local example template
-    - type: file
-      target: ../../examples/template/template.yaml
+    # Templates from Gitlab.
+    - type: url
+      target: ${GIT_URL}/${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
       rules:
-        - allow: [Template]
+        - allow: [ Component, System, API, Resource, Location, Template, User, Group ]
+  # import:
+  #   entityFilename: catalog-info.yaml
+  #   pullRequestBranchName: backstage-integration
+  # rules:
+  #   - allow: [Component, System, API, Resource, Location]
+  # locations:
+  #   # Local example data, file locations are relative to the backend process, typically `packages/backend`
+  #   - type: file
+  #     target: ../../examples/entities.yaml
 
-    # Local example organizational data
-    - type: file
-      target: ../../examples/org.yaml
-      rules:
-        - allow: [User, Group]
+  #   # Local example template
+  #   - type: file
+  #     target: ../../examples/template/template.yaml
+  #     rules:
+  #       - allow: [Template]
+
+  #   # Local example organizational data
+  #   - type: file
+  #     target: ../../examples/org.yaml
+  #     rules:
+  #       - allow: [User, Group]
 
     ## Uncomment these lines to add more example data
     # - type: url
