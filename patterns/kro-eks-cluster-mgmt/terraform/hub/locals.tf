@@ -7,7 +7,7 @@ locals {
   enable_efs                = var.enable_efs
   name                      = var.cluster_name
   environment               = var.environment
-  fleet_member               = "control-plane"
+  fleet_member              = "control-plane"
   tenant                    = var.tenant
   region                    = data.aws_region.current.id
   cluster_version           = var.kubernetes_version
@@ -18,12 +18,12 @@ locals {
   ingress_domain_name       = aws_cloudfront_distribution.ingress.domain_name
   gitlab_nlb_domain_name    = "${data.aws_lb.gitlab_nlb.dns_name}"
   gitlab_domain_name        = aws_cloudfront_distribution.gitlab.domain_name
-  git_url                   = var.git_url == "" ? "https://${local.gitlab_domain_name}/" : var.git_url
-  backstage_app_image       = var.backstage_app_image == "" ? "${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.region}.amazonaws.com/backstage-app:latest" : var.backstage_app_image
-  gitops_addons_repo_url    = "${local.git_url}${var.git_org_name}/${var.gitops_addons_repo_name}.git"
-  gitops_fleet_repo_url     = "${local.git_url}${var.git_org_name}/${var.gitops_fleet_repo_name}.git"
-  gitops_workload_repo_url = "${local.git_url}${var.git_org_name}/${var.gitops_workload_repo_name}.git"
-  gitops_platform_repo_url = "${var.git_url}${var.git_org_name}/${var.gitops_platform_repo_name}.git"
+  git_hostname              = var.git_hostname == "" ? "https://${local.gitlab_domain_name}" : var.git_hostname
+  backstage_image           = var.backstage_image == "" ? "${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.region}.amazonaws.com/backstage:latest" : var.backstage_image
+  gitops_addons_repo_url    = "https://${local.git_hostname}/${var.git_org_name}/${var.gitops_addons_repo_name}.git"
+  gitops_fleet_repo_url     = "https://${local.git_hostname}/${var.git_org_name}/${var.gitops_fleet_repo_name}.git"
+  gitops_workload_repo_url  = "https://${local.git_hostname}/${var.git_org_name}/${var.gitops_workload_repo_name}.git"
+  gitops_platform_repo_url  = "https://${local.git_hostname}/${var.git_org_name}/${var.gitops_platform_repo_name}.git"
 
   external_secrets = {
     namespace       = "external-secrets"
@@ -188,7 +188,7 @@ locals {
       ide_password = data.external.env_vars.result.IDE_PASSWORD
       ide_password_hash = local.password_hash
       ide_password_key = local.password_key
-      backstage_app_image = local.backstage_app_image
+      backstage_image = local.backstage_image
     },
 
   )

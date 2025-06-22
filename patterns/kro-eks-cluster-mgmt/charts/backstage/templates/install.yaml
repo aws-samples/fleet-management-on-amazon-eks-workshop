@@ -70,10 +70,10 @@ metadata:
 data:
   app-config.yaml: |
     app:
-      title: Platform Backstage
+      title: Internal Developer Platform
       baseUrl: https://{{ .Values.ingress_domain_name }}
     organization:
-      name: CNOE
+      name: Internal Developer Platform
     backend:
       # Used for enabling authentication, secret is shared by all backend plugins
       # See https://backstage.io/docs/tutorials/backend-to-backend-auth for
@@ -108,9 +108,9 @@ data:
     integrations:
       gitlab:
         - token: ${GIT_PASSWORD}
-          apiBaseUrl: ${GIT_URL}/api/v4
-          baseUrl: ${GIT_URL}
-          host: {{ .Values.gitlab_domain_name }}
+          apiBaseUrl: https://${GIT_HOSTNAME}/api/v4
+          baseUrl: https://${GIT_HOSTNAME}
+          host: ${GIT_HOSTNAME}
     #  gitea:
     #   - baseUrl: https://cnoe.localtest.me:8443/gitea
     #     host: cnoe.localtest.me:8443
@@ -177,7 +177,7 @@ data:
       locations:
         # Templates from Gitlab.
         - type: url
-          target: ${GIT_URL}${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
+          target: https://${GIT_HOSTNAME}/${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
           rules:
             - allow: [ Component, System, API, Resource, Location, Template, User, Group ]
     kubernetes:

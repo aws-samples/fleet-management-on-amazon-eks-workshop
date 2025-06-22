@@ -83,16 +83,10 @@ EOF
 sleep 5
 
 print_step "Creating Amazon Elastic Container Repository (Amazon ECR) for Backstage image"
-aws ecr create-repository --repository-name backstage-app --region $AWS_REGION || true
-
-print_step "Cloning Backstage image repository"
-cd $WORKSPACE_PATH
-git clone https://github.com/ybezsonov/backstage-app.git
-cd backstage-app
-git checkout app-promo
+aws ecr create-repository --repository-name backstage --region $AWS_REGION || true
 
 print_step "Building Backstage image"
-$SCRIPTS/build_backstage.sh $WORKSPACE_PATH/backstage-app
+$SCRIPTS/build_backstage.sh $PATTERN_FULL_PATH/backstage
 
 print_step "Logging in to ArgoCD CLI"
 argocd login --username admin --password $IDE_PASSWORD --grpc-web-root-path /argocd $DOMAIN_NAME

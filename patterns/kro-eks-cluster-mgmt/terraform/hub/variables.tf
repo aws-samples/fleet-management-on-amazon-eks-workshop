@@ -72,8 +72,8 @@ variable "route53_zone_name" {
 }
 # Github Repos Variables
 
-variable "git_url" {
-  description = "The Url of Git server"
+variable "local.git_hostname" {
+  description = "The Host Name of Git server, without scheme and /, like gitlab.com"
   default     = ""
 }
 
@@ -218,7 +218,7 @@ variable "account_ids" {
   default     = ""
 }
 
-variable "backstage_app_image" {
+variable "backstage_image" {
   description = "The Url and tag of Backstage image"
   default     = ""
 }

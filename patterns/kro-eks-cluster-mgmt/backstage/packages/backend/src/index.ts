@@ -1,12 +1,5 @@
-/*
- * Hi!
- *
- * Note that this is an EXAMPLE Backstage backend. Please check the README.
- *
- * Happy hacking!
- */
-
 import { createBackend } from '@backstage/backend-defaults';
+import { authModuleKeycloakOIDCProvider } from './plugins/auth';
 
 const backend = createBackend();
 
@@ -56,5 +49,8 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 
 // kubernetes
 backend.add(import('@backstage/plugin-kubernetes-backend'));
+
+// Internal Developer Platform custom plugins
+backend.add(authModuleKeycloakOIDCProvider);
 
 backend.start();

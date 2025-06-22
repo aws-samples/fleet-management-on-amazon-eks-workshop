@@ -19,10 +19,10 @@ data "external" "password_key" {
 # Store both hash and key in a single file to avoid regenerating on each run
 locals {
   password_file = "${path.module}/argocd-password-hash.txt"
-  
+
   # Check if file exists and parse its content
   existing_data = fileexists(local.password_file) ? jsondecode(file(local.password_file)) : { hash = "", key = "" }
-  
+
   # Use existing values if available, otherwise generate new ones
   password_hash = local.existing_data.hash != "" ? local.existing_data.hash : bcrypt(data.external.env_vars.result.IDE_PASSWORD)
   password_key = local.existing_data.key != "" ? local.existing_data.key : data.external.password_key.result.result
@@ -108,7 +108,7 @@ resource "kubernetes_secret" "git_credentials" {
   }
 
   data = {
-    GIT_URL      = "${local.git_url}"
+    GIT_HOSTNAME = "${local.git_hostname}"
     GIT_USERNAME = "${var.git_org_name}"
     GIT_PASSWORD = data.external.env_vars.result.IDE_PASSWORD
     WORKING_REPO = data.external.env_vars.result.WORKING_REPO

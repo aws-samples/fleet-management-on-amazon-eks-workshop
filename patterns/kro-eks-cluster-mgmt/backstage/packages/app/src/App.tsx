@@ -20,7 +20,8 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
-import { apis } from './apis';
+import {apis, keycloakOIDCAuthApiRef} from './apis';
+import {configApiRef, useApi} from "@backstage/core-plugin-api";
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
@@ -41,6 +42,7 @@ import { UnifiedThemeProvider, themes } from '@backstage/theme';
 import { customTheme } from './customPlatform/customTheme';
 import { HomepageCompositionRoot } from '@backstage/plugin-home';
 import { CustomHomepage } from './customPlatform/CustomHomepage';
+import { TechRadarPage } from '@backstage-community/plugin-tech-radar';
 
 const app = createApp({
   apis,
@@ -91,7 +93,23 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
+    SignInPage: props => {
+      const configApi = useApi(configApiRef);
+      if (configApi.getString('auth.environment') === 'local') {
+        return <SignInPage {...props} auto providers={['guest']} />;
+      }
+      return (
+        <SignInPage
+          {...props}
+          provider={{
+            id: 'keycloak-oidc',
+            title: 'Keycloak',
+            message: 'Sign in using Keycloak',
+            apiRef: keycloakOIDCAuthApiRef,
+          }}
+        />
+      );
+    },
   },
 });
 
@@ -134,6 +152,10 @@ const routes = (
     </Route>
     <Route path="/settings" element={<UserSettingsPage />} />
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
+    <Route
+      path="/tech-radar"
+      element={<TechRadarPage width={1500} height={800} />}
+    />
   </FlatRoutes>
 );
 
