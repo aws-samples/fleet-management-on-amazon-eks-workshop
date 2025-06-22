@@ -579,7 +579,7 @@ backstage:
   valuesObject:
     gitlab_domain_name: '{{.metadata.annotations.gitlab_domain_name}}'
     ingress_domain_name: '{{.metadata.annotations.ingress_domain_name}}'
-    backstage_app_image: '{{.metadata.annotations.backstage_app_image}}'
+    backstage_image: '{{.metadata.annotations.backstage_image}}'
 
 kargo:
   enabled: false

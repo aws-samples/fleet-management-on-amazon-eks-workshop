@@ -283,7 +283,7 @@ spec:
                 name: git-credentials
             - secretRef:
                 name: argocd-credentials
-          image: {{ .Values.backstage_app_image }}
+          image: {{ .Values.backstage_image }}
           name: backstage
           ports:
             - containerPort: 7007
