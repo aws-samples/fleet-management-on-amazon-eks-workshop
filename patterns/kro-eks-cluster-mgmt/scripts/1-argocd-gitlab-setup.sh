@@ -59,7 +59,7 @@ cd $WORKSPACE_PATH/$WORKING_REPO
 git remote add origin ssh://git@$NLB_DNS/$GIT_USERNAME/$WORKING_REPO.git
 
 print_step "Updating Backstage templates"
-$PATTERN_FULL_PATH/scripts/update_template_defaults.sh  
+$PATTERN_FULL_PATH/scripts/update_template_defaults.sh
 git add . && git commit -m "Update Backstage Templates"
 
 git push --set-upstream origin main
