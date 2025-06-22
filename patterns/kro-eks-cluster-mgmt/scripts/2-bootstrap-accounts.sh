@@ -32,7 +32,7 @@ source "$SCRIPT_DIR/colors.sh"
 print_header "Bootstrapping Management and Spoke Accounts"
 
 print_step "Creating ACK workload roles"
-$SCRIPTS/create_ack_workload_roles.sh
+$PATTERN_FULL_PATH/scripts/create_ack_workload_roles.sh
 
 print_header "Checking ResourceGraphDefinitions Status"
 print_info "Waiting for all ResourceGraphDefinitions to become Active..."
