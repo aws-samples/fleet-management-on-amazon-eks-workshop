@@ -72,7 +72,7 @@ variable "route53_zone_name" {
 }
 # Github Repos Variables
 
-variable "local.git_hostname" {
+variable "git_hostname" {
   description = "The Host Name of Git server, without scheme and /, like gitlab.com"
   default     = ""
 }
