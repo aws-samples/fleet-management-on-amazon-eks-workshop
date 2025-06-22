@@ -11,7 +11,7 @@ import {
   TemplateBackstageLogoIcon,
 } from '@backstage/plugin-home';
 
-const logoUrl = '/backstage/backstage-icon-color.png';
+const logoUrl = '/backstage-icon-color.png';
 
 // Get the domain URL dynamically from the current window location
 const getDomainUrl = () => {
@@ -132,27 +132,27 @@ export const CustomHomepage = () => {
                     {
                       url: gitUrl,
                       label: 'GitLab',
-                      icon: <img src="/backstage/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
                       url: `${domainUrl}/argocd`,
                       label: 'ArgoCD',
-                      icon: <img src="/backstage/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
                       url: `${domainUrl}/argo-workflows`,
                       label: 'Argo Workflows',
-                      icon: <img src="/backstage/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
                       url: domainUrl,
                       label: 'Kargo',
-                      icon: <img src="/backstage/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
                       url: `${domainUrl}/keycloak`,
                       label: 'Keycloak',
-                      icon: <img src="/backstage/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
                     },
                   ]}
                 />

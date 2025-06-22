@@ -1,9 +1,1 @@
-# # Backstage override configuration for your local development environment
-# app:
-#   baseUrl: http://localhost:3000/backstage
-# backend:
-#   baseUrl: http://localhost:7007
-#   listen:
-#     port: 7007
-#   cors:
-#     origin:  http://localhost:3000
+# Backstage override configuration for your local development environment
