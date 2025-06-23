@@ -11,7 +11,7 @@ import {
   TemplateBackstageLogoIcon,
 } from '@backstage/plugin-home';
 
-const logoUrl = '/backstage-icon-color.png';
+const logoUrl = '/img/backstage-icon-color.png';
 
 // Get the domain URL dynamically from the current window location
 const getDomainUrl = () => {
@@ -132,27 +132,27 @@ export const CustomHomepage = () => {
                     {
                       url: gitUrl,
                       label: 'GitLab',
-                      icon: <img src="/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/img/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${domainUrl}/argocd`,
+                      url: `${config.getOptionalString('app.argocdUrl')}`,
                       label: 'ArgoCD',
-                      icon: <img src="/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/img/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${domainUrl}/argo-workflows`,
+                      url: `${config.getOptionalString('app.argoworkflowsUrl')}`,
                       label: 'Argo Workflows',
-                      icon: <img src="/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/img/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: domainUrl,
+                      url: `${config.getOptionalString('app.kargoUrl')}`,
                       label: 'Kargo',
-                      icon: <img src="/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/img/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${domainUrl}/keycloak`,
+                      url: `${config.getOptionalString('app.keycloakUrl')}`,
                       label: 'Keycloak',
-                      icon: <img src="/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/img/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
                     },
                   ]}
                 />
