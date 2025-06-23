@@ -14,14 +14,14 @@ import {
 const logoUrl = '/img/backstage-icon-color.png';
 
 // Get the domain URL dynamically from the current window location
-const getDomainUrl = () => {
-  if (typeof window !== 'undefined') {
-    return `${window.location.protocol}//${window.location.host}`;
-  }
-  return 'http://localhost:3000';
-};
+// const getDomainUrl = () => {
+//   if (typeof window !== 'undefined') {
+//     return `${window.location.protocol}//${window.location.host}`;
+//   }
+//   return 'http://localhost:3000';
+// };
 
-const domainUrl = getDomainUrl();
+// const domainUrl = getDomainUrl();
 
 const useStyles = makeStyles(theme => ({
   searchBar: {
