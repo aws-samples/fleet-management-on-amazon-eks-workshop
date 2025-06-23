@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kargo-url-fetcher
+  namespace: backstage
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -5,12 +15,12 @@ metadata:
   namespace: backstage
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": "10"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
-      serviceAccountName: backstage
+      serviceAccountName: kargo-url-fetcher
       restartPolicy: Never
       containers:
       - name: url-fetcher
@@ -44,6 +54,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: kargo-url-reader
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "5"
 rules:
 - apiGroups: [""]
   resources: ["services"]
@@ -60,11 +73,14 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: backstage-kargo-url-reader
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "5"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: kargo-url-reader
 subjects:
 - kind: ServiceAccount
-  name: backstage
+  name: kargo-url-fetcher
   namespace: backstage
