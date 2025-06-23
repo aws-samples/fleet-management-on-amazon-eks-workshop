@@ -45,9 +45,7 @@ export PATTERN_REPO_URL="https://github.com/aws-samples/fleet-management-on-amaz
 # export PATTERN_REPO_BRANCH="riv24"
 export WORKSPACE_PATH="$HOME/environment" # the directory where repos will be cloned e.g. ~/environment
 export PATTERN_REPO_NAME="pattern_repo"
-export PATTERN_PATH="patterns/kro-eks-cluster-mgmt"
-export PATTERN_FULL_PATH="$WORKSPACE_PATH/$PATTERN_REPO_NAME/$PATTERN_PATH"
-export SCRIPTS="$PATTERN_FULL_PATH/scripts"
+export PATTERN_FULL_PATH="$HOME/environment/pattern_repo/patterns/kro-eks-cluster-mgmt"
 export WORKING_REPO="eks-cluster-mgmt" # Contains terraform and gitops configurations
 export TF_VAR_FILE="terraform.tfvars" # the name of terraform configuration file to use
 export MGMT_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account) # Or update to the AWS account to use for your management cluster
@@ -67,7 +65,7 @@ git clone $PATTERN_REPO_URL $WORKSPACE_PATH/$PATTERN_REPO_NAME
 ### Creating the Management cluster
 
 ```sh
-$SCRIPTS/0-initial-setup.sh
+$PATTERN_FULL_PATH/scripts/0-initial-setup.sh
 ```
 
 Review the terraform changes and accept to deploy.
@@ -79,7 +77,7 @@ Review the terraform changes and accept to deploy.
 We are using GitLab in our cluster, as source for our GitOps workflow, and are using Argo CD as GitOps tool.
 
 ```sh
-$SCRIPTS/1-argocd-gitlab-setup.sh
+$PATTERN_FULL_PATH/scripts/1-argocd-gitlab-setup.sh
 direnv allow
 ```
 
@@ -117,7 +115,7 @@ In order for the management cluster to execute actions in the spoke AWS accounts
 - `eks-cluster-mgmt-iam`
 
 ```sh
-$SCRIPTS/2-bootstrap-accounts.sh
+$PATTERN_FULL_PATH/scripts/2-bootstrap-accounts.sh
 ```
 
 This script bootstraps the management and spoke AWS accounts for EKS
@@ -162,7 +160,7 @@ We use management account ID to deploy `test`, `pre-prod`, `prod-eu` and `prod-u
 This is automated by this script: 
 
 ```sh
-$SCRIPTS/3-create-spoke-clusters.sh
+$PATTERN_FULL_PATH/scripts/3-create-spoke-clusters.sh
 ```
 
 This script creates the spoke EKS clusters in different regions. It:
@@ -242,7 +240,7 @@ multi-acct-hub-cluster               Synced        Healthy
 ### Deploy Argo Rollouts Demo Application
 
 ```sh
-$SCRIPTS/4-deploy-argo-rollouts-demo.sh
+$PATTERN_FULL_PATH/scripts/4-deploy-argo-rollouts-demo.sh
 ```
 
 This script deploys the Argo Rollouts demo application to the EKS clusters. It performs the following steps:
@@ -254,13 +252,13 @@ This script deploys the Argo Rollouts demo application to the EKS clusters. It p
 6. Sets up access for Kargo to the Git repository
 
 ```sh
-$SCRIPTS/6-tools-urls.sh
+$PATTERN_FULL_PATH/scripts/6-tools-urls.sh
 ```
 
 ### Configure EKS Cluster Access to all spoke clusters
 
 ```sh
-$SCRIPTS/5-cluster-access.sh
+$PATTERN_FULL_PATH/scripts/5-cluster-access.sh
 ```
 
 This script configures access to the EKS clusters created in the previous steps. It:
@@ -291,7 +289,7 @@ In order to see this in action, we can create a new version of the application:
 4. Build a new container images and observe deployment, continuous promotion from `test` to `prep-prod` and rollouts:
 
 ```sh
-$SCRIPTS/build-rollouts-demo.sh orange
+$PATTERN_FULL_PATH/scripts/build-rollouts-demo.sh orange
 ```
 
 ### Promote the application to pre-prod
@@ -307,7 +305,7 @@ $SCRIPTS/build-rollouts-demo.sh orange
 3. Build a new container image and test complete continuous promotion process:
 
 ```sh
-$SCRIPTS/build-rollouts-demo.sh green
+$PATTERN_FULL_PATH/scripts/build-rollouts-demo.sh green
 ```
 
 ![Kargo continuous promotion](docs/kargo-promotion.png)
@@ -315,7 +313,7 @@ $SCRIPTS/build-rollouts-demo.sh green
 When you play with creating other color builds and promoting them to different environments, you can execute following script, to have a dachboard, with all 4 clusters application deployment:
 
 ```bash
-$SCRIPTS/multi-cluster-dashboard-generator.sh
+$PATTERN_FULL_PATH/scripts/multi-cluster-dashboard-generator.sh
 ```
 
 > Note: If you use more than one accounts for spoke, the script won't work as is as it don't know the aws account mapping for clusters. You'll need to manually connect to each accounts and update the kube config file like
@@ -326,7 +324,7 @@ $SCRIPTS/multi-cluster-dashboard-generator.sh
 >
 > In this case you can use the script with manual flag meaning you have manually configure kubectl to work with all 4 clusters
 > ```bash
->$SCRIPTS/multi-cluster-dashboard-generator.sh --manual
+>$PATTERN_FULL_PATH/scripts/multi-cluster-dashboard-generator.sh --manual
 >```
 
 then download the generated Dashboard html, and open it in your browser
@@ -338,7 +336,7 @@ then download the generated Dashboard html, and open it in your browser
 We have deployed other tools in our environment, you can get the list of them by running the following script
 
 ```sh
-$SCRIPTS/6-tools-urls.sh
+$PATTERN_FULL_PATH/scripts/6-tools-urls.sh
 ```
 
 - *Keycloack* is used for authentication.

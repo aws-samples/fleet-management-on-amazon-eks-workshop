@@ -70,10 +70,14 @@ metadata:
 data:
   app-config.yaml: |
     app:
-      title: Platform Backstage
+      title: Internal Developer Platform
       baseUrl: https://{{ .Values.ingress_domain_name }}
+      kargoUrl: ${IDP_KARGO_URL}
+      argocdUrl: ${IDP_ARGO_CD_URL}
+      argoworkflowsUrl: ${IDP_ARGO_WORKFLOWS_URL}
+      keycloakUrl: ${IDP_KEYCLOAK_URL}
     organization:
-      name: CNOE
+      name: Internal Developer Platform
     backend:
       # Used for enabling authentication, secret is shared by all backend plugins
       # See https://backstage.io/docs/tutorials/backend-to-backend-auth for
@@ -108,9 +112,9 @@ data:
     integrations:
       gitlab:
         - token: ${GIT_PASSWORD}
-          apiBaseUrl: ${GIT_URL}/api/v4
-          baseUrl: ${GIT_URL}
-          host: {{ .Values.gitlab_domain_name }}
+          apiBaseUrl: https://${GIT_HOSTNAME}/api/v4
+          baseUrl: https://${GIT_HOSTNAME}
+          host: ${GIT_HOSTNAME}
     #  gitea:
     #   - baseUrl: https://cnoe.localtest.me:8443/gitea
     #     host: cnoe.localtest.me:8443
@@ -177,7 +181,7 @@ data:
       locations:
         # Templates from Gitlab.
         - type: url
-          target: ${GIT_URL}${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
+          target: https://${GIT_HOSTNAME}/${GIT_USERNAME}/${WORKING_REPO}/-/blob/main/backstage-templates/catalog-info.yaml
           rules:
             - allow: [ Component, System, API, Resource, Location, Template, User, Group ]
     kubernetes:
@@ -276,6 +280,11 @@ spec:
               value: development
             - name: NODE_OPTIONS
               value: --no-node-snapshot
+            - name: IDP_KARGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: kargo-config
+                  key: KARGO_URL
           envFrom:
             - secretRef:
                 name: backstage-env-vars
@@ -283,7 +292,7 @@ spec:
                 name: git-credentials
             - secretRef:
                 name: argocd-credentials
-          image: {{ .Values.backstage_app_image }}
+          image: {{ .Values.backstage_image }}
           name: backstage
           ports:
             - containerPort: 7007
@@ -407,6 +416,10 @@ spec:
         KEYCLOAK_CLIENT_SECRET: "{{ `{{.BACKSTAGE_CLIENT_SECRET}}` }}"
         ARGOCD_AUTH_TOKEN: "argocd.token={{ `{{.ARGOCD_SESSION_TOKEN}}` }}"
         ARGO_CD_URL: 'https://argocd-server.argocd.svc.cluster.local/api/v1/'
+        IDP_INGRESS_HOSTNAME: {{ .Values.ingress_domain_name }}
+        IDP_ARGO_CD_URL: https://{{ .Values.ingress_domain_name }}/argocd
+        IDP_ARGO_WORKFLOWS_URL: https://{{ .Values.ingress_domain_name }}/argo-workflows
+        IDP_KEYCLOAK_URL: https://{{ .Values.ingress_domain_name }}/keycloak
   data:
     - secretKey: ARGOCD_SESSION_TOKEN
       remoteRef:

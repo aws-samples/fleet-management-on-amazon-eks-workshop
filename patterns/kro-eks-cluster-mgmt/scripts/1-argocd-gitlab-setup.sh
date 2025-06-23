@@ -52,14 +52,14 @@ echo "export GITLAB_URL=$GITLAB_URL" >> ~/environment/.envrc
 echo "export NLB_DNS=$NLB_DNS" >> ~/environment/.envrc
 
 print_info "Creating GitLab SSH keys"
-$SCRIPTS/gitlab_create_keys.sh
+$PATTERN_FULL_PATH/scripts/gitlab_create_keys.sh
 
 print_step "Configuring Git remote and pushing to GitLab"
 cd $WORKSPACE_PATH/$WORKING_REPO
 git remote add origin ssh://git@$NLB_DNS/$GIT_USERNAME/$WORKING_REPO.git
 
 print_step "Updating Backstage templates"
-$SCRIPTS/update_template_defaults.sh  
+$PATTERN_FULL_PATH/scripts/update_template_defaults.sh
 git add . && git commit -m "Update Backstage Templates"
 
 git push --set-upstream origin main
@@ -83,16 +83,10 @@ EOF
 sleep 5
 
 print_step "Creating Amazon Elastic Container Repository (Amazon ECR) for Backstage image"
-aws ecr create-repository --repository-name backstage-app --region $AWS_REGION || true
-
-print_step "Cloning Backstage image repository"
-cd $WORKSPACE_PATH
-git clone https://github.com/ybezsonov/backstage-app.git
-cd backstage-app
-git checkout app-promo
+aws ecr create-repository --repository-name backstage --region $AWS_REGION || true
 
 print_step "Building Backstage image"
-$SCRIPTS/build_backstage.sh $WORKSPACE_PATH/backstage-app
+$PATTERN_FULL_PATH/scripts/build_backstage.sh $PATTERN_FULL_PATH/backstage
 
 print_step "Logging in to ArgoCD CLI"
 argocd login --username admin --password $IDE_PASSWORD --grpc-web-root-path /argocd $DOMAIN_NAME
