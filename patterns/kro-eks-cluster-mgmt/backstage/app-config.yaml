@@ -1,10 +1,10 @@
 app:
   title: Internal Developer Platform
   baseUrl: http://localhost:3000
-  kargoUrl: ${KARGO_URL}
-  argocdUrl: ${ARGOCD_URL}
-  argoworkflowsUrl: ${ARGO_WORKFLOWS_URL}
-  keycloakUrl: ${KEYCLOAK_URL}
+  kargoUrl: ${IDP_KARGO_URL}
+  argocdUrl: ${IDP_ARGO_CD_URL}
+  argoworkflowsUrl: ${IDP_ARGO_WORKFLOWS_URL}
+  keycloakUrl: ${IDP_KEYCLOAK_URL}
 
 organization:
   name: Internal Developer Platform

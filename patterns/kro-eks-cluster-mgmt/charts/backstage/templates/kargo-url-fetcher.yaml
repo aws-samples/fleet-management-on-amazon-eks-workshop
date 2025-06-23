@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kargo-url-fetcher
+  namespace: backstage
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName: backstage
+      restartPolicy: Never
+      containers:
+      - name: url-fetcher
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Get Kargo LoadBalancer hostname
+          KARGO_URL=$(kubectl get svc -n kargo -o jsonpath='{.items[?(@.spec.type=="LoadBalancer")].status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+
+          # Add protocol if URL found
+          if [ -n "$KARGO_URL" ]; then
+            KARGO_URL="http://$KARGO_URL"
+          else
+            # Fallback to cluster internal service
+            KARGO_URL="http://kargo.kargo.svc.cluster.local"
+          fi
+
+          echo "Found Kargo URL: $KARGO_URL"
+
+          # Create or update the ConfigMap with the URL
+          kubectl create configmap kargo-config \
+            --from-literal=KARGO_URL="$KARGO_URL" \
+            --namespace=backstage \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          echo "ConfigMap kargo-config created/updated with KARGO_URL=$KARGO_URL"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kargo-url-reader
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch", "get"]
+  resourceNames: ["kargo-config"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backstage-kargo-url-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kargo-url-reader
+subjects:
+- kind: ServiceAccount
+  name: backstage
+  namespace: backstage

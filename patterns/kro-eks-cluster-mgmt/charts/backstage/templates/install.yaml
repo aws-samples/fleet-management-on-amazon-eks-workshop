@@ -72,6 +72,10 @@ data:
     app:
       title: Internal Developer Platform
       baseUrl: https://{{ .Values.ingress_domain_name }}
+      kargoUrl: ${IDP_KARGO_URL}
+      argocdUrl: ${IDP_ARGO_CD_URL}
+      argoworkflowsUrl: ${IDP_ARGO_WORKFLOWS_URL}
+      keycloakUrl: ${IDP_KEYCLOAK_URL}
     organization:
       name: Internal Developer Platform
     backend:
@@ -276,6 +280,11 @@ spec:
               value: development
             - name: NODE_OPTIONS
               value: --no-node-snapshot
+            - name: IDP_KARGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: kargo-config
+                  key: KARGO_URL
           envFrom:
             - secretRef:
                 name: backstage-env-vars
@@ -407,6 +416,10 @@ spec:
         KEYCLOAK_CLIENT_SECRET: "{{ `{{.BACKSTAGE_CLIENT_SECRET}}` }}"
         ARGOCD_AUTH_TOKEN: "argocd.token={{ `{{.ARGOCD_SESSION_TOKEN}}` }}"
         ARGO_CD_URL: 'https://argocd-server.argocd.svc.cluster.local/api/v1/'
+        IDP_INGRESS_HOSTNAME: {{ .Values.ingress_domain_name }}
+        IDP_ARGO_CD_URL: https://{{ .Values.ingress_domain_name }}/argocd
+        IDP_ARGO_WORKFLOWS_URL: https://{{ .Values.ingress_domain_name }}/argo-workflows
+        IDP_KEYCLOAK_URL: https://{{ .Values.ingress_domain_name }}/keycloak
   data:
     - secretKey: ARGOCD_SESSION_TOKEN
       remoteRef:
