@@ -34,7 +34,9 @@ enableIstio: false
 adotLoglevel: normal
 adotServiceTelemetryLoglevel: INFO
 
-enableAdotcollectorMetrics: false
+# override default port to avoid conflict with grafana port
+enableAdotcollectorMetrics: true
+telemetryPort: 8889
 
 serviceAccount: "adot-collector-kubeprometheus"
 
