@@ -31,7 +31,7 @@ data "aws_ssm_parameter" "frontend_team_view_role" {
 
 locals {
   context_prefix = var.project_context_prefix
-  name            = "fleet-spoke-${terraform.workspace}"
+  name            = "${var.cluster_name_prefix}-${terraform.workspace}"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   vpc_cidr        = var.vpc_cidr
@@ -162,7 +162,7 @@ data "aws_ssm_parameter" "amp_endpoint" {
 }
 
 resource "aws_secretsmanager_secret" "spoke_cluster_secret" {
-  name                    = "fleet-hub-cluster/fleet-spoke-${terraform.workspace}"
+  name                    = "fleet-hub-cluster/${var.cluster_name_prefix}-${terraform.workspace}"
   recovery_window_in_days = 0
 }
 

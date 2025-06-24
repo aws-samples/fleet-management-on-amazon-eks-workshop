@@ -44,7 +44,7 @@ provider "kubernetes" {
 
 locals {
   context_prefix = var.project_context_prefix
-  name            = "fleet-hub-cluster"
+  name            = var.cluster_name
   environment     = "control-plane"
   tenant          = "tenant1"
   fleet_member    = "control-plane"
