@@ -1,7 +1,5 @@
 # Amazon EKS multi cluster management using kro & ACK and continuous promotion to multiple environments using Argo CD, Kargo and Argo Rollouts
 
-update script 2
-
 ## Overview of a solution
 
 This solution demonstrates:
@@ -20,6 +18,7 @@ bootstrapping workload clusters (spokes) are installed on top.
 2. Deploy VSCode IDE: open cloud shell (or other terminal configured with your account) and execute the following to create the working IDE
 
 ```sh
+zsh
 curl https://raw.githubusercontent.com/aws-samples/java-on-aws/main/infrastructure/cfn/ide-stack.yaml > ide-stack.yaml
 CFN_S3=cfn-$(uuidgen | tr -d - | tr '[:upper:]' '[:lower:]')
 aws s3 mb s3://$CFN_S3
