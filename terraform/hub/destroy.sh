@@ -20,18 +20,33 @@ if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   configure_eks_access
 fi
 if kubectl get nodes; then
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-spoke-argocd
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members-init
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-control-plane
-  kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd cluster-addons
+  # Check if ArgoCD CLI is available
+  if command -v argocd &> /dev/null; then
+    echo "Using ArgoCD CLI for application cleanup..."
+    ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d || echo "")
+    
+    if [ -n "$ARGOCD_PASSWORD" ]; then
+      argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD --insecure
+      
+      for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
+        timeout 60s argocd app delete $app --cascade --yes 2>/dev/null || \
+        timeout 30s kubectl delete applicationsets.argoproj.io -n argocd $app --ignore-not-found=true
+      done
+    fi
+  else
+    for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
+      timeout 30s kubectl delete applicationsets.argoproj.io -n argocd $app --ignore-not-found=true
+    done
+  fi
+  
   scale_down_karpenter_nodes
-  # delete all load balancers
-  kubectl get services --all-namespaces -o custom-columns="NAME:.metadata.name,NAMESPACE:.metadata.namespace,TYPE:.spec.type" | \
-  grep LoadBalancer | \
-  while read -r name namespace type; do
-    echo "Deleting service $name in namespace $namespace of type $type"
-    kubectl delete --cascade='foreground' service "$name" -n "$namespace"
+  
+  # Delete load balancers with timeout
+  kubectl get services --all-namespaces -o json | \
+  jq -r '.items[] | select(.spec.type=="LoadBalancer") | "\(.metadata.name) \(.metadata.namespace)"' | \
+  while read -r name namespace; do
+    echo "Deleting service $name in namespace $namespace"
+    timeout 30s kubectl delete service "$name" -n "$namespace" --ignore-not-found=true || true
   done
 fi
 
