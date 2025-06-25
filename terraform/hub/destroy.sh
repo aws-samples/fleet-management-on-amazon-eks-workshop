@@ -26,12 +26,25 @@ if kubectl get nodes; then
     ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" 2>/dev/null | base64 -d || echo "")
     
     if [ -n "$ARGOCD_PASSWORD" ]; then
-      argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD --insecure
+      # Get ArgoCD server endpoint
+      ARGOCD_SERVER=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null)
+      if [ -z "$ARGOCD_SERVER" ] || [ "$ARGOCD_SERVER" = "null" ]; then
+        ARGOCD_SERVER=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+      fi
       
-      for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
-        timeout 60s argocd app delete $app --cascade --yes 2>/dev/null || \
-        timeout 30s kubectl delete applicationsets.argoproj.io -n argocd $app --ignore-not-found=true
-      done
+      if [ -n "$ARGOCD_SERVER" ] && [ "$ARGOCD_SERVER" != "null" ]; then
+        argocd login $ARGOCD_SERVER --username admin --password $ARGOCD_PASSWORD --insecure
+        
+        for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
+          timeout 60s argocd app delete $app --cascade --yes 2>/dev/null || \
+          timeout 30s kubectl delete applicationsets.argoproj.io -n argocd $app --ignore-not-found=true
+        done
+      else
+        echo "Warning: Could not get ArgoCD server endpoint, using kubectl fallback"
+        for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
+          timeout 30s kubectl delete applicationsets.argoproj.io -n argocd $app --ignore-not-found=true
+        done
+      fi
     fi
   else
     for app in fleet-members fleet-spoke-argocd fleet-members-init fleet-control-plane cluster-addons; do
