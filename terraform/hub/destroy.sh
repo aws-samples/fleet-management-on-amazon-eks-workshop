@@ -16,6 +16,8 @@ terraform -chdir=$SCRIPTDIR output -raw configure_kubectl > "$TMPFILE"
 # check if TMPFILE contains the string "No outputs found"
 if [[ ! $(cat $TMPFILE) == *"No outputs found"* ]]; then
   source "$TMPFILE"
+  # Configure EKS access after sourcing kubectl configuration
+  configure_eks_access
 fi
 if kubectl get nodes; then
   kubectl delete --cascade='foreground' applicationsets.argoproj.io -n argocd fleet-members
