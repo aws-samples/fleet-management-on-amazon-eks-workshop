@@ -33,6 +33,12 @@ aws cloudformation describe-stacks --stack-name ide-stack --query "Stacks[0].Out
 
 ## Walkthrough Creating the environments
 
+1. Switch to `zsh`
+
+```sh
+zsh
+```
+
 ### Configuring workspace
 
 1. Set variables
