@@ -132,7 +132,7 @@ module "gitops_bridge_bootstrap" {
   argocd = {
     name             = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "7.9.1"
+    chart_version    = "8.1.1"
     values           = [
       templatefile("${path.module}/argocd-initial-values.yaml", {
         DOMAIN_NAME = local.ingress_domain_name

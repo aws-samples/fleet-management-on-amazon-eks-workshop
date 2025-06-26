@@ -53,5 +53,4 @@ backend.add(import('@backstage/plugin-kubernetes-backend'));
 // Internal Developer Platform custom plugins
 backend.add(authModuleKeycloakOIDCProvider);
 
-backend.add(import('@internal/plugin-integrations-idp-backend'));
 backend.start();

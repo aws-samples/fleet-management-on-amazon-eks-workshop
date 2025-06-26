@@ -71,11 +71,7 @@ data:
   app-config.yaml: |
     app:
       title: Internal Developer Platform
-      baseUrl: https://{{ .Values.ingress_domain_name }}
-      kargoUrl: ${IDP_KARGO_URL}
-      argocdUrl: ${IDP_ARGO_CD_URL}
-      argoworkflowsUrl: ${IDP_ARGO_WORKFLOWS_URL}
-      keycloakUrl: ${IDP_KEYCLOAK_URL}
+      baseUrl: https://{{ .Values.ingress_domain_name }}/backstage
     organization:
       name: Internal Developer Platform
     backend:
@@ -85,7 +81,7 @@ data:
       # auth:
       #   keys:
       #     - secret: ${BACKEND_SECRET}
-      baseUrl: https://{{ .Values.ingress_domain_name }}
+      baseUrl: https://{{ .Values.ingress_domain_name }}/backstage
       listen:
         port: 7007
         # Uncomment the following host directive to bind to specific interfaces
@@ -95,7 +91,7 @@ data:
         # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
         # Default Helmet Content-Security-Policy values can be removed by setting the key to false
       cors:
-        origin: https://{{ .Values.ingress_domain_name }}
+        origin: https://{{ .Values.ingress_domain_name }}/backstage
         methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
         credentials: true
       database:
@@ -280,11 +276,6 @@ spec:
               value: development
             - name: NODE_OPTIONS
               value: --no-node-snapshot
-            - name: IDP_KARGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: kargo-config
-                  key: KARGO_URL
           envFrom:
             - secretRef:
                 name: backstage-env-vars
@@ -405,7 +396,7 @@ spec:
     template:
       engineVersion: v2
       data:
-        BACKSTAGE_FRONTEND_URL: https://{{ .Values.ingress_domain_name }}
+        BACKSTAGE_FRONTEND_URL: https://{{ .Values.ingress_domain_name }}/backstage
         POSTGRES_HOST: postgresql.backstage.svc.cluster.local
         POSTGRES_PORT: '5432'
         POSTGRES_DB: backstage
@@ -416,10 +407,6 @@ spec:
         KEYCLOAK_CLIENT_SECRET: "{{ `{{.BACKSTAGE_CLIENT_SECRET}}` }}"
         ARGOCD_AUTH_TOKEN: "argocd.token={{ `{{.ARGOCD_SESSION_TOKEN}}` }}"
         ARGO_CD_URL: 'https://argocd-server.argocd.svc.cluster.local/api/v1/'
-        IDP_INGRESS_HOSTNAME: {{ .Values.ingress_domain_name }}
-        IDP_ARGO_CD_URL: https://{{ .Values.ingress_domain_name }}/argocd
-        IDP_ARGO_WORKFLOWS_URL: https://{{ .Values.ingress_domain_name }}/argo-workflows
-        IDP_KEYCLOAK_URL: https://{{ .Values.ingress_domain_name }}/keycloak
   data:
     - secretKey: ARGOCD_SESSION_TOKEN
       remoteRef:
@@ -444,14 +431,17 @@ kind: Ingress
 metadata:
   name: backstage
   namespace: backstage
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: "nginx"
   rules:
-    - host: {{ .Values.ingress_domain_name | default "*" }}
+    - host: {{ .Values.ingress_domain_name }}
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /backstage(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: backstage
