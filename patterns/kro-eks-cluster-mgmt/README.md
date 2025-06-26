@@ -38,7 +38,6 @@ aws cloudformation describe-stacks --stack-name ide-stack --query "Stacks[0].Out
 1. Set variables
 
 ```sh
-zsh
 cat << EOF > ~/environment/.envrc
 export PATTERN_REPO_URL="https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop.git"
 # export PATTERN_REPO_BRANCH="riv24"
