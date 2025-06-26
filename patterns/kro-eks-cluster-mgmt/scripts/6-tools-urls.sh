@@ -58,11 +58,11 @@ echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Backstage" $TOOL_COL)${NC}${BOLD} |
 echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
 echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Kargo" $TOOL_COL)${NC}${BOLD} |${NC} ${YELLOW}$(pad_string "$KARGO_URL" $URL_COL)${NC}${BOLD} |${NC} $(pad_string "admin or SSO: user1" $CRED_COL)${BOLD} |${NC}"
 echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
-echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Gitlab" $TOOL_COL)${NC}${BOLD} |${NC} ${YELLOW}$(pad_string "$GITLAB_URL" $URL_COL)${NC}${BOLD} |${NC} $(pad_string "root or user1" $CRED_COL)${BOLD} |${NC}"
-echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
 echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Argo-Workflows" $TOOL_COL)${NC}${BOLD} |${NC} ${YELLOW}$(pad_string "$WORKFLOWS_URL" $URL_COL)${NC}${BOLD} |${NC} $(pad_string "SSO: user1" $CRED_COL)${BOLD} |${NC}"
 echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
 echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Keycloak" $TOOL_COL)${NC}${BOLD} |${NC} ${YELLOW}$(pad_string "$KEYCLOAK_URL" $URL_COL)${NC}${BOLD} |${NC} $(pad_string "admin" $CRED_COL)${BOLD} |${NC}"
+echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
+echo -e "${BOLD}|${NC} ${GREEN}$(pad_string "Gitlab" $TOOL_COL)${NC}${BOLD} |${NC} ${YELLOW}$(pad_string "$GITLAB_URL" $URL_COL)${NC}${BOLD} |${NC} $(pad_string "root or user1" $CRED_COL)${BOLD} |${NC}"
 echo -e "${BOLD}+----------------+-------------------------------------------------------+-------------------------------------+${NC}"
 
 # Print full URLs for easy copy-paste
@@ -70,9 +70,9 @@ print_header "Full URLs for copy-paste"
 print_info "ArgoCD: ${BOLD}$ARGOCD_URL${NC}"
 print_info "Backstage: ${BOLD}$BACKSTAGE_URL${NC}"
 print_info "Kargo: ${BOLD}$KARGO_URL${NC}"
-print_info "GitLab: ${BOLD}$GITLAB_URL${NC}"
 print_info "Argo-Workflows: ${BOLD}$WORKFLOWS_URL${NC}"
 print_info "Keycloak: ${BOLD}$KEYCLOAK_URL${NC}"
+print_info "GitLab: ${BOLD}$GITLAB_URL${NC}"
 
 # Print usage instructions
 print_header "Usage examples"

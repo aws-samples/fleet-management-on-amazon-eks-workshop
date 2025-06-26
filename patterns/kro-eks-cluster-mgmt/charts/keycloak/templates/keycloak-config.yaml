@@ -437,9 +437,10 @@ spec:
               CLIENT_SCOPE_GROUPS_ID=$(curl -sS -H "Content-Type: application/json" -H "Authorization: bearer ${KEYCLOAK_TOKEN}" -X GET  ${KEYCLOAK_URL}/admin/realms/${REALM_NAME}/client-scopes | jq -e -r  '.[] | select(.name == "groups") | .id')
               curl -sS -H "Content-Type: application/json" -H "Authorization: bearer ${KEYCLOAK_TOKEN}" -X PUT  ${KEYCLOAK_URL}/admin/realms/${REALM_NAME}/clients/${CLIENT_ID}/default-client-scopes/${CLIENT_SCOPE_GROUPS_ID}
 
-              KARGO_CLIENT_SECRET=$(curl -sS -H "Content-Type: application/json" \
-                -H "Authorization: bearer ${KEYCLOAK_TOKEN}" \
-                -X GET ${KEYCLOAK_URL}/admin/realms/${REALM_NAME}/clients/${CLIENT_ID} | jq -e -r '.secret')
+              # Kargo uses PKCE, so secret is not required
+              # KARGO_CLIENT_SECRET=$(curl -sS -H "Content-Type: application/json" \
+              #   -H "Authorization: bearer ${KEYCLOAK_TOKEN}" \
+              #   -X GET ${KEYCLOAK_URL}/admin/realms/${REALM_NAME}/clients/${CLIENT_ID} | jq -e -r '.secret')
 
               ARGOCD_PASSWORD=$(./kubectl -n argocd get secret ide-password -o jsonpath="{.data.password}" | base64 -d)
 
@@ -460,8 +461,6 @@ spec:
                 BACKSTAGE_CLIENT_ID: backstage
                 ARGOCD_CLIENT_SECRET: ${ARGOCD_CLIENT_SECRET}
                 ARGOCD_CLIENT_ID: argocd
-                KARGO_CLIENT_SECRET: ${KARGO_CLIENT_SECRET}
-                KARGO_CLIENT_ID: kargo
               " > /tmp/secret.yaml
 
               ./kubectl apply -f /tmp/secret.yaml
