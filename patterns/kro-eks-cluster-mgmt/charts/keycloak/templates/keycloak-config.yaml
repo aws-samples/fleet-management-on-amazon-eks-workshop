@@ -170,10 +170,10 @@ data:
         "oidc.ciba.grant.enabled": false
       },
       "alwaysDisplayInConsole": false,
-      "rootUrl": "https://${DOMAIN_NAME}",
+      "rootUrl": "https://${DOMAIN_NAME}/backstage",
       "baseUrl": "",
       "redirectUris": [
-        "https://${DOMAIN_NAME}/api/auth/keycloak-oidc/handler/frame"
+        "https://${DOMAIN_NAME}/backstage/api/auth/keycloak-oidc/handler/frame"
       ],
       "webOrigins": [
         "/*"
@@ -185,7 +185,7 @@ data:
       "clientId": "kargo",
       "name": "Kargo Client",
       "description": "Used for Kargo SSO",
-      "publicClient": false,
+      "publicClient": true,
       "authorizationServicesEnabled": false,
       "serviceAccountsEnabled": false,
       "implicitFlowEnabled": false,
