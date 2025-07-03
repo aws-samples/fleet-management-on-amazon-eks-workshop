@@ -11,17 +11,17 @@ import {
   TemplateBackstageLogoIcon,
 } from '@backstage/plugin-home';
 
-const logoUrl = '/img/backstage-icon-color.png';
+const logoUrl = '/backstage/img/backstage-icon-color.png';
 
 // Get the domain URL dynamically from the current window location
-// const getDomainUrl = () => {
-//   if (typeof window !== 'undefined') {
-//     return `${window.location.protocol}//${window.location.host}`;
-//   }
-//   return 'http://localhost:3000';
-// };
+const getDomainUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.host}`;
+  }
+  return 'http://localhost:3000/backstage';
+};
 
-// const domainUrl = getDomainUrl();
+const domainUrl = getDomainUrl();
 
 const useStyles = makeStyles(theme => ({
   searchBar: {
@@ -132,27 +132,27 @@ export const CustomHomepage = () => {
                     {
                       url: gitUrl,
                       label: 'GitLab',
-                      icon: <img src="/img/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/backstage/img/gitlab.png" alt="GitLab" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${config.getOptionalString('app.argocdUrl')}`,
+                      url: domainUrl + '/argocd',
                       label: 'ArgoCD',
-                      icon: <img src="/img/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/backstage/img/argocd.png" alt="ArgoCD" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${config.getOptionalString('app.argoworkflowsUrl')}`,
+                      url: domainUrl + '/argo-workflows',
                       label: 'Argo Workflows',
-                      icon: <img src="/img/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/backstage/img/argo-workflows.png" alt="Argo Workflows" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${config.getOptionalString('app.kargoUrl')}`,
+                      url: domainUrl,
                       label: 'Kargo',
-                      icon: <img src="/img/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/backstage/img/kargo.png" alt="Kargo" style={{ width: '24px', height: '24px' }} />,
                     },
                     {
-                      url: `${config.getOptionalString('app.keycloakUrl')}`,
+                      url: domainUrl + '/keycloak',
                       label: 'Keycloak',
-                      icon: <img src="/img/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
+                      icon: <img src="/backstage/img/keycloak.png" alt="Keycloak" style={{ width: '24px', height: '24px' }} />,
                     },
                   ]}
                 />

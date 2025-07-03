@@ -1,7 +1,5 @@
 # Amazon EKS multi cluster management using kro & ACK and continuous promotion to multiple environments using Argo CD, Kargo and Argo Rollouts
 
-update script 2
-
 ## Overview of a solution
 
 This solution demonstrates:
@@ -34,6 +32,12 @@ aws cloudformation describe-stacks --stack-name ide-stack --query "Stacks[0].Out
 3. Login to VSCode IDE using `IdeUrl` and `IdePassword` from the outputs above.
 
 ## Walkthrough Creating the environments
+
+1. Switch to `zsh`
+
+```sh
+zsh
+```
 
 ### Configuring workspace
 

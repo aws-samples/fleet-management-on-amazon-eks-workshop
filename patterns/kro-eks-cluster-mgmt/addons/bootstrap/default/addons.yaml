@@ -547,7 +547,7 @@ keycloak:
         operator: In
         values: ['true']
   valuesObject:
-    domain_name: '{{.metadata.annotations.ingress_domain_name}}'
+    ingress_domain_name: '{{.metadata.annotations.ingress_domain_name}}'
 
 argo-workflows:
   enabled: false
@@ -562,7 +562,7 @@ argo-workflows:
         operator: In
         values: ['true']
   valuesObject:
-    domain_name: '{{.metadata.annotations.ingress_domain_name}}'
+    ingress_domain_name: '{{.metadata.annotations.ingress_domain_name}}'
 
 kargo:
   enabled: false
@@ -571,7 +571,7 @@ kargo:
   namespace: kargo
   chartName: kargo
   chartRepository: ghcr.io/akuity/kargo-charts
-  defaultVersion: "1.4.3"
+  defaultVersion: "1.5.3"
   selector:
     matchExpressions:
       - key: enable_kargo
@@ -579,7 +579,7 @@ kargo:
         values: ['true']
   valuesObject:
     api:
-      # host: '{{.metadata.annotations.ingress_domain_name}}'
+      host: '{{.metadata.annotations.ingress_domain_name}}'
       argocd:
         urls:
         - https://{{.metadata.annotations.ingress_domain_name}}/argocd

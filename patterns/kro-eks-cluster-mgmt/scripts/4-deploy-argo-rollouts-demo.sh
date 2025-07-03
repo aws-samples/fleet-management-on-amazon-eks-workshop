@@ -190,7 +190,7 @@ argocd app wait rollouts-demo-kargo --health --sync
 
 print_header "Setting up Kargo Access"
 
-export KARGO_URL=http://$(kubectl get svc kargo-api -n kargo -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+export KARGO_URL=https://$DOMAIN_NAME
 curl --head -X GET --retry 20 --retry-all-errors --retry-delay 15 \
   --connect-timeout 5 --max-time 10 -k $KARGO_URL
 print_info "Kargo URL: ${BOLD}$KARGO_URL${NC}"
