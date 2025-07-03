@@ -1,3 +1,7 @@
+SPOKE_CLUSTER_PREFIX=${SPOKE_CLUSTER_NAME_PREFIX:-fleet-spoke}
+SPOKE_STAGING_CLUSTER="${SPOKE_CLUSTER_PREFIX}-staging"
+SPOKE_PROD_CLUSTER="${SPOKE_CLUSTER_PREFIX}-prod"
+
 function deploy_prod (){
   # Deploy the production cluster
 
@@ -33,10 +37,10 @@ function deploy_prod (){
 }
 
 function app_url_staging (){
-  wait-for-lb $(kubectl --context fleet-staging-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  wait-for-lb $(kubectl --context $SPOKE_STAGING_CLUSTER get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 function app_url_prod (){
-  wait-for-lb $(kubectl --context fleet-prod-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  wait-for-lb $(kubectl --context $SPOKE_PROD_CLUSTER get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 
 function apps_fix_kyverno_insights(){
@@ -45,12 +49,12 @@ function apps_fix_kyverno_insights(){
 }
 
 function kyverno_policy_reporter_ui_staging_on(){
-  nohup kubectl --context fleet-staging-cluster port-forward -n kyverno svc/policy-reporter-ui 8085:8080 > /dev/null 2>&1 &
+  nohup kubectl --context $SPOKE_STAGING_CLUSTER port-forward -n kyverno svc/policy-reporter-ui 8085:8080 > /dev/null 2>&1 &
   echo $IDE_URL/proxy/8085/#/
 }
 
 function kyverno_policy_reporter_ui_prod_on(){
-  nohup kubectl --context fleet-prod-cluster port-forward -n kyverno svc/policy-reporter-ui 8086:8080 > /dev/null 2>&1 &
+  nohup kubectl --context $SPOKE_PROD_CLUSTER port-forward -n kyverno svc/policy-reporter-ui 8086:8080 > /dev/null 2>&1 &
   echo $IDE_URL/proxy/8086/#/
 }
 
@@ -299,6 +303,6 @@ function custom_domain_delete() {
 }
 
 function validation_locust_ui(){
-  nohup kubectl --context fleet-staging-cluster port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
+  nohup kubectl --context $SPOKE_STAGING_CLUSTER port-forward -n default service/eks-loadtest-locust 8089:8089 > /dev/null 2>&1 &
   echo $IDE_URL/proxy/8089/
 }
