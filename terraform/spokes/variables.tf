@@ -64,3 +64,9 @@ variable "enable_prometheus_scraper" {
   type        = bool
   default     = false
 }
+
+variable "cluster_name_prefix" {
+  description = "Prefix for the EKS spoke cluster name (will be appended with workspace name)"
+  type        = string
+  default     = "fleet-spoke"
+}

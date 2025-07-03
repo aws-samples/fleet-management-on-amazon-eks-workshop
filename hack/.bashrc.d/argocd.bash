@@ -15,13 +15,13 @@ function argocd_credentials (){
 }
 
 function argocd_hub_credentials (){
-	argocd_credentials fleet-hub-cluster 8081
+	argocd_credentials ${HUB_CLUSTER_NAME:-fleet-hub-cluster} 8081
 }
 function argocd_staging_credentials (){
-	argocd_credentials fleet-staging-cluster 8082
+	argocd_credentials ${SPOKE_CLUSTER_NAME_PREFIX:-fleet-spoke}-staging 8082
 }
 function argocd_prod_credentials (){
-	argocd_credentials fleet-prod-cluster 8083
+	argocd_credentials ${SPOKE_CLUSTER_NAME_PREFIX:-fleet-spoke}-prod 8083
 }
 
 

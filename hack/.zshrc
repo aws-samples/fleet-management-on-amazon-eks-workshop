@@ -92,7 +92,7 @@ alias wkgn='watch kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.
 
 alias kgall='kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found'
 
-export CLUSTER_NAME=fleet-hub-cluster
+export CLUSTER_NAME=${HUB_CLUSTER_NAME:-fleet-hub-cluster}
 asg() {
   echo "cluster_name=${CLUSTER_NAME} / aws_region=${AWS_REGION}"; \
   aws autoscaling \
