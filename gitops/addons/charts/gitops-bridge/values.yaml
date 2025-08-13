@@ -946,7 +946,7 @@ addons:
     namespace: '{{ default "kube-prometheus-stack" (index .metadata.annotations "kube_state_metrics_namespace")}}'
     chart: kube-state-metrics
     repoUrl: https://prometheus-community.github.io/helm-charts
-    targetRevision: "5.33.1"
+    targetRevision: "5.37.0"
     selector:
       matchExpressions:
         - key: enable_kube_state_metrics
