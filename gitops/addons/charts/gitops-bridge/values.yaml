@@ -1017,7 +1017,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_dynamodb_namespace")}}'
     chart: aws-controllers-k8s/dynamodb-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.4.5"
+    targetRevision: "1.4.8"
     selector:
       matchExpressions:
         - key: enable_ack_dynamodb
