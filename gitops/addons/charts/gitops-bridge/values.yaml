@@ -998,7 +998,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_apigatewayv2_namespace")}}'
     chart: aws-controllers-k8s/apigatewayv2-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.0.25"
+    targetRevision: "1.0.28"
     selector:
       matchExpressions:
         - key: enable_ack_apigatewayv2
