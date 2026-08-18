@@ -153,7 +153,10 @@ data:
     auth:
       environment: development
       session:
-        secret: MW2sV-sIPngEl26vAzatV-6VqfsgAx4bPIz7PuE_2Lk=
+        # Read from the environment, like KEYCLOAK_CLIENT_SECRET below.
+        # Generate a value per install, for example:
+        #   openssl rand -base64 32
+        secret: ${BACKSTAGE_SESSION_SECRET}
       providers:
         keycloak-oidc:
           development:
