@@ -43,9 +43,13 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "d282NkZHRjV0RWFJNDU0RA=="
+  # Placeholder values: both decode to CHANGE_ME. Generate your own before
+  # applying this manifest, for example:
+  #   printf %s "$(openssl rand -base64 16)" | base64   # rabbitmq-password
+  #   printf %s "$(openssl rand -base64 32)" | base64   # rabbitmq-erlang-cookie
+  rabbitmq-password: "Q0hBTkdFX01F"
   
-  rabbitmq-erlang-cookie: "WnFkT1lqR0cyZ29NVWdiaUFwbHRDendabkRrZ0ZqVjU="
+  rabbitmq-erlang-cookie: "Q0hBTkdFX01F"
 ---
 # Source: rabbitmq/templates/role.yaml
 kind: Role
