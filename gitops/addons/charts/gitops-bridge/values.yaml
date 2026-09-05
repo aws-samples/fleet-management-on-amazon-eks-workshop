@@ -641,7 +641,7 @@ addons:
     namespace: '{{ default "argo-events" (index .metadata.annotations "argo_events_namespace")}}'
     chart: argo-events
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "2.4.15"
+    targetRevision: "2.4.26"
     selector:
       matchExpressions:
         - key: enable_argo_events
