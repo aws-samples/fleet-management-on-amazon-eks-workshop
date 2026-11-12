@@ -324,7 +324,19 @@ module "eks" {
       addon_version  = "v1.35.3-eksbuild.69"
     }
     amazon-cloudwatch-observability = {
-      addon_version  = "v7.0.1-eksbuild.1"
+      addon_version = "v7.0.1-eksbuild.1"
+      # v7 adds Deployments (manager, kube-state-metrics); the managed node group carries the
+      # CriticalAddonsOnly taint when Karpenter is enabled, so they need a matching toleration
+      # or the add-on stays DEGRADED and terraform times out after 20m.
+      configuration_values = jsonencode({
+        tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+        manager = {
+          tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+        }
+        kubeStateMetrics = {
+          tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+        }
+      })
     }
     aws-ebs-csi-driver = {
       addon_version  = "v1.68.0-eksbuild.1"
