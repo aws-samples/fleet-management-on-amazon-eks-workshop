@@ -46,10 +46,15 @@ print_step "Creating Amazon Elastic Container Repository (Amazon ECR) for contai
 aws ecr create-repository --repository-name rollouts-demo --region $AWS_REGION || true
 
 print_step "Setting up cross-account permissions for ECR repository"
-# Define spoke account IDs - if not already defined, use the provided accounts
+# Spoke account IDs. There is deliberately no default: these ids are used
+# below to build an ECR repository policy that grants cross-account pull,
+# so a default would silently grant access to accounts the operator does
+# not control.
 if [ -z "$SPOKE_ACCOUNT_IDS" ]; then
-  export SPOKE_ACCOUNT_IDS="515966522948 586794472760 825765380480"
-  print_info "Using default SPOKE_ACCOUNT_IDS: $SPOKE_ACCOUNT_IDS"
+  print_error "SPOKE_ACCOUNT_IDS is not set."
+  print_info  "Set it to your own spoke account ids before running this script:"
+  print_info  '  export SPOKE_ACCOUNT_IDS="111122223333 444455556666 777788889999"'
+  exit 1
 fi
 
 # Create policy statements for each spoke account
