@@ -208,7 +208,7 @@ spec:
       initContainers:
       containers:
         - name: rabbitmq
-          image: public.ecr.aws/bitnami/rabbitmq:3.11.1-debian-11-r0
+          image: docker.io/bitnamilegacy/rabbitmq:3.11.1-debian-11-r0
           imagePullPolicy: "IfNotPresent"
           securityContext:
             seccompProfile:

@@ -328,10 +328,16 @@ module "eks" {
       # v7 adds Deployments (manager, kube-state-metrics); the managed node group carries the
       # CriticalAddonsOnly taint when Karpenter is enabled, so they need a matching toleration
       # or the add-on stays DEGRADED and terraform times out after 20m.
+      # v7 also turns on Application Signals auto-monitor by default: it annotates every Deployment
+      # with instrumentation.opentelemetry.io/inject-* and injects init containers that request 50m
+      # CPU, below the 100m minimum of the workshop LimitRanges, so no retail-store pod can start.
       configuration_values = jsonencode({
         tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
         manager = {
           tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+          applicationSignals = {
+            autoMonitor = { monitorAllServices = false }
+          }
         }
         kubeStateMetrics = {
           tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
