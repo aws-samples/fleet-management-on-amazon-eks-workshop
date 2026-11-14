@@ -63,7 +63,7 @@ addons:
     namespace: argocd
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.10"
+    targetRevision: "10.11.7"
     selector:
       matchExpressions:
         - key: enable_argocd
@@ -153,7 +153,7 @@ addons:
     namespace: '{{ default "kube-system" (index .metadata.annotations "karpenter_namespace") }}'
     chart: karpenter/karpenter
     repoUrl: public.ecr.aws
-    targetRevision: "1.5.0"
+    targetRevision: "1.9.3"
     selector:
       matchExpressions:
         - key: enable_karpenter
@@ -381,7 +381,7 @@ addons:
     namespace: '{{ default "argocd" (index .metadata.annotations "aws_argocd_namespace") }}'
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.10"
+    targetRevision: "10.11.7"
     selector:
       matchExpressions:
         - key: enable_aws_argocd
@@ -403,7 +403,7 @@ addons:
     namespace: '{{ default "argocd" (index .metadata.annotations "aws_argocd_ingress_namespace") }}'
     chart: argo-cd
     repoUrl: https://argoproj.github.io/argo-helm
-    targetRevision: "8.0.10"
+    targetRevision: "10.11.7"
     selector:
       matchExpressions:
         - key: enable_aws_argocd_ingress
@@ -809,7 +809,7 @@ addons:
     namespace: "opentelemetry-operator-system"
     chart: opentelemetry-operator
     repoUrl: https://open-telemetry.github.io/opentelemetry-helm-charts
-    targetRevision: "0.88.7"
+    targetRevision: "0.129.0"
     values:
       manager:
         collectorImage:
@@ -855,6 +855,17 @@ addons:
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
+    # Kyverno 1.14 defaults spec.rules[].skipBackgroundRequests and emitWarning on admission;
+    # Argo CD 3.x reports the defaulted fields as drift forever (no real diff). Ignore them.
+    ignoreDifferences:
+      - group: kyverno.io
+        kind: ClusterPolicy
+        jqPathExpressions:
+          - '.spec.admission'
+          - '.spec.emitWarning'
+          - '.spec.rules[].skipBackgroundRequests'
+          - '.spec.rules[].validate.allowExistingViolations'
+          - '.spec.rules[].validate.failureAction'
 
   kyverno_policy_reporter:
     enabled: false

@@ -1,5 +1,5 @@
 variables {
-  kubernetes_version = "1.30"
+  kubernetes_version = "1.35"
   vpc_cidr            = "10.2.0.0/16"    
 }
 

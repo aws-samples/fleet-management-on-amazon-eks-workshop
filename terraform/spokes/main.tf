@@ -318,19 +318,37 @@ module "eks" {
   # EKS Addons
   cluster_addons = {
     coredns    = {
-      addon_version  = "v1.11.3-eksbuild.2"
+      addon_version  = "v1.13.2-eksbuild.75"
     }
     kube-proxy = {
-      addon_version  = "v1.31.1-eksbuild.2"
+      addon_version  = "v1.35.3-eksbuild.69"
     }
     amazon-cloudwatch-observability = {
-      addon_version  = "v2.2.1-eksbuild.1"
+      addon_version = "v7.0.1-eksbuild.1"
+      # v7 adds Deployments (manager, kube-state-metrics); the managed node group carries the
+      # CriticalAddonsOnly taint when Karpenter is enabled, so they need a matching toleration
+      # or the add-on stays DEGRADED and terraform times out after 20m.
+      # v7 also turns on Application Signals auto-monitor by default: it annotates every Deployment
+      # with instrumentation.opentelemetry.io/inject-* and injects init containers that request 50m
+      # CPU, below the 100m minimum of the workshop LimitRanges, so no retail-store pod can start.
+      configuration_values = jsonencode({
+        tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+        manager = {
+          tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+          applicationSignals = {
+            autoMonitor = { monitorAllServices = false }
+          }
+        }
+        kubeStateMetrics = {
+          tolerations = [{ key = "CriticalAddonsOnly", operator = "Exists" }]
+        }
+      })
     }
     aws-ebs-csi-driver = {
-      addon_version  = "v1.36.0-eksbuild.1"
+      addon_version  = "v1.68.0-eksbuild.1"
     }
     eks-pod-identity-agent = {
-      addon_version  = "v1.3.2-eksbuild.2"
+      addon_version  = "v1.4.1-eksbuild.3"
       before_compute = true
     }
     vpc-cni = {
@@ -338,7 +356,7 @@ module "eks" {
       # the addon is configured before data plane compute resources are created
       # See README for further details
       before_compute = true
-      addon_version  = "v1.18.5-eksbuild.1"
+      addon_version  = "v1.22.4-eksbuild.14"
       configuration_values = jsonencode({
         env = {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html

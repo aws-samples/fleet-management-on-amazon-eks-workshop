@@ -201,3 +201,13 @@ config:
 features:
   backgroundScan:
     skipResourceFilters: false
+
+# docker.io/bitnami/* was retired in 2025; the same images live under bitnamilegacy.
+# Without this the policyReportsCleanup / webhooksCleanup hook Jobs stay in ImagePullBackOff
+# and the kyverno Application never finishes its sync (measured on event ee6a9f3b).
+webhooksCleanup:
+  image:
+    repository: bitnamilegacy/kubectl
+policyReportsCleanup:
+  image:
+    repository: bitnamilegacy/kubectl

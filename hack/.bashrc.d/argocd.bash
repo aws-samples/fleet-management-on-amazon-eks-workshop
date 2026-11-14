@@ -5,8 +5,11 @@ function argocd_kill_port_forward (){
 function argocd_credentials (){
 	argocd_kill_port_forward $1 $2
     kubectl --context $1 port-forward svc/argocd-server -n argocd $2:80 >/dev/null 2>&1 &
-    # wait for port-forward to be up
-    sleep 3
+    # wait for the port-forward to accept connections (up to 30 s; 3 s was too short right after a rollout)
+    for _ in $(seq 1 30); do
+        curl -s -o /dev/null "http://localhost:$2/" && break
+        sleep 1
+    done
 	export ARGOCD_PWD=$(kubectl get secrets argocd-initial-admin-secret -n argocd --template='{{index .data.password | base64decode}}' --context $1)
     argocd login "localhost:$2" --plaintext --username admin --password $ARGOCD_PWD --name $1
 	echo "ArgoCD Username: admin"
@@ -15,13 +18,13 @@ function argocd_credentials (){
 }
 
 function argocd_hub_credentials (){
-	argocd_credentials ${HUB_CLUSTER_NAME:-fleet-hub-cluster} 8081
+	argocd_credentials ${HUB_CONTEXT:-fleet-hub-cluster} 8081
 }
 function argocd_staging_credentials (){
-	argocd_credentials ${SPOKE_CLUSTER_NAME_PREFIX:-fleet-spoke}-staging 8082
+	argocd_credentials ${STAGING_CONTEXT:-fleet-staging-cluster} 8082
 }
 function argocd_prod_credentials (){
-	argocd_credentials ${SPOKE_CLUSTER_NAME_PREFIX:-fleet-spoke}-prod 8083
+	argocd_credentials ${PROD_CONTEXT:-fleet-prod-cluster} 8083
 }
 
 
