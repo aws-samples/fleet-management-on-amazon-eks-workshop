@@ -861,8 +861,10 @@ addons:
       - group: kyverno.io
         kind: ClusterPolicy
         jqPathExpressions:
-          - '.spec.rules[].skipBackgroundRequests'
+          - '.spec.admission'
           - '.spec.emitWarning'
+          - '.spec.rules[].skipBackgroundRequests'
+          - '.spec.rules[].validate.allowExistingViolations'
           - '.spec.rules[].validate.failureAction'
 
   kyverno_policy_reporter:
