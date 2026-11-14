@@ -275,7 +275,7 @@ module "gitops_bridge_bootstrap" {
   argocd = {
     name = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "7.5.2"
+    chart_version    = "10.11.7"
     values = [file("${path.module}/argocd-initial-values.yaml")]
     timeout          = 600
     create_namespace = false

@@ -15,7 +15,7 @@ spec:
             install_argocd: "true"
         values:
           addonChart: argo-cd
-          addonChartVersion: "7.5.2"
+          addonChartVersion: "10.11.7"
           addonChartReleaseName: argocd
           addonChartRepository: https://argoproj.github.io/argo-helm
   template:
