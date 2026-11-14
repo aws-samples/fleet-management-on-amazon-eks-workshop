@@ -17,8 +17,6 @@ controller:
   env:
     - name: ARGOCD_K8S_CLIENT_QPS #required for Crossplane too many CRDs https://github.com/argoproj/argo-cd/pull/448
       value: '300'
-    - name: ARGOCD_SYNC_WAVE_DELAY
-      value: '30'
   controller.resource.health.persist: "true"
 repoServer:
   autoscaling:
@@ -84,6 +82,8 @@ configs:
     # -- Used if Argo CD is running behind reverse proxy under subpath different from /
     server.rootpath: ''
     server.insecure: true
+    # argo-cd chart >= 8 wires ARGOCD_SYNC_WAVE_DELAY from this key; an extra env entry duplicates it
+    controller.sync.wave.delay.seconds: 30
   rbac:
     # -- The name of the default role which Argo CD will falls back to, when authorizing API requests (optional).
     # If omitted or empty, users may be still be able to login, but will see no apps, projects, etc...
