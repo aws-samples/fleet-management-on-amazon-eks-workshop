@@ -855,6 +855,15 @@ addons:
       helm:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
+    # Kyverno 1.14 defaults spec.rules[].skipBackgroundRequests and emitWarning on admission;
+    # Argo CD 3.x reports the defaulted fields as drift forever (no real diff). Ignore them.
+    ignoreDifferences:
+      - group: kyverno.io
+        kind: ClusterPolicy
+        jqPathExpressions:
+          - '.spec.rules[].skipBackgroundRequests'
+          - '.spec.emitWarning'
+          - '.spec.rules[].validate.failureAction'
 
   kyverno_policy_reporter:
     enabled: false
