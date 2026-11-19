@@ -1055,7 +1055,7 @@ addons:
     namespace: '{{ default "aws-controllers-k8s" (index .metadata.annotations "ack_emrcontainers_namespace")}}'
     chart: aws-controllers-k8s/emrcontainers-chart
     repoUrl: public.ecr.aws
-    targetRevision: "1.0.22"
+    targetRevision: "1.0.24"
     selector:
       matchExpressions:
         - key: enable_ack_emrcontainers
